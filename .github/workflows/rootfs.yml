@@ -1,0 +1,418 @@
+name: Build Fedora RootFS
+
+on:
+  workflow_dispatch:
+    inputs:
+      fedora_version:
+        description: 'Fedora Version'
+        type: choice
+        options:
+          - 45
+          - rawhide
+        default: '45'
+
+      autologin:
+        description: 'Autologin'
+        type: boolean
+        default: true
+
+      username:
+        description: 'Username'
+        type: string
+        default: 'username'
+
+      hostname:
+        description: 'Hostname'
+        type: string
+        default: 'xiaomi-sheng'
+
+      language:
+        description: 'System language'
+        type: choice
+        options:
+          - 'None (C.UTF-8)'
+          - 'en_US.UTF-8'
+          - 'zh_CN.UTF-8'
+          - 'zh_TW.UTF-8'
+          - 'ja_JP.UTF-8'
+          - 'ko_KR.UTF-8'
+          - 'de_DE.UTF-8'
+          - 'fr_FR.UTF-8'
+          - 'es_ES.UTF-8'
+          - 'ru_RU.UTF-8'
+        default: 'None (C.UTF-8)'
+
+      boot_mode:
+        description: |
+          Boot mode:
+          - single: Boot from partition "userdata"
+          - dual: Boot from partition "linux"
+          - custom: Boot from custom partition
+        type: choice
+        options:
+          - 'single (userdata)'
+          - 'dual (linux)'
+          - 'custom'
+        default: 'dual (linux)'
+
+      custom_partition:
+        description: 'Custom partition (required when boot_mode=custom)'
+        type: string
+        required: false
+        default: ''
+
+      extra_packages:
+        description: 'Extra packages to install (space-separated)'
+        type: string
+        required: false
+        default: ''
+
+      firmware_repo:
+        description: 'Firmware Repo URL'
+        type: string
+        required: false
+        default: 'https://github.com/ianchb/sheng-firmware'
+
+      firmware_branch:
+        description: 'Firmware Branch'
+        type: string
+        required: false
+        default: 'master'
+
+jobs:
+  # ==========================================================================
+  # Build Custom RPMs
+  # ==========================================================================
+  build-rpms:
+    name: "Build Custom RPMs"
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - name: "Checkout Repo"
+        uses: actions/checkout@v7
+
+      - name: "Install RPM Build Tools"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm rpmbuild rpmdevtools
+          echo "✓ RPM build tools installed"
+
+      - name: "Clone Source Repos"
+        run: |
+          mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+
+          # Clone all source repos
+          git clone --depth 1 https://github.com/ianchb/sheng-firmware.git /tmp/sheng-firmware
+          git clone --depth 1 https://github.com/ianchb/sheng_devauth.git /tmp/sheng-devauth
+          git clone --depth 1 https://github.com/ianchb/xiaomi-mipps-auth.git /tmp/xiaomi-mipps-auth
+          git clone --depth 1 https://github.com/ianchb/xiaomi-charger-mode.git /tmp/xiaomi-charger-mode
+          git clone --depth 1 https://github.com/ianchb/xiaomi-sheng-thp.git /tmp/xiaomi-sheng-thp
+          git clone --depth 1 https://github.com/ianchb/xiaomi-pen-status.git /tmp/xiaomi-pen-status
+          git clone --depth 1 https://github.com/slhssb/xiaomi-sheng-keyboard-backlight.git /tmp/xiaomi-sheng-keyboard-backlight
+          git clone --depth 1 https://github.com/ianchb/xiaomi-sheng-keyboard-helper.git /tmp/xiaomi-sheng-keyboard-helper
+          git clone --depth 1 https://github.com/qualcomm/fastrpc.git /tmp/fastrpc
+          git clone --depth 1 https://codeberg.org/DylanVanAssche/libssc.git /tmp/libssc
+          git clone --depth 1 https://gitlab.freedesktop.org/hadess/iio-sensor-proxy.git /tmp/iio-sensor-proxy
+          git clone --depth 1 https://github.com/ianchb/xiaomi-sheng-fingerprint.git /tmp/xiaomi-sheng-fingerprint
+          echo "✓ Source repos cloned"
+
+      - name: "Create Source Tarballs"
+        run: |
+          cd /tmp
+          for repo in sheng-firmware sheng-devauth xiaomi-mipps-auth xiaomi-charger-mode \
+                      xiaomi-sheng-thp xiaomi-pen-status xiaomi-sheng-keyboard-backlight \
+                      xiaomi-sheng-keyboard-helper fastrpc libssc iio-sensor-proxy xiaomi-sheng-fingerprint; do
+            tar -czf ~/rpmbuild/SOURCES/${repo}-1.0.tar.gz ${repo}/
+          done
+          echo "✓ Source tarballs created"
+
+      - name: "Build Simple RPMs"
+        run: |
+          cd rpms
+
+          # Build firmware-xiaomi-sheng
+          rpmbuild -ba firmware-xiaomi-sheng.spec || echo "Warning: firmware build failed"
+
+          # Build sheng-devauth
+          rpmbuild -ba sheng-devauth.spec || echo "Warning: sheng-devauth build failed"
+
+          # Build xiaomi-mipps-auth
+          rpmbuild -ba xiaomi-mipps-auth.spec || echo "Warning: xiaomi-mipps-auth build failed"
+
+          # Build xiaomi-charger-mode
+          rpmbuild -ba xiaomi-charger-mode.spec || echo "Warning: xiaomi-charger-mode build failed"
+
+          # Build xiaomi-sheng-keyboard-backlight
+          rpmbuild -ba xiaomi-sheng-keyboard-backlight.spec || echo "Warning: xiaomi-sheng-keyboard-backlight build failed"
+
+          # Build alsa-xiaomi-sheng
+          rpmbuild -ba alsa-xiaomi-sheng.spec || echo "Warning: alsa-xiaomi-sheng build failed"
+
+          # Build sheng-sensors
+          rpmbuild -ba sheng-sensors.spec || echo "Warning: sheng-sensors build failed"
+
+          echo "✓ Simple RPMs built"
+
+      - name: "Upload RPM Artifacts"
+        uses: actions/upload-artifact@v7
+        with:
+          name: custom-rpms
+          path: ~/rpmbuild/RPMS/*.rpm
+          retention-days: 3
+          if-no-files-found: warn
+
+  # ==========================================================================
+  # Build RootFS
+  # ==========================================================================
+  build-rootfs:
+    name: "Build Fedora RootFS"
+    runs-on: ubuntu-24.04-arm
+    needs: [build-rpms]
+
+    env:
+      ROOTFS_MOUNT: /mnt/rootfs
+      IMAGE_SIZE: 10G
+
+    steps:
+      - name: "Checkout Repo"
+        uses: actions/checkout@v7
+
+      - name: "Install Build Tools"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            rpm tar xz e2fsprogs \
+            qemu-user-static binfmt-support
+          echo "✓ Build tools installed"
+
+      - name: "Download RPM Artifacts"
+        uses: actions/download-artifact@v8
+        with:
+          name: custom-rpms
+          path: rpms/
+
+      - name: "Parse Partition Label"
+        id: partition
+        run: |
+          case "${{ inputs.boot_mode }}" in
+            'single (userdata)')
+              echo "label=userdata" >> $GITHUB_OUTPUT
+              echo "boot_img_pattern=boot_sheng_singleboot.img" >> $GITHUB_OUTPUT
+              ;;
+            'dual (linux)')
+              echo "label=linux" >> $GITHUB_OUTPUT
+              echo "boot_img_pattern=boot_sheng_dualboot.img" >> $GITHUB_OUTPUT
+              ;;
+            'custom')
+              echo "label=${{ inputs.custom_partition }}" >> $GITHUB_OUTPUT
+              echo "boot_img_pattern=boot.img" >> $GITHUB_OUTPUT
+              ;;
+          esac
+          echo "✓ Partition label set"
+
+      - name: "Create RootFS Image"
+        run: |
+          truncate -s "$IMAGE_SIZE" rootfs.img
+          mkfs.ext4 rootfs.img
+          echo "✓ RootFS image created (${IMAGE_SIZE})"
+
+      - name: "Mount RootFS Image"
+        run: |
+          sudo mkdir -p "$ROOTFS_MOUNT"
+          sudo mount -o loop rootfs.img "$ROOTFS_MOUNT"
+          echo "✓ RootFS image mounted at $ROOTFS_MOUNT"
+
+      - name: "Install Fedora via DNF"
+        run: |
+          # Register binfmt for cross-architecture support
+          sudo update-binfmts --enable qemu-aarch64 2>/dev/null || true
+
+          sudo dnf \
+            --installroot="$ROOTFS_MOUNT" \
+            --releasever="${{ inputs.fedora_version }}" \
+            --repo=fedora \
+            --repo=updates \
+            --setopt=install_weak_deps=False \
+            --setopt=tsflags=nodocs \
+            install -y \
+            @core \
+            systemd systemd-sysv \
+            sudo vim wget curl \
+            NetworkManager openssh-server \
+            wpa_supplicant dbus \
+            ca-certificates \
+            chrony \
+            iw \
+            lm-sensors \
+            wireless-regdb \
+            net-tools \
+            glib2 \
+            libqmi \
+            libmbim \
+            polkit
+          echo "✓ DNF installroot complete"
+
+      - name: "Mount Virtual File Systems"
+        run: |
+          sudo mount --bind /dev "$ROOTFS_MOUNT/dev"
+          sudo mount --bind /dev/pts "$ROOTFS_MOUNT/dev/pts"
+          sudo mount -t proc proc "$ROOTFS_MOUNT/proc"
+          sudo mount -t sysfs sys "$ROOTFS_MOUNT/sys"
+          sudo cp /etc/resolv.conf "$ROOTFS_MOUNT/etc/resolv.conf"
+          echo "✓ Virtual file systems mounted"
+
+      - name: "Install Custom RPMs"
+        run: |
+          sudo cp rpms/*.rpm "$ROOTFS_MOUNT/tmp/" 2>/dev/null || true
+          sudo chroot "$ROOTFS_MOUNT" rpm -Uvh /tmp/*.rpm 2>/dev/null || true
+          sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm 2>/dev/null || true
+          echo "✓ Custom RPMs installed"
+
+      - name: "Install Extra Packages"
+        if: ${{ inputs.extra_packages != '' }}
+        run: |
+          EXTRA_PKGS="${{ inputs.extra_packages }}"
+          echo "  Extra packages: $EXTRA_PKGS"
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y $EXTRA_PKGS
+          echo "✓ Extra packages installed"
+
+      - name: "Set Hostname"
+        run: |
+          echo "${{ inputs.hostname }}" | sudo tee "$ROOTFS_MOUNT/etc/hostname"
+          if ! grep -q "127.0.1.1.*${{ inputs.hostname }}" "$ROOTFS_MOUNT/etc/hosts"; then
+            echo "127.0.1.1 ${{ inputs.hostname }}" | sudo tee -a "$ROOTFS_MOUNT/etc/hosts"
+          fi
+          echo "✓ Hostname set to ${{ inputs.hostname }}"
+
+      - name: "Configure Locale"
+        run: |
+          LANG_CHOICE="${{ inputs.language }}"
+
+          if [ "$LANG_CHOICE" = 'None (C.UTF-8)' ]; then
+            echo "✓ System locale stays C.UTF-8"
+          else
+            sudo chroot "$ROOTFS_MOUNT" dnf install -y glibc-langpack-en
+            sudo chroot "$ROOTFS_MOUNT" localectl set-locale LANG="$LANG_CHOICE" 2>/dev/null || true
+            echo "LANG=$LANG_CHOICE" | sudo tee "$ROOTFS_MOUNT/etc/locale.conf"
+            echo "✓ Locale set to $LANG_CHOICE"
+          fi
+
+      - name: "Create User"
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" useradd \
+            -m -s /bin/bash \
+            -G wheel \
+            "${{ inputs.username }}"
+          echo "✓ User ${{ inputs.username }} created"
+
+      - name: "Set Passwords"
+        env:
+          ROOTFS_PASSWORD: ${{ secrets.ROOTFS_PASSWORD }}
+        run: |
+          if [[ -z "$ROOTFS_PASSWORD" ]]; then
+            ROOTFS_PASSWORD="password"
+          else
+            echo "::add-mask::$ROOTFS_PASSWORD"
+          fi
+          printf '%s:%s\n' "${{ inputs.username }}" "$ROOTFS_PASSWORD" | \
+            sudo chroot "$ROOTFS_MOUNT" chpasswd
+          printf 'root:%s\n' "$ROOTFS_PASSWORD" | \
+            sudo chroot "$ROOTFS_MOUNT" chpasswd
+          echo "✓ Passwords set"
+
+      - name: "Enable Services"
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" systemctl enable NetworkManager
+          sudo chroot "$ROOTFS_MOUNT" systemctl enable sshd
+          # QRTR服务 - Qualcomm IPC Router，传感器通信必需
+          sudo chroot "$ROOTFS_MOUNT" systemctl enable qrtr-ns 2>/dev/null || \
+            sudo bash -c 'cat > "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" << EOF
+[Unit]
+Description=Qualcomm IPC Router Service (QRTR)
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/qrtr-ns -f
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF'
+          sudo chroot "$ROOTFS_MOUNT" systemctl enable qrtr-ns 2>/dev/null || true
+          echo "✓ Services enabled"
+
+      - name: "Configure sudo"
+        run: |
+          echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "$ROOTFS_MOUNT/etc/sudoers.d/wheel"
+          sudo chmod 440 "$ROOTFS_MOUNT/etc/sudoers.d/wheel"
+          echo "✓ sudo configured for wheel group"
+
+      - name: "Disable SELinux"
+        run: |
+          sudo mkdir -p "$ROOTFS_MOUNT/etc/selinux"
+          echo "SELINUX=disabled" | sudo tee "$ROOTFS_MOUNT/etc/selinux/config"
+          echo "SELINUXTYPE=targeted" | sudo tee -a "$ROOTFS_MOUNT/etc/selinux/config"
+          echo "✓ SELinux disabled"
+
+      - name: "Configure fstab"
+        run: |
+          PARTITION="${{ steps.partition.outputs.label }}"
+          echo "PARTLABEL=$PARTITION / ext4 defaults,x-systemd.growfs 0 1" | \
+            sudo tee "$ROOTFS_MOUNT/etc/fstab"
+          echo "✓ fstab configured: root=PARTLABEL=$PARTITION"
+
+      - name: "Clean DNF Cache"
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" dnf clean all
+          sudo rm -rf "$ROOTFS_MOUNT/var/cache/dnf"
+          sudo rm -f "$ROOTFS_MOUNT/etc/resolv.conf"
+          echo "✓ DNF cache cleaned"
+
+      - name: "Unmount Virtual File Systems"
+        if: always()
+        run: |
+          sudo umount "$ROOTFS_MOUNT/dev/pts" 2>/dev/null || true
+          sudo umount "$ROOTFS_MOUNT/dev" 2>/dev/null || true
+          sudo umount "$ROOTFS_MOUNT/proc" 2>/dev/null || true
+          sudo umount "$ROOTFS_MOUNT/sys" 2>/dev/null || true
+          echo "✓ Virtual file systems unmounted"
+
+      - name: "Unmount Image & Set UUID"
+        run: |
+          sudo umount "$ROOTFS_MOUNT" 2>/dev/null || true
+          tune2fs -U random rootfs.img || true
+          echo "✓ Image unmounted, UUID set"
+
+      - name: "Generate boot.img"
+        run: |
+          PARTITION="${{ steps.partition.outputs.label }}"
+          CMDLINE="root=PARTLABEL=$PARTITION"
+          chmod +x mkbootimg
+          ./mkbootimg \
+            --kernel Image.gz-dtb_sheng \
+            --cmdline "$CMDLINE" \
+            --base 0x00000000 \
+            --kernel_offset 0x00008000 \
+            --tags_offset 0x01e00000 \
+            --pagesize 4096 \
+            --id \
+            -o boot.img
+          echo "✓ boot.img generated (cmdline: $CMDLINE)"
+
+      - name: "Upload RootFS Image"
+        uses: actions/upload-artifact@v7
+        with:
+          name: rootfs-fedora-${{ inputs.fedora_version }}-${{ steps.partition.outputs.label }}
+          path: rootfs.img
+          retention-days: 14
+          if-no-files-found: error
+          compression-level: 1
+
+      - name: "Upload Boot Image"
+        uses: actions/upload-artifact@v7
+        with:
+          name: boot-fedora-${{ inputs.fedora_version }}-${{ steps.partition.outputs.label }}
+          path: boot.img
+          retention-days: 14
+          if-no-files-found: warn
+          compression-level: 1

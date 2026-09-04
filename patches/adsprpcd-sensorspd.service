@@ -1,0 +1,14 @@
+[Unit]
+Description=sensorspd aDSP RPC daemon
+ConditionPathExists=|/dev/fastrpc-adsp
+ConditionPathExists=|/dev/fastrpc-adsp-secure
+Before=iio-sensor-proxy.service
+
+[Service]
+Type=exec
+ExecStart=/usr/bin/adsprpcd sensorspd
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=iio-sensor-proxy.service
