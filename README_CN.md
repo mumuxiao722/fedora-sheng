@@ -93,33 +93,25 @@
 
 ### 方式二：使用自己的预构建内核 RPM
 
-1. 构建 `kernel-sheng` RPM（格式与预构建相同）
-2. 在您的仓库中创建 tag 为 **`prekernel`** 的 release
-3. 上传 `kernel-sheng-*.rpm` 文件到该 release
-4. 将 **Kernel Source** 设为 `prebuilt`，**Kernel Prebuilt Source** 设为 `own`
-5. 运行工作流 — 它将从 release 下载您的内核 RPM
+1. 运行 `custom_build` 工作流编译内核
+2. 从 Actions 运行结果中下载 `kernel-sheng-*.rpm` artifact
+3. 创建一个 release，tag 名称自定（如 `my-kernel-v1`）
+4. 上传 `kernel-sheng-*.rpm` 到该 release
+5. 将 **Kernel Source** 设为 `prebuilt`，**Kernel Prebuilt Source** 设为 `own`
+6. 在 **Kernel Branch** 中填入你的 tag 名称
+7. 运行工作流 — 它将从 release 下载内核 RPM
 
 ### 上传内核 RPM 到 release（手动）
 
-`custom_build` 工作流运行后，内核 RPM 作为 workflow artifact 可用。要使其可用于后续预构建运行：
+`custom_build` 工作流运行后，内核 RPM 作为 workflow artifact 可用：
 
-```bash
-# 上传到 release，tag 与内核分支名一致
-gh release create sheng-7.2.2 kernel-sheng-*.rpm \
-  --repo YOUR_USERNAME/fedora-sheng \
-  --title "预构建内核 sheng-7.2.2" \
-  --notes "sheng 预构建内核"
-```
+1. 进入 Actions → 选择 `custom_build` 运行
+2. 在 **Artifacts** 中下载 `kernel-sheng.zip`
+3. 解压得到 `kernel-sheng-*.rpm`
+4. 创建一个 release，tag 名称自定（如 `my-kernel-v1`）
+5. 上传 RPM 文件到该 release
 
-或向已有 release 添加 RPM：
-
-```bash
-gh release upload sheng-7.2.2 kernel-sheng-*.rpm \
-  --repo YOUR_USERNAME/fedora-sheng \
-  --clobber
-```
-
-> Release tag 必须与 **Kernel Branch** 的值一致（如 `sheng-7.2.2`）。
+之后构建 rootfs 时，将 **Kernel Prebuilt Source** 设为 `own`，并在 **Kernel Branch** 中填入 tag 名称。
 
 ---
 

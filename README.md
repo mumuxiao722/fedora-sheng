@@ -93,33 +93,25 @@ If you want to use a custom kernel instead of the prebuilt one:
 
 ### Option 2: Use your own prebuilt kernel RPM
 
-1. Build a `kernel-sheng` RPM (same format as the prebuilt one)
-2. Create a release with tag **`prekernel`** in your repository
-3. Upload the `kernel-sheng-*.rpm` file to that release
-4. Set **Kernel Source** to `prebuilt` and **Kernel Prebuilt Source** to `own`
-5. Run the workflow — it will download your kernel RPM from the release
+1. Run a `custom_build` workflow to build the kernel
+2. Download the `kernel-sheng-*.rpm` artifact from the Actions run
+3. Create a release with any tag name you like (e.g. `my-kernel-v1`)
+4. Upload the `kernel-sheng-*.rpm` to that release
+5. Set **Kernel Source** to `prebuilt`, **Kernel Prebuilt Source** to `own`
+6. Enter your tag name in **Kernel Branch**
+7. Run the workflow — it will download the kernel RPM from your release
 
 ### Uploading kernel RPM to release (manual)
 
-After a `custom_build` workflow run, the kernel RPM is available as a workflow artifact. To make it available for future prebuilt runs:
+After a `custom_build` workflow run, the kernel RPM is available as a workflow artifact:
 
-```bash
-# Upload to release with tag matching the kernel branch name
-gh release create sheng-7.2.2 kernel-sheng-*.rpm \
-  --repo YOUR_USERNAME/fedora-sheng \
-  --title "Prebuilt kernel sheng-7.2.2" \
-  --notes "Prebuilt kernel for sheng"
-```
+1. Go to Actions → select the `custom_build` run
+2. Under **Artifacts**, download `kernel-sheng.zip`
+3. Unzip to get `kernel-sheng-*.rpm`
+4. Create a release with any tag name (e.g. `my-kernel-v1`)
+5. Upload the RPM file to the release
 
-Or add an existing RPM to an existing release:
-
-```bash
-gh release upload sheng-7.2.2 kernel-sheng-*.rpm \
-  --repo YOUR_USERNAME/fedora-sheng \
-  --clobber
-```
-
-> The release tag must match the **Kernel Branch** value (e.g., `sheng-7.2.2`).
+Then when building rootfs, set **Kernel Prebuilt Source** to `own` and enter the tag name in **Kernel Branch**.
 
 ---
 
