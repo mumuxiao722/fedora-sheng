@@ -64,7 +64,7 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 | **Kernel Source** | Use prebuilt kernel or build from source | `prebuilt` / `custom_build` | `prebuilt` |
 | **Kernel Prebuilt Source** | Where to get the prebuilt kernel (only when prebuilt) | `upstream` / `own` | `upstream` |
 | **Kernel Repo URL** | Git repo for kernel source (only when custom_build) | valid Git URL | `https://github.com/ianchb/sm8550-mainline` |
-| **Kernel Branch** | Branch to checkout (only when custom_build) | branch name | `sheng-7.2.2` |
+| **Kernel Branch** | Branch to checkout / release tag (only when custom_build) | branch name | `sheng-7.2.2` |
 | **Kernel Config** | Config file path in repo (only when custom_build) | file path | `sm8550.config` |
 
 ### Firmware
@@ -104,20 +104,22 @@ If you want to use a custom kernel instead of the prebuilt one:
 After a `custom_build` workflow run, the kernel RPM is available as a workflow artifact. To make it available for future prebuilt runs:
 
 ```bash
-# Download the artifact, then upload to release
-gh release create prekernel kernel-sheng-*.rpm \
+# Upload to release with tag matching the kernel branch name
+gh release create sheng-7.2.2 kernel-sheng-*.rpm \
   --repo YOUR_USERNAME/fedora-sheng \
-  --title "Prebuilt kernel" \
+  --title "Prebuilt kernel sheng-7.2.2" \
   --notes "Prebuilt kernel for sheng"
 ```
 
 Or add an existing RPM to an existing release:
 
 ```bash
-gh release upload prekernel kernel-sheng-*.rpm \
+gh release upload sheng-7.2.2 kernel-sheng-*.rpm \
   --repo YOUR_USERNAME/fedora-sheng \
   --clobber
 ```
+
+> The release tag must match the **Kernel Branch** value (e.g., `sheng-7.2.2`).
 
 ---
 

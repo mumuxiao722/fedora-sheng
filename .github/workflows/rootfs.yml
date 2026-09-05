@@ -93,7 +93,7 @@ on:
         default: 'https://github.com/ianchb/sm8550-mainline'
 
       kernel_branch:
-        description: 'Kernel Branch (only when kernel_source=custom_build)'
+        description: 'Kernel branch / release tag (e.g. sheng-7.2.2)'
         type: string
         required: false
         default: 'sheng-7.2.2'
@@ -181,54 +181,55 @@ jobs:
       - name: "Package Kernel RPM"
         if: steps.check.outputs.exists == 'false'
         run: |
+          KVER="${{ steps.build.outputs.kernel_version }}"
           FEDORA_VER="${{ inputs.fedora_version }}"
           TOPDIR="${{ github.workspace }}/rpmbuild"
           mkdir -p "$TOPDIR"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
-          cat > "$TOPDIR/SPECS/kernel-sheng.spec" << 'SPECEOF'
-          Name:           kernel-sheng
-          Version:        1.0
-          Release:        1
-          Summary:        Kernel for Xiaomi Pad 6S Pro (sheng)
-          License:        GPLv2
-          URL:            https://github.com/ianchb/sm8550-mainline
-          Source0:        kernel-sheng-%{version}.tar.gz
+          cat > "$TOPDIR/SPECS/kernel-sheng.spec" << SPECEOF
+Name:           kernel-sheng
+Version:        ${KVER}
+Release:        1.fc${FEDORA_VER}
+Summary:        Kernel for Xiaomi Pad 6S Pro (sheng)
+License:        GPLv2
+URL:            ${{ inputs.kernel_repo }}
+Source0:        kernel-sheng-%{version}.tar.gz
 
-          %undefine __debug_package
-          %undefine _debugsource_packages
+%undefine __debug_package
+%undefine _debugsource_packages
 
-          BuildRequires:  gcc, make
+BuildRequires:  gcc, make
 
-          %description
-          Prebuilt kernel for Xiaomi Pad 6S Pro.
+%description
+Prebuilt kernel for Xiaomi Pad 6S Pro.
 
-          %prep
-          %autosetup -n kernel-staging -p0
+%prep
+%autosetup -n kernel-staging -p0
 
-          %build
-          echo "Prebuilt kernel, nothing to build"
+%build
+echo "Prebuilt kernel, nothing to build"
 
-          %install
-          mkdir -p %{buildroot}/boot
-          mkdir -p %{buildroot}/lib/modules
-          cp -a boot/* %{buildroot}/boot/ 2>/dev/null || true
-          cp -a lib/modules/* %{buildroot}/lib/modules/ 2>/dev/null || true
+%install
+mkdir -p %{buildroot}/boot
+mkdir -p %{buildroot}/lib/modules
+cp -a boot/* %{buildroot}/boot/ 2>/dev/null || true
+cp -a lib/modules/* %{buildroot}/lib/modules/ 2>/dev/null || true
 
-          %files
-          /boot/Image.gz
-          /boot/sm8550-xiaomi-sheng.dtb
-          /boot/config-*
-          /lib/modules/*
+%files
+/boot/Image.gz
+/boot/sm8550-xiaomi-sheng.dtb
+/boot/config-*
+/lib/modules/*
 
-          %changelog
-          SPECEOF
+%changelog
+SPECEOF
 
           cd "${{ github.workspace }}/kernel-staging"
-          tar -czf "$TOPDIR/SOURCES/kernel-sheng-1.0.tar.gz" .
+          tar -czf "$TOPDIR/SOURCES/kernel-sheng-${KVER}.tar.gz" .
 
           cd "$TOPDIR"
           rpmbuild --define "_topdir $TOPDIR" -ba SPECS/kernel-sheng.spec
-          echo "✓ Kernel RPM packaged"
+          echo "✓ Kernel RPM packaged (${KVER})"
           ls -la RPMS/aarch64/
 
       - name: "Upload Kernel Artifact"
@@ -319,24 +320,24 @@ jobs:
       - name: "Download Kernel RPM (prebuilt upstream)"
         if: ${{ inputs.kernel_source == 'prebuilt' && inputs.kernel_prebuilt == 'upstream' }}
         run: |
-          gh release download prekernel \
+          gh release download "${{ inputs.kernel_branch }}" \
             --repo mumuxiao722/fedora-sheng \
             --pattern "*.rpm" \
             --dest rpms/ \
             --clobber
-          echo "✓ Kernel RPM downloaded from upstream"
+          echo "✓ Kernel RPM downloaded from upstream (${{ inputs.kernel_branch }})"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Download Kernel RPM (prebuilt own)"
         if: ${{ inputs.kernel_source == 'prebuilt' && inputs.kernel_prebuilt == 'own' }}
         run: |
-          gh release download prekernel \
+          gh release download "${{ inputs.kernel_branch }}" \
             --repo "${{ github.repository }}" \
             --pattern "*.rpm" \
             --dest rpms/ \
             --clobber
-          echo "✓ Kernel RPM downloaded from own release"
+          echo "✓ Kernel RPM downloaded from own release (${{ inputs.kernel_branch }})"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

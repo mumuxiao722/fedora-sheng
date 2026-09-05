@@ -64,7 +64,7 @@
 | **Kernel Source** | 使用预构建内核还是从源码构建 | `prebuilt` / `custom_build` | `prebuilt` |
 | **Kernel Prebuilt Source** | 预构建内核来源（仅 prebuilt 时） | `upstream` / `own` | `upstream` |
 | **Kernel Repo URL** | 内核源码仓库地址（仅 custom_build 时） | 有效的 Git URL | `https://github.com/ianchb/sm8550-mainline` |
-| **Kernel Branch** | 检出的分支（仅 custom_build 时） | 分支名称 | `sheng-7.2.2` |
+| **Kernel Branch** | 检出的分支 / release tag（仅 custom_build 时） | 分支名称 | `sheng-7.2.2` |
 | **Kernel Config** | 仓库中的配置文件路径（仅 custom_build 时） | 文件路径 | `sm8550.config` |
 
 ### 固件设置
@@ -104,20 +104,22 @@
 `custom_build` 工作流运行后，内核 RPM 作为 workflow artifact 可用。要使其可用于后续预构建运行：
 
 ```bash
-# 下载 artifact，然后上传到 release
-gh release create prekernel kernel-sheng-*.rpm \
+# 上传到 release，tag 与内核分支名一致
+gh release create sheng-7.2.2 kernel-sheng-*.rpm \
   --repo YOUR_USERNAME/fedora-sheng \
-  --title "预构建内核" \
+  --title "预构建内核 sheng-7.2.2" \
   --notes "sheng 预构建内核"
 ```
 
 或向已有 release 添加 RPM：
 
 ```bash
-gh release upload prekernel kernel-sheng-*.rpm \
+gh release upload sheng-7.2.2 kernel-sheng-*.rpm \
   --repo YOUR_USERNAME/fedora-sheng \
   --clobber
 ```
+
+> Release tag 必须与 **Kernel Branch** 的值一致（如 `sheng-7.2.2`）。
 
 ---
 
