@@ -10,7 +10,7 @@
 
 ## 项目概述
 
-本项目使用 **GitHub Actions** 自动构建适用于小米平板 6S Pro (sheng) 的 Fedora 根文件系统，提供可刷入的 `rootfs.img.zip` 和 `boot.img.zip`。  
+本项目使用 **GitHub Actions** 自动构建适用于小米平板 6S Pro (sheng) 的 Fedora 根文件系统，提供可刷入的 `rootfs.img` 和 `boot.img`。  
 只需在您自己的仓库中启动工作流，即可获得一个开箱即用的 Fedora 环境。
 
 ---
@@ -36,7 +36,7 @@
 ### 3. 下载产物
 
 工作流完成后，打开该运行的摘要页面。  
-在 **Artifacts** 部分，下载 `rootfs-*.zip` 和 `boot-*.zip`。
+在 **Artifacts** 部分，下载 `rootfs-*.zip` 和 `boot-*.zip`（GitHub Actions 会将原始 `.img` 文件压缩为 zip 归档）。
 
 ---
 
@@ -56,6 +56,16 @@
 | **Boot mode** | Fedora 从哪个分区启动 | `single (userdata)` / `dual (linux)` / `custom` | `dual (linux)` |
 | **Custom partition** | 分区名称（boot_mode=custom 时必填） | 任意分区名称 | *（空）* |
 | **Extra packages** | 额外安装的软件包（空格分隔） | 字符串 | *（空）* |
+| **Enable COPR** | 启用 COPR 仓库（GNOME Mobile 需要） | `true` / `false` | `false` |
+
+### 桌面环境设置
+
+| 参数 | 说明 | 选项 | 默认值 |
+|------|------|------|--------|
+| **Desktop** | 要安装的桌面环境 | `GNOME` / `KDE Plasma` / `server` | `KDE Plasma` |
+| **Plasma Mobile** | 使用 Plasma Mobile 界面而非 Plasma Desktop（仅 Desktop=KDE Plasma 时有效） | `true` / `false` | `false` |
+| **GNOME Mobile** | 使用 GNOME Mobile 而非 GNOME（仅 Desktop=GNOME 时有效） | `true` / `false` | `false` |
+| **Quiet Boot** | 启用 Plymouth 启动画面和安静启动信息 | `true` / `false` | `true` |
 
 ### 内核设置
 

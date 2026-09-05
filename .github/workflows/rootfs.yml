@@ -116,6 +116,35 @@ on:
         required: false
         default: 'master'
 
+      desktop:
+        description: 'Desktop Environment (server = no DE)'
+        type: choice
+        options:
+          - 'GNOME'
+          - 'KDE Plasma'
+          - 'server'
+        default: 'KDE Plasma'
+
+      plasma_mobile:
+        description: 'Enable Plasma Mobile instead of Plasma Desktop (only when desktop=KDE Plasma)'
+        type: boolean
+        default: false
+
+      gnome_mobile:
+        description: 'Enable GNOME Mobile instead of GNOME (only when desktop=GNOME)'
+        type: boolean
+        default: false
+
+      enable_copr:
+        description: 'Enable COPR repository (required for GNOME Mobile)'
+        type: boolean
+        default: false
+
+      quiet_boot:
+        description: 'Enable Plymouth splash and quiet boot'
+        type: boolean
+        default: true
+
 jobs:
   # ==========================================================================
   # Build Kernel
@@ -513,6 +542,104 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" dnf install -y $EXTRA_PKGS
           echo "✓ Extra packages installed"
 
+      - name: "Compute Effective quiet_boot"
+        id: quiet
+        run: |
+          if [[ "${{ inputs.quiet_boot }}" == "true" && "${{ inputs.desktop }}" != "server" ]]; then
+            echo "enabled=true" >> $GITHUB_OUTPUT
+          else
+            echo "enabled=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: "Enable COPR Repository"
+        if: ${{ inputs.enable_copr == true }}
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y dnf-plugins-core
+          sudo chroot "$ROOTFS_MOUNT" dnf copr enable -y mobility/gnome-mobile
+          echo "✓ COPR repository enabled (mobility/gnome-mobile)"
+
+      - name: "Install GNOME"
+        if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == false }}
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
+            gnome-shell gnome-session gnome-terminal \
+            gdm gnome-control-center
+          echo "✓ GNOME installed"
+
+      - name: "Install GNOME Mobile"
+        if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == true }}
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
+            gnome-mobile \
+            gdm gnome-terminal gnome-control-center
+          echo "✓ GNOME Mobile installed"
+
+      - name: "Install KDE Plasma"
+        if: ${{ inputs.desktop == 'KDE Plasma' && inputs.plasma_mobile == false }}
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
+            plasma-desktop plasma-workspace plasma-nm \
+            sddm konsole dolphin kate pipewire-alsa
+          echo "✓ KDE Plasma installed"
+
+      - name: "Install KDE Plasma Mobile"
+        if: ${{ inputs.desktop == 'KDE Plasma' && inputs.plasma_mobile == true }}
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
+            plasma-mobile plasma-workspace plasma-nm \
+            sddm konsole dolphin kate pipewire-alsa
+          echo "✓ KDE Plasma Mobile installed"
+
+      - name: "Install Plymouth"
+        if: ${{ steps.quiet.outputs.enabled == 'true' }}
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
+            plymouth plymouth-themes
+          echo "✓ Plymouth installed"
+
+      - name: "Install KDE Plymouth Theme"
+        if: ${{ inputs.desktop == 'KDE Plasma' && steps.quiet.outputs.enabled == 'true' }}
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
+            kde-config-plymouth plymouth-theme-breeze
+          echo "✓ KDE Plymouth theme installed"
+
+      - name: "Configure Display Manager"
+        run: |
+          if [[ "${{ inputs.desktop }}" == "GNOME" ]]; then
+            sudo chroot "$ROOTFS_MOUNT" systemctl enable gdm
+          elif [[ "${{ inputs.desktop }}" == "KDE Plasma" ]]; then
+            sudo chroot "$ROOTFS_MOUNT" systemctl enable sddm
+          fi
+          echo "✓ Display manager configured"
+
+      - name: "Configure Autologin"
+        if: ${{ inputs.autologin == true && inputs.desktop != 'server' }}
+        run: |
+          USERNAME="${{ inputs.username }}"
+          if [[ "${{ inputs.desktop }}" == "GNOME" ]]; then
+            sudo mkdir -p "$ROOTFS_MOUNT/etc/gdm"
+            printf '[daemon]\nAutomaticLoginEnable=true\nAutomaticLogin=%s\n' "$USERNAME" | \
+              sudo tee "$ROOTFS_MOUNT/etc/gdm/custom.conf" > /dev/null
+            echo "✓ GDM autologin configured"
+          elif [[ "${{ inputs.desktop }}" == "KDE Plasma" ]]; then
+            sudo mkdir -p "$ROOTFS_MOUNT/etc/sddm.conf.d"
+            if [[ "${{ inputs.plasma_mobile }}" == "true" ]]; then
+              SESSION="plasma-mobile"
+            else
+              SESSION="plasma"
+            fi
+            printf '[Autologin]\nUser=%s\nSession=%s\n' "$USERNAME" "$SESSION" | \
+              sudo tee "$ROOTFS_MOUNT/etc/sddm.conf.d/autologin.conf" > /dev/null
+            echo "✓ SDDM autologin configured (session: $SESSION)"
+          fi
+
+      - name: "Set Graphical Target"
+        if: ${{ inputs.desktop != 'server' }}
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" systemctl set-default graphical.target
+          echo "✓ graphical.target set as default"
+
       - name: "Set Hostname"
         run: |
           echo "${{ inputs.hostname }}" | sudo tee "$ROOTFS_MOUNT/etc/hostname"
@@ -615,6 +742,10 @@ jobs:
         run: |
           PARTITION="${{ steps.partition.outputs.label }}"
           CMDLINE="root=PARTLABEL=$PARTITION"
+
+          if [[ "${{ steps.quiet.outputs.enabled }}" == "true" ]]; then
+            CMDLINE="$CMDLINE quiet splash plymouth.ignore-serial-consoles fbcon=map:1"
+          fi
 
           cat "$ROOTFS_MOUNT/boot/Image.gz" \
               "$ROOTFS_MOUNT/boot/sm8550-xiaomi-sheng.dtb" \

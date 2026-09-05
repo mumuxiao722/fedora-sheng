@@ -10,7 +10,7 @@
 
 ## Overview
 
-This project uses **GitHub Actions** to automatically build a Fedora root filesystem for the Xiaomi Pad 6S Pro (sheng), providing a flashable `rootfs.img.zip` and `boot.img.zip`.  
+This project uses **GitHub Actions** to automatically build a Fedora root filesystem for the Xiaomi Pad 6S Pro (sheng), providing a flashable `rootfs.img` and `boot.img`.  
 Simply start a workflow in your own repository and you will have a ready-to-use Fedora environment.
 
 ---
@@ -36,7 +36,7 @@ Click the green **Run workflow** button to start the build.
 ### 3. Download Artifacts
 
 Once the workflow finishes, open the summary page of that run.  
-Under the **Artifacts** section, download `rootfs-*.zip` and `boot-*.zip`.
+Under the **Artifacts** section, download `rootfs-*.zip` and `boot-*.zip` (GitHub Actions compresses the raw `.img` files into zip archives).
 
 ---
 
@@ -56,6 +56,16 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 | **Boot mode** | Which partition Fedora boots from | `single (userdata)` / `dual (linux)` / `custom` | `dual (linux)` |
 | **Custom partition** | Partition name (required when boot_mode=custom) | any partition name | *(empty)* |
 | **Extra packages** | Extra packages to install (space-separated) | string | *(empty)* |
+| **Enable COPR** | Enable COPR repository (required for GNOME Mobile) | `true` / `false` | `false` |
+
+### Desktop Environment
+
+| Parameter | Description | Options | Default |
+|-----------|-------------|---------|---------|
+| **Desktop** | Desktop environment to install | `GNOME` / `KDE Plasma` / `server` | `KDE Plasma` |
+| **Plasma Mobile** | Use Plasma Mobile shell instead of Plasma Desktop (only when Desktop=KDE Plasma) | `true` / `false` | `false` |
+| **GNOME Mobile** | Use GNOME Mobile instead of GNOME (only when Desktop=GNOME) | `true` / `false` | `false` |
+| **Quiet Boot** | Enable Plymouth splash screen and quiet boot messages | `true` / `false` | `true` |
 
 ### Kernel
 
