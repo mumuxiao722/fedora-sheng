@@ -49,28 +49,17 @@
 | 参数 | 说明 | 选项 | 默认值 |
 |------|------|------|--------|
 | **Fedora Version** | 要安装的 Fedora 版本 | `44` / `45` | `44` |
+| **Enable COPR** | 启用 COPR 仓库（GNOME Mobile 需要） | `true` / `false` | `false` |
+| **Desktop** | 要安装的桌面环境 | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
+| **GNOME Mobile** | 使用 GNOME Mobile 而非 GNOME（仅 Desktop=GNOME 时有效） | `true` / `false` | `false` |
+| **Plasma Mobile** | 使用 Plasma Mobile 界面而非 Plasma Desktop（仅 Desktop=KDE Plasma 时有效） | `true` / `false` | `false` |
 | **Autologin** | 创建的用户是否自动登录 | `true` / `false` | `true` |
 | **Username** | 非 root 用户的用户名 | 字符串 | `username` |
 | **Hostname** | 系统主机名 | 字符串 | `xiaomi-sheng` |
-
-### 桌面环境设置
-
-| 参数 | 说明 | 选项 | 默认值 |
-|------|------|------|--------|
-| **Desktop** | 要安装的桌面环境 | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
-| **Enable COPR** | 启用 COPR 仓库（GNOME Mobile 需要） | `true` / `false` | `false` |
-| **GNOME Mobile** | 使用 GNOME Mobile 而非 GNOME（仅 Desktop=GNOME 时有效） | `true` / `false` | `false` |
-| **Plasma Mobile** | 使用 Plasma Mobile 界面而非 Plasma Desktop（仅 Desktop=KDE Plasma 时有效） | `true` / `false` | `false` |
-
-### 通用设置（续）
-
-| 参数 | 说明 | 选项 | 默认值 |
-|------|------|------|--------|
 | **System language** | 系统语言环境 | `None (C.UTF-8)` / `en_US.UTF-8` / `zh_CN.UTF-8` / `zh_TW.UTF-8` / `ja_JP.UTF-8` / `ko_KR.UTF-8` / `de_DE.UTF-8` / `fr_FR.UTF-8` / `es_ES.UTF-8` / `ru_RU.UTF-8` | `None (C.UTF-8)` |
 | **Boot mode** | Fedora 从哪个分区启动 | `single (userdata)` / `dual (linux)` / `custom` | `dual (linux)` |
 | **Custom partition** | 分区名称（boot_mode=custom 时必填） | 任意分区名称 | *（空）* |
 | **Extra packages** | 额外安装的软件包（空格分隔） | 字符串 | *（空）* |
-| **Enable COPR** | 启用 COPR 仓库（GNOME Mobile 需要） | `true` / `false` | `false` |
 | **Quiet Boot** | 启用 Plymouth 启动画面和安静启动信息 | `true` / `false` | `true` |
 
 ### 内核设置

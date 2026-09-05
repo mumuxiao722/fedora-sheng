@@ -11,6 +11,11 @@ on:
           - 45
         default: '44'
 
+      enable_copr:
+        description: 'Enable COPR repository (required for GNOME Mobile)'
+        type: boolean
+        default: false
+
       desktop:
         description: 'Desktop Environment (server = no DE)'
         type: choice
@@ -20,18 +25,13 @@ on:
           - 'server'
         default: 'GNOME'
 
-      plasma_mobile:
-        description: 'Enable Plasma Mobile instead of Plasma Desktop (only when desktop=KDE Plasma)'
-        type: boolean
-        default: false
-
       gnome_mobile:
         description: 'Enable GNOME Mobile instead of GNOME (only when desktop=GNOME)'
         type: boolean
         default: false
 
-      enable_copr:
-        description: 'Enable COPR repository (required for GNOME Mobile)'
+      plasma_mobile:
+        description: 'Enable Plasma Mobile instead of Plasma Desktop (only when desktop=KDE Plasma)'
         type: boolean
         default: false
 
