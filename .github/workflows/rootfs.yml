@@ -464,7 +464,7 @@ jobs:
               wpa_supplicant dbus \
               ca-certificates \
               iw \
-              lm-sensors \
+              lm_sensors \
               wireless-regdb \
               glib2 \
               libqmi \
