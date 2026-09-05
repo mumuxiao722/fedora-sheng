@@ -275,103 +275,99 @@ jobs:
       - name: "Clean debuginfo/debugsource RPMs"
         run: find rpmbuild/RPMS -name "*-debuginfo-*" -o -name "*-debugsource-*" | xargs rm -f
 
-      - name: "Zip RPMs"
-        run: cd rpmbuild/RPMS && for rpm in aarch64/*.rpm noarch/*.rpm; do [ -f "$rpm" ] || continue; name=$(basename "$rpm" .rpm); zip -j "${{ github.workspace }}/rpm/${name}.zip" "$rpm"; done
-        shell: bash
-
       - name: "Upload libssc RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: libssc-rpms-fc${{ inputs.fedora_version }}
-          path: rpm/libssc-[0-9]*.zip
+          name: libssc-rpm-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/libssc-[0-9]*.rpm
           retention-days: 3
           if-no-files-found: error
 
       - name: "Upload fastrpc RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: fastrpc-rpms-fc${{ inputs.fedora_version }}
-          path: rpm/fastrpc-*.zip
+          name: fastrpc-rpm-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/fastrpc-*.rpm
           retention-days: 3
           if-no-files-found: error
 
       - name: "Upload xiaomi-sheng-thp RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: xiaomi-sheng-thp-rpms-fc${{ inputs.fedora_version }}
-          path: rpm/xiaomi-sheng-thp-*.zip
+          name: xiaomi-sheng-thp-rpm-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/xiaomi-sheng-thp-*.rpm
           retention-days: 3
           if-no-files-found: error
 
       - name: "Upload xiaomi-sheng-keyboard-helper RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: xiaomi-sheng-keyboard-helper-rpms-fc${{ inputs.fedora_version }}
-          path: rpm/xiaomi-sheng-keyboard-helper-*.zip
+          name: xiaomi-sheng-keyboard-helper-rpm-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/xiaomi-sheng-keyboard-helper-*.rpm
           retention-days: 3
           if-no-files-found: error
 
       - name: "Upload iio-sensor-proxy RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: iio-sensor-proxy-rpms-fc${{ inputs.fedora_version }}
-          path: rpm/iio-sensor-proxy-*.zip
+          name: iio-sensor-proxy-rpm-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/iio-sensor-proxy-*.rpm
           retention-days: 3
           if-no-files-found: error
 
       - name: "Upload firmware-xiaomi-sheng RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: firmware-xiaomi-sheng-rpms-fc${{ inputs.fedora_version }}
-          path: rpm/firmware-xiaomi-sheng-*.zip
+          name: firmware-xiaomi-sheng-rpm-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/noarch/firmware-xiaomi-sheng-*.rpm
           retention-days: 3
           if-no-files-found: error
 
       - name: "Upload sheng-devauth RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: sheng-devauth-rpms-fc${{ inputs.fedora_version }}
-          path: rpm/sheng-devauth-*.zip
+          name: sheng-devauth-rpm-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/sheng-devauth-*.rpm
           retention-days: 3
           if-no-files-found: error
 
       - name: "Upload xiaomi-mipps-auth RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: xiaomi-mipps-auth-rpms-fc${{ inputs.fedora_version }}
-          path: rpm/xiaomi-mipps-auth-*.zip
+          name: xiaomi-mipps-auth-rpm-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/noarch/xiaomi-mipps-auth-*.rpm
           retention-days: 3
           if-no-files-found: error
 
       - name: "Upload xiaomi-charger-mode RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: xiaomi-charger-mode-rpms-fc${{ inputs.fedora_version }}
-          path: rpm/xiaomi-charger-mode-*.zip
+          name: xiaomi-charger-mode-rpm-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/noarch/xiaomi-charger-mode-*.rpm
           retention-days: 3
           if-no-files-found: error
 
       - name: "Upload xiaomi-sheng-keyboard-backlight RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: xiaomi-sheng-keyboard-backlight-rpms-fc${{ inputs.fedora_version }}
-          path: rpm/xiaomi-sheng-keyboard-backlight-*.zip
+          name: xiaomi-sheng-keyboard-backlight-rpm-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/noarch/xiaomi-sheng-keyboard-backlight-*.rpm
           retention-days: 3
           if-no-files-found: error
 
       - name: "Upload sheng-sensors RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: sheng-sensors-rpms-fc${{ inputs.fedora_version }}
-          path: rpm/sheng-sensors-*.zip
+          name: sheng-sensors-rpm-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/noarch/sheng-sensors-*.rpm
           retention-days: 3
           if-no-files-found: error
 
       - name: "Upload alsa-xiaomi-sheng RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: alsa-xiaomi-sheng-rpms-fc${{ inputs.fedora_version }}
-          path: rpm/alsa-xiaomi-sheng-*.zip
+          name: alsa-xiaomi-sheng-rpm-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/noarch/alsa-xiaomi-sheng-*.rpm
           retention-days: 3
           if-no-files-found: error
 
@@ -512,7 +508,6 @@ jobs:
 
       - name: "Install Custom RPMs"
         run: |
-          cd rpm && for z in *.zip; do unzip -o "$z"; done && cd ..
           find rpm/ -name "*.rpm" ! -name "*-devel-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
           sudo chroot "$ROOTFS_MOUNT" rpm -Uvh /tmp/*.rpm
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
