@@ -198,6 +198,9 @@ mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 # 复制 spec 文件
 cp rpms/*.spec ~/rpmbuild/SPECS/
 
+# 复制补丁文件（部分包需要）
+cp patches/* ~/rpmbuild/SOURCES/
+
 # 构建指定包（如 fastrpc）
 rpmbuild --define "_topdir $HOME/rpmbuild" -ba ~/rpmbuild/SPECS/fastrpc.spec
 ```

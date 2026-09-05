@@ -198,6 +198,9 @@ mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 # Copy spec files
 cp rpms/*.spec ~/rpmbuild/SPECS/
 
+# Copy patches (some packages need them)
+cp patches/* ~/rpmbuild/SOURCES/
+
 # Build a specific package (e.g., fastrpc)
 rpmbuild --define "_topdir $HOME/rpmbuild" -ba ~/rpmbuild/SPECS/fastrpc.spec
 ```
