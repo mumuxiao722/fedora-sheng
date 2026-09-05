@@ -469,11 +469,7 @@ jobs:
               glib2 \
               libqmi \
               libmbim \
-              polkit \
-              alsa-ucm-conf \
-              libbsd \
-              libgudev \
-              protobuf-c-libs
+              polkit
           echo "✓ DNF installroot complete"
 
       - name: "Mount Virtual File Systems"
@@ -488,6 +484,16 @@ jobs:
 
       - name: "Install Custom RPMs"
         run: |
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
+            alsa-ucm-conf \
+            libbsd \
+            libgudev \
+            protobuf-c-libs
+          sudo chroot "$ROOTFS_MOUNT" dnf mark install \
+            alsa-ucm-conf \
+            libbsd \
+            libgudev \
+            protobuf-c-libs
           find rpm/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
           sudo chroot "$ROOTFS_MOUNT" rpm -Uvh /tmp/*.rpm
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
