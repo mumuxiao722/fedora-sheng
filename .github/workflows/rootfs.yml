@@ -232,22 +232,110 @@ jobs:
         run: find rpmbuild/RPMS -name "*-debuginfo-*" -o -name "*-debugsource-*" | xargs rm -f
 
       - name: "Upload RPMs"
-        run: |
-          cd rpmbuild/RPMS
-          for rpm in aarch64/*.rpm noarch/*.rpm; do
-            [ -f "$rpm" ] || continue
-            name=$(basename "$rpm" .rpm)
-            zip "${name}.zip" "$rpm"
-          done
-          mkdir -p "${{ github.workspace }}/rpms-upload"
-          find . -name "*.zip" -exec cp {} "${{ github.workspace }}/rpms-upload/" \;
+        run: cd rpmbuild/RPMS && for rpm in aarch64/*.rpm noarch/*.rpm; do [ -f "$rpm" ] || continue; name=$(basename "$rpm" .rpm); zip "${name}.zip" "$rpm"; done && find . -name "*.zip" -exec cp {} "${{ github.workspace }}/" \;
         shell: bash
 
       - name: "Upload RPMs"
         uses: actions/upload-artifact@v7
         with:
-          name: rpms-fc${{ inputs.fedora_version }}
-          path: rpms-upload/*.zip
+          name: libssc-rpms-fc${{ inputs.fedora_version }}
+          path: libssc-[0-9]*.zip
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: fastrpc-rpms-fc${{ inputs.fedora_version }}
+          path: fastrpc-*.zip
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: xiaomi-sheng-thp-rpms-fc${{ inputs.fedora_version }}
+          path: xiaomi-sheng-thp-*.zip
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: xiaomi-sheng-keyboard-helper-rpms-fc${{ inputs.fedora_version }}
+          path: xiaomi-sheng-keyboard-helper-*.zip
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: iio-sensor-proxy-rpms-fc${{ inputs.fedora_version }}
+          path: iio-sensor-proxy-*.zip
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: firmware-xiaomi-sheng-rpms-fc${{ inputs.fedora_version }}
+          path: firmware-xiaomi-sheng-*.zip
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: sheng-devauth-rpms-fc${{ inputs.fedora_version }}
+          path: sheng-devauth-*.zip
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: xiaomi-mipps-auth-rpms-fc${{ inputs.fedora_version }}
+          path: xiaomi-mipps-auth-*.zip
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: xiaomi-charger-mode-rpms-fc${{ inputs.fedora_version }}
+          path: xiaomi-charger-mode-*.zip
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: xiaomi-sheng-keyboard-backlight-rpms-fc${{ inputs.fedora_version }}
+          path: xiaomi-sheng-keyboard-backlight-*.zip
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: sheng-sensors-rpms-fc${{ inputs.fedora_version }}
+          path: sheng-sensors-*.zip
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: alsa-xiaomi-sheng-rpms-fc${{ inputs.fedora_version }}
+          path: alsa-xiaomi-sheng-*.zip
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: libssc-devel-rpms-fc${{ inputs.fedora_version }}
+          path: libssc-devel-*.zip
           retention-days: 3
           if-no-files-found: error
 
@@ -277,8 +365,8 @@ jobs:
       - name: "Download RPM Artifacts"
         uses: actions/download-artifact@v8
         with:
-          name: rpms-fc${{ inputs.fedora_version }}
           path: rpms/
+          merge-multiple: true
 
       - name: "Download Kernel Artifact (custom_build)"
         if: ${{ inputs.kernel_source == 'custom_build' }}
