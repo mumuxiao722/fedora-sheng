@@ -5,7 +5,7 @@ Summary:        Qualcomm FastRPC userspace library
 
 License:        BSD-3-Clause
 URL:            https://github.com/qualcomm/fastrpc
-Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz
+Source0:        %{name}-%{version}.tar.gz
 Source1:        adsprpcd-sensorspd.service
 
 BuildRequires:  gcc

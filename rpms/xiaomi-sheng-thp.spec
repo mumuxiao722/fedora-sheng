@@ -5,7 +5,7 @@ Summary:        Touch processing for Xiaomi Pad 6S Pro
 
 License:        Proprietary
 URL:            https://github.com/ianchb/xiaomi-sheng-thp
-Source0:        %{url}/archive/%{version}.tar.gz
+Source0:        %{name}-%{version}.tar.gz
 
 BuildRequires:  gcc-c++
 BuildRequires:  make

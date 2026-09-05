@@ -5,7 +5,7 @@ Summary:        IIO sensors to D-Bus proxy (SSC patched)
 
 License:        GPLv2+
 URL:            https://gitlab.freedesktop.org/hadess/iio-sensor-proxy
-Source0:        %{url}/-/archive/%{version}/%{name}-%{version}.tar.gz
+Source0:        %{name}-%{version}.tar.gz
 
 BuildRequires:  meson >= 0.54.0
 BuildRequires:  ninja-build
@@ -19,6 +19,7 @@ BuildRequires:  systemd-rpm-macros
 %description
 iio-sensor-proxy with Qualcomm SSC support patches. Provides D-Bus interface
 for IIO sensors including accelerometer, gyroscope, light, and proximity sensors.
+Patched version for Xiaomi Pad 6S Pro.
 
 %prep
 %autosetup -n %{name}-%{version}

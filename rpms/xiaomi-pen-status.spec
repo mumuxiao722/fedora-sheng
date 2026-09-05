@@ -5,7 +5,7 @@ Summary:        Stylus status display for Xiaomi Pad 6S Pro
 
 License:        Proprietary
 URL:            https://github.com/ianchb/xiaomi-pen-status
-Source0:        %{url}/archive/%{version}.tar.gz
+Source0:        %{name}-%{version}.tar.gz
 
 BuildRequires:  gcc-c++
 BuildRequires:  make

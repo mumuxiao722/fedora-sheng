@@ -5,7 +5,7 @@ Summary:        Library to expose Qualcomm Sensor Core sensors
 
 License:        LGPL-2.1-or-later
 URL:            https://codeberg.org/DylanVanAssche/libssc
-Source0:        %{url}/archive/v%{version}.tar.gz
+Source0:        %{name}-%{version}.tar.gz
 Patch0:         wait_for_qmi_service.patch
 
 BuildRequires:  meson >= 1.4.0
@@ -21,7 +21,7 @@ BuildRequires:  protobuf-c-compiler
 %description
 libssc userspace library for Qualcomm SSC (Sensor Signal Conditioner).
 Provides access to accelerometer, gyroscope, magnetometer, and other sensors
-via QMI protocol.
+via QMI protocol. Patched version for Xiaomi Pad 6S Pro.
 
 %prep
 %autosetup -n libssc-%{version} -p1
