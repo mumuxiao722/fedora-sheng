@@ -276,7 +276,7 @@ jobs:
         run: find rpmbuild/RPMS -name "*-debuginfo-*" -o -name "*-debugsource-*" | xargs rm -f
 
       - name: "Zip RPMs"
-        run: cd rpmbuild/RPMS && for rpm in aarch64/*.rpm noarch/*.rpm; do [ -f "$rpm" ] || continue; name=$(basename "$rpm" .rpm); zip "${{ github.workspace }}/rpm/${name}.zip" "$rpm"; done
+        run: cd rpmbuild/RPMS && for rpm in aarch64/*.rpm noarch/*.rpm; do [ -f "$rpm" ] || continue; name=$(basename "$rpm" .rpm); zip -j "${{ github.workspace }}/rpm/${name}.zip" "$rpm"; done
         shell: bash
 
       - name: "Upload libssc RPM"
