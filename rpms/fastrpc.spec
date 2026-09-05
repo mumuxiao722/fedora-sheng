@@ -1,3 +1,5 @@
+%undefine __debug_package
+%undefine _debugsource_packages
 Name:           fastrpc
 Version:        1.0.2
 Release:        1%{?dist}

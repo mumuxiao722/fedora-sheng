@@ -1,3 +1,5 @@
+%undefine __debug_package
+%undefine _debugsource_packages
 Name:           xiaomi-sheng-keyboard-backlight
 Version:        1.0
 Release:        1%{?dist}

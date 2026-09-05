@@ -1,3 +1,5 @@
+%undefine __debug_package
+%undefine _debugsource_packages
 Name:           sheng-devauth
 Version:        1.0
 Release:        1%{?dist}

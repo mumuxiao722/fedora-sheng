@@ -1,3 +1,5 @@
+%undefine __debug_package
+%undefine _debugsource_packages
 Name:           xiaomi-sheng-thp
 Version:        0.4.0
 Release:        1%{?dist}

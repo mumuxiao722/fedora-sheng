@@ -1,3 +1,5 @@
+%undefine __debug_package
+%undefine _debugsource_packages
 Name:           xiaomi-mipps-auth
 Version:        1.0
 Release:        1%{?dist}

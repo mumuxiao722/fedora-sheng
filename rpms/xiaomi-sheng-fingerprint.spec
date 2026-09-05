@@ -1,3 +1,5 @@
+%undefine __debug_package
+%undefine _debugsource_packages
 Name:           xiaomi-sheng-fingerprint
 Version:        0.1.4
 Release:        1%{?dist}

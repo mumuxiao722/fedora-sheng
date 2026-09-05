@@ -1,3 +1,5 @@
+%undefine __debug_package
+%undefine _debugsource_packages
 Name:           libssc
 Version:        0.4.4
 Release:        1%{?dist}

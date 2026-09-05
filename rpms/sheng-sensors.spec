@@ -1,3 +1,5 @@
+%undefine __debug_package
+%undefine _debugsource_packages
 Name:           sheng-sensors
 Version:        20240917
 Release:        1%{?dist}

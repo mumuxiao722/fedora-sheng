@@ -1,3 +1,5 @@
+%undefine __debug_package
+%undefine _debugsource_packages
 Name:           xiaomi-pen-status
 Version:        1.0
 Release:        1%{?dist}
