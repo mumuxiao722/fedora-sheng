@@ -495,7 +495,7 @@ jobs:
             libgudev \
             protobuf-c
           find rpm/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
-          sudo chroot "$ROOTFS_MOUNT" rpm -Uvh /tmp/*.rpm
+          sudo chroot "$ROOTFS_MOUNT" rpm -Uvh --nosignature /tmp/*.rpm
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
           echo "✓ Custom RPMs installed"
 
@@ -560,6 +560,7 @@ jobs:
       - name: "Enable Services"
         run: |
           sudo chroot "$ROOTFS_MOUNT" systemctl enable NetworkManager
+          sudo chroot "$ROOTFS_MOUNT" systemctl enable systemd-resolved
           sudo chroot "$ROOTFS_MOUNT" systemctl enable sshd
           sudo chroot "$ROOTFS_MOUNT" systemctl enable systemd-timesyncd
           sudo chroot "$ROOTFS_MOUNT" systemctl enable qrtr-ns || {
@@ -603,8 +604,8 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" dnf clean all
           sudo rm -rf "$ROOTFS_MOUNT/var/cache/dnf"
           sudo rm -f "$ROOTFS_MOUNT/etc/resolv.conf"
-          sudo ln -s ../run/NetworkManager/resolv.conf "$ROOTFS_MOUNT/etc/resolv.conf"
-          echo "✓ DNF cache cleaned"
+          sudo ln -s ../run/systemd/resolve/stub-resolv.conf "$ROOTFS_MOUNT/etc/resolv.conf"
+          echo "✓ DNF cache cleaned, resolv.conf → systemd-resolved"
 
       - name: "Generate boot.img"
         run: |
