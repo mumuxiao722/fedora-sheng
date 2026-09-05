@@ -577,6 +577,12 @@ jobs:
             echo "WantedBy=multi-user.target" | sudo tee -a "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
             sudo chroot "$ROOTFS_MOUNT" systemctl enable qrtr-ns
           }
+          sudo chroot "$ROOTFS_MOUNT" systemctl enable sheng-devauth
+          sudo chroot "$ROOTFS_MOUNT" systemctl enable xiaomi-sheng-thp
+          sudo chroot "$ROOTFS_MOUNT" systemctl enable xiaomi-sheng-keyboard-helper-angle
+          sudo chroot "$ROOTFS_MOUNT" systemctl enable xiaomi-charger-mode
+          sudo chroot "$ROOTFS_MOUNT" systemctl enable xiaomi-mipps-auth
+          sudo chroot "$ROOTFS_MOUNT" systemctl enable adsprpcd-sensorspd
           echo "✓ Services enabled"
 
       - name: "[DEBUG] Verify Sheng Service Links"
@@ -584,9 +590,8 @@ jobs:
           echo "=== Sheng package service symlinks ==="
           for svc in \
             sheng-devauth.service \
-            sheng-sensors.service \
             xiaomi-sheng-thp.service \
-            xiaomi-sheng-keyboard-helper.service \
+            xiaomi-sheng-keyboard-helper-angle.service \
             xiaomi-charger-mode.service \
             xiaomi-mipps-auth.service \
             adsprpcd-sensorspd.service; do
@@ -594,6 +599,8 @@ jobs:
             ls -l "$ROOTFS_MOUNT/etc/systemd/system/$svc" 2>&1 || echo "  (not found)"
             ls -l "$ROOTFS_MOUNT/usr/lib/systemd/system/$svc" 2>&1 || echo "  (not in /usr/lib either)"
           done
+          echo "=== iio-sensor-proxy drop-in ==="
+          ls -l "$ROOTFS_MOUNT/usr/lib/systemd/system/iio-sensor-proxy.service.d/" 2>&1 || echo "  (not found)"
           echo "=== All enabled services ==="
           sudo chroot "$ROOTFS_MOUNT" systemctl list-unit-files --type=service --state=enabled | grep -i -E "sheng|xiaomi|adsprpcd|fastrpc|charger|mipps" || echo "  (none found)"
           echo "✓ [DEBUG] Service links verified"

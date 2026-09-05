@@ -88,8 +88,8 @@ cd /tmp
 mv fastrpc fastrpc-1.0.2
 tar -czf /workspace/rpmbuild/SOURCES/fastrpc-1.0.2.tar.gz fastrpc-1.0.2/
 
-mv libssc libssc-0.4.4
-tar -czf /workspace/rpmbuild/SOURCES/libssc-0.4.4.tar.gz libssc-0.4.4/
+mv libssc libssc-0.3.0
+tar -czf /workspace/rpmbuild/SOURCES/libssc-0.3.0.tar.gz libssc-0.3.0/
 
 mv iio-sensor-proxy iio-sensor-proxy-3.9
 tar -czf /workspace/rpmbuild/SOURCES/iio-sensor-proxy-3.9.tar.gz iio-sensor-proxy-3.9/
@@ -110,7 +110,7 @@ export RPM_TOPDIR=/workspace/rpmbuild
 echo "=== Building libssc ==="
 rpmbuild --define "_topdir $RPM_TOPDIR" -ba libssc.spec
 # Install libssc so subsequent builds can find it
-dnf install -y /workspace/rpmbuild/RPMS/aarch64/libssc-0.4.4-*.rpm
+dnf install -y /workspace/rpmbuild/RPMS/aarch64/libssc-0.3.0-*.rpm
 dnf install -y /workspace/rpmbuild/RPMS/aarch64/libssc-devel-*.rpm
 
 echo "=== Building fastrpc ==="

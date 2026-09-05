@@ -3,7 +3,7 @@
 %define _debug_package %{nil}
 %define _build_id_links none
 Name:           libssc
-Version:        0.4.4
+Version:        0.3.0
 Release:        1%{?dist}
 Summary:        Library to expose Qualcomm Sensor Core sensors
 
