@@ -37,7 +37,6 @@ libraries and daemons for ADSP, CDSP, and SDSP communication.
 autoreconf -is
 ./configure \
     --prefix=/usr \
-    --libdir=/usr/lib64 \
     --with-systemdsystemunitdir=/usr/lib/systemd/system
 make %{?_smp_mflags}
 
@@ -46,15 +45,15 @@ make %{?_smp_mflags}
 rm -f %{buildroot}/usr/bin/dsp_check
 rm -f %{buildroot}/usr/bin/fastrpc_test
 rm -rf %{buildroot}/usr/include
-rm -rf %{buildroot}/usr/lib64/fastrpc_test
+rm -rf %{buildroot}/usr/lib/fastrpc_test
 rm -rf %{buildroot}/usr/share/fastrpc_test
 rm -rf %{buildroot}/usr/share/man
-rm -f %{buildroot}/usr/lib64/libadsp_default_listener.la
-rm -f %{buildroot}/usr/lib64/libadsprpc.la
-rm -f %{buildroot}/usr/lib64/libcdsp_default_listener.la
-rm -f %{buildroot}/usr/lib64/libcdsprpc.la
-rm -f %{buildroot}/usr/lib64/libsdsp_default_listener.la
-rm -f %{buildroot}/usr/lib64/libsdsprpc.la
+rm -f %{buildroot}/usr/lib/libadsp_default_listener.la
+rm -f %{buildroot}/usr/lib/libadsprpc.la
+rm -f %{buildroot}/usr/lib/libcdsp_default_listener.la
+rm -f %{buildroot}/usr/lib/libcdsprpc.la
+rm -f %{buildroot}/usr/lib/libsdsp_default_listener.la
+rm -f %{buildroot}/usr/lib/libsdsprpc.la
 rm -f %{buildroot}/usr/lib/systemd/system/adsprpcd.service
 rm -f %{buildroot}/usr/lib/systemd/system/adsprpcd_audiopd.service
 rm -f %{buildroot}/usr/lib/systemd/system/cdsp1rpcd.service
@@ -79,24 +78,24 @@ install -Dpm 644 %{SOURCE1} %{buildroot}/usr/lib/systemd/system/adsprpcd-sensors
 /usr/bin/cdsprpcd
 /usr/bin/sdsprpcd
 /usr/bin/gdsprpcd
-/usr/lib64/libadsprpc.so.1.0.0
-/usr/lib64/libadsprpc.so.1
-/usr/lib64/libadsprpc.so
-/usr/lib64/libcdsprpc.so.1.0.0
-/usr/lib64/libcdsprpc.so.1
-/usr/lib64/libcdsprpc.so
-/usr/lib64/libsdsprpc.so.1.0.0
-/usr/lib64/libsdsprpc.so.1
-/usr/lib64/libsdsprpc.so
-/usr/lib64/libadsp_default_listener.so.1.0.0
-/usr/lib64/libadsp_default_listener.so.1
-/usr/lib64/libadsp_default_listener.so
-/usr/lib64/libcdsp_default_listener.so.1.0.0
-/usr/lib64/libcdsp_default_listener.so.1
-/usr/lib64/libcdsp_default_listener.so
-/usr/lib64/libsdsp_default_listener.so.1.0.0
-/usr/lib64/libsdsp_default_listener.so.1
-/usr/lib64/libsdsp_default_listener.so
+/usr/lib/libadsprpc.so.1.0.0
+/usr/lib/libadsprpc.so.1
+/usr/lib/libadsprpc.so
+/usr/lib/libcdsprpc.so.1.0.0
+/usr/lib/libcdsprpc.so.1
+/usr/lib/libcdsprpc.so
+/usr/lib/libsdsprpc.so.1.0.0
+/usr/lib/libsdsprpc.so.1
+/usr/lib/libsdsprpc.so
+/usr/lib/libadsp_default_listener.so.1.0.0
+/usr/lib/libadsp_default_listener.so.1
+/usr/lib/libadsp_default_listener.so
+/usr/lib/libcdsp_default_listener.so.1.0.0
+/usr/lib/libcdsp_default_listener.so.1
+/usr/lib/libcdsp_default_listener.so
+/usr/lib/libsdsp_default_listener.so.1.0.0
+/usr/lib/libsdsp_default_listener.so.1
+/usr/lib/libsdsp_default_listener.so
 /usr/lib/systemd/system/adsprpcd-sensorspd.service
 
 %changelog
