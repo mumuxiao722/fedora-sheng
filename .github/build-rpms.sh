@@ -110,46 +110,47 @@ echo "✓ Source tarballs created"
 
 # Build RPMs
 cd /workspace/rpms
+export RPM_TOPDIR=/workspace/rpmbuild
 
 # Build libssc FIRST - thp/keyboard-helper/iio-sensor-proxy need its headers
 echo "=== Building libssc ==="
-rpmbuild -ba libssc.spec
+rpmbuild --define "_topdir $RPM_TOPDIR" -ba libssc.spec
 # Install libssc so subsequent builds can find it
 dnf install -y /workspace/rpmbuild/RPMS/aarch64/libssc-0.4.4-*.rpm
 dnf install -y /workspace/rpmbuild/RPMS/aarch64/libssc-devel-*.rpm
 
 echo "=== Building fastrpc ==="
-rpmbuild -ba fastrpc.spec
+rpmbuild --define "_topdir $RPM_TOPDIR" -ba fastrpc.spec
 
 echo "=== Building xiaomi-sheng-thp ==="
-rpmbuild -ba xiaomi-sheng-thp.spec
+rpmbuild --define "_topdir $RPM_TOPDIR" -ba xiaomi-sheng-thp.spec
 
 echo "=== Building xiaomi-sheng-keyboard-helper ==="
-rpmbuild -ba xiaomi-sheng-keyboard-helper.spec
+rpmbuild --define "_topdir $RPM_TOPDIR" -ba xiaomi-sheng-keyboard-helper.spec
 
 echo "=== Building iio-sensor-proxy ==="
-rpmbuild -ba iio-sensor-proxy.spec
+rpmbuild --define "_topdir $RPM_TOPDIR" -ba iio-sensor-proxy.spec
 
 echo "=== Building firmware-xiaomi-sheng ==="
-rpmbuild -ba firmware-xiaomi-sheng.spec
+rpmbuild --define "_topdir $RPM_TOPDIR" -ba firmware-xiaomi-sheng.spec
 
 echo "=== Building sheng-devauth ==="
-rpmbuild -ba sheng-devauth.spec
+rpmbuild --define "_topdir $RPM_TOPDIR" -ba sheng-devauth.spec
 
 echo "=== Building xiaomi-mipps-auth ==="
-rpmbuild -ba xiaomi-mipps-auth.spec
+rpmbuild --define "_topdir $RPM_TOPDIR" -ba xiaomi-mipps-auth.spec
 
 echo "=== Building xiaomi-charger-mode ==="
-rpmbuild -ba xiaomi-charger-mode.spec
+rpmbuild --define "_topdir $RPM_TOPDIR" -ba xiaomi-charger-mode.spec
 
 echo "=== Building xiaomi-sheng-keyboard-backlight ==="
-rpmbuild -ba xiaomi-sheng-keyboard-backlight.spec
+rpmbuild --define "_topdir $RPM_TOPDIR" -ba xiaomi-sheng-keyboard-backlight.spec
 
 echo "=== Building sheng-sensors ==="
-rpmbuild -ba sheng-sensors.spec
+rpmbuild --define "_topdir $RPM_TOPDIR" -ba sheng-sensors.spec
 
 echo "=== Building alsa-xiaomi-sheng ==="
-rpmbuild -ba alsa-xiaomi-sheng.spec
+rpmbuild --define "_topdir $RPM_TOPDIR" -ba alsa-xiaomi-sheng.spec
 
 echo "✓ RPM build complete"
 ls -la /workspace/rpmbuild/RPMS/
