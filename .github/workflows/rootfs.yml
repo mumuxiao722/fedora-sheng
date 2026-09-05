@@ -67,18 +67,6 @@ on:
         required: false
         default: ''
 
-      firmware_repo:
-        description: 'Firmware Repo URL'
-        type: string
-        required: false
-        default: 'https://github.com/ianchb/sheng-firmware'
-
-      firmware_branch:
-        description: 'Firmware Branch'
-        type: string
-        required: false
-        default: 'master'
-
 jobs:
   # ==========================================================================
   # Build Custom RPMs (in Fedora container)
