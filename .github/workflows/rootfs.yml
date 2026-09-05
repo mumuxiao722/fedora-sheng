@@ -531,6 +531,7 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" dnf install -y python3-dnf-plugin-versionlock
           sudo chroot "$ROOTFS_MOUNT" dnf versionlock add libssc
           sudo chroot "$ROOTFS_MOUNT" dnf versionlock add iio-sensor-proxy
+          sudo chroot "$ROOTFS_MOUNT" dnf versionlock add fastrpc
           echo "✓ Versionlock applied"
 
       - name: "Install Extra Packages"

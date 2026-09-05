@@ -167,26 +167,6 @@ After rebooting, the device should start from slot B and boot into Fedora.
 
 ---
 
-## Local RPM Build
-
-You can build the RPM packages locally without GitHub Actions.
-
-```bash
-git clone https://github.com/mumuxiao722/fedora-sheng.git
-cd fedora-sheng
-
-mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-cp rpms/*.spec ~/rpmbuild/SPECS/
-cp patches/* ~/rpmbuild/SOURCES/
-
-# Auto-install build dependencies and build (e.g., fastrpc)
-sudo dnf builddep ~/rpmbuild/SPECS/fastrpc.spec
-rpmbuild --define "_topdir $HOME/rpmbuild" -ba ~/rpmbuild/SPECS/fastrpc.spec
-```
-
-> **Note**  
-> Local builds may have missing dependencies that `dnf builddep` cannot resolve.
-
 ---
 
 ## Credits
