@@ -15,7 +15,7 @@ dnf install -y \
   meson ninja-build pkg-config git \
   glib2-devel libqmi-devel libmbim-devel libyaml-devel libbsd-devel \
   protobuf-c-devel protobuf-c-compiler protobuf-compiler python3-devel \
-  polkit-devel libgudev-devel systemd-devel systemd-rpm-macros
+  polkit-devel libgudev-devel systemd systemd-devel systemd-rpm-macros
 
 # Verify critical deps
 rpm -q libqmi-devel libbsd-devel libyaml-devel protobuf-c-devel python3-devel glib2-devel polkit-devel libgudev-devel systemd-devel

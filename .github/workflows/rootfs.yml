@@ -236,6 +236,15 @@ jobs:
         with:
           name: libssc-rpms-fc${{ inputs.fedora_version }}
           path: rpmbuild/RPMS/aarch64/libssc-*.rpm
+          exclude: rpmbuild/RPMS/aarch64/libssc-devel-*.rpm
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload libssc-devel RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: libssc-devel-rpms-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/libssc-devel-*.rpm
           retention-days: 3
           if-no-files-found: error
 
@@ -465,7 +474,7 @@ jobs:
       - name: "Install Custom RPMs"
         run: |
           cd rpms && for z in *.zip; do unzip -o "$z"; done && cd ..
-          sudo cp rpms/*.rpm "$ROOTFS_MOUNT/tmp/"
+          find rpms/ -name "*.rpm" ! -name "*-devel-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
           sudo chroot "$ROOTFS_MOUNT" rpm -Uvh /tmp/*.rpm
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
           echo "✓ Custom RPMs installed"
