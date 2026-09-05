@@ -226,7 +226,7 @@ jobs:
       - name: "Upload Kernel Artifact"
         uses: actions/upload-artifact@v7
         with:
-          name: kernel-sheng
+          name: kernel-sheng-${{ inputs.kernel_branch }}
           path: rpmbuild/RPMS/aarch64/kernel-sheng-*.rpm
           retention-days: 3
           if-no-files-found: error
@@ -387,7 +387,7 @@ jobs:
         if: ${{ inputs.kernel_source == 'custom_build' }}
         uses: actions/download-artifact@v8
         with:
-          name: kernel-sheng
+          name: kernel-sheng-${{ inputs.kernel_branch }}
           path: rpm/
 
       - name: "Download Kernel RPM (prebuilt upstream)"
