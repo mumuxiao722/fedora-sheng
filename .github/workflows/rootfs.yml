@@ -489,7 +489,7 @@ jobs:
             libbsd \
             libgudev \
             protobuf-c
-          sudo chroot "$ROOTFS_MOUNT" dnf mark dependency \
+          sudo chroot "$ROOTFS_MOUNT" dnf mark dependency -y \
             alsa-ucm \
             libbsd \
             libgudev \
