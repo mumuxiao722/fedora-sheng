@@ -126,7 +126,7 @@ jobs:
       - name: "Install Build Tools"
         run: |
           sudo apt-get update
-          sudo apt-get install -y rpm tar xz e2fsprogs
+          sudo apt-get install -y rpm tar xz-utils e2fsprogs
           echo "✓ Build tools installed"
 
       - name: "Download RPM Artifacts"
@@ -208,6 +208,13 @@ jobs:
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
           echo "✓ Custom RPMs installed"
 
+      - name: "Versionlock Custom Packages"
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y python3-dnf-plugin-versionlock
+          sudo chroot "$ROOTFS_MOUNT" dnf versionlock add libssc
+          sudo chroot "$ROOTFS_MOUNT" dnf versionlock add iio-sensor-proxy
+          echo "✓ Versionlock applied"
+
       - name: "Install Extra Packages"
         if: ${{ inputs.extra_packages != '' }}
         run: |
@@ -215,13 +222,6 @@ jobs:
           echo "  Extra packages: $EXTRA_PKGS"
           sudo chroot "$ROOTFS_MOUNT" dnf install -y $EXTRA_PKGS
           echo "✓ Extra packages installed"
-
-      - name: "Versionlock Custom Packages"
-        run: |
-          sudo chroot "$ROOTFS_MOUNT" dnf install -y python3-dnf-plugin-versionlock
-          sudo chroot "$ROOTFS_MOUNT" dnf versionlock add libssc
-          sudo chroot "$ROOTFS_MOUNT" dnf versionlock add iio-sensor-proxy
-          echo "✓ Versionlock applied"
 
       - name: "Set Hostname"
         run: |
@@ -307,6 +307,17 @@ jobs:
             sudo tee "$ROOTFS_MOUNT/etc/fstab"
           echo "✓ fstab configured: root=PARTLABEL=$PARTITION"
 
+      - name: "Install Kernel Modules in RootFS"
+        run: |
+          DEB=$(ls linux-xiaomi-sheng*.deb 2>/dev/null | head -1)
+          if [ -n "$DEB" ]; then
+            dpkg-deb -x "$DEB" kernel-extract
+            sudo cp -a kernel-extract/lib/modules/* "$ROOTFS_MOUNT/lib/modules/" 2>/dev/null || true
+            echo "✓ Kernel modules installed"
+          else
+            echo "⚠ No kernel package found, skipping modules"
+          fi
+
       - name: "Clean DNF Cache"
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf clean all
@@ -317,22 +328,48 @@ jobs:
       - name: "Unmount Virtual File Systems"
         if: always()
         run: |
-          sudo umount "$ROOTFS_MOUNT/dev/pts"
-          sudo umount "$ROOTFS_MOUNT/dev"
-          sudo umount "$ROOTFS_MOUNT/proc"
-          sudo umount "$ROOTFS_MOUNT/sys"
+          for mp in "$ROOTFS_MOUNT/dev/pts" "$ROOTFS_MOUNT/dev" "$ROOTFS_MOUNT/proc" "$ROOTFS_MOUNT/sys"; do
+            if mountpoint -q "$mp" 2>/dev/null; then
+              sudo umount "$mp"
+            fi
+          done
           echo "✓ Virtual file systems unmounted"
 
       - name: "Unmount Image & Set UUID"
         run: |
-          sudo umount "$ROOTFS_MOUNT"
+          if mountpoint -q "$ROOTFS_MOUNT" 2>/dev/null; then
+            sudo umount "$ROOTFS_MOUNT"
+          fi
           tune2fs -U random rootfs.img
           echo "✓ Image unmounted, UUID set"
+
+      - name: "Download Prebuilt Kernel"
+        run: |
+          LATEST_TAG=$(gh release list --repo ianchb/sm8550-mainline --limit 1 --json tagName -q '.[0].tagName')
+          echo "  Latest tag: $LATEST_TAG"
+          gh release download "$LATEST_TAG" \
+            --repo ianchb/sm8550-mainline \
+            --pattern "linux-xiaomi-sheng*.deb" \
+            --clobber
+          echo "✓ Prebuilt kernel downloaded"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Generate boot.img"
         run: |
           PARTITION="${{ steps.partition.outputs.label }}"
           CMDLINE="root=PARTLABEL=$PARTITION"
+
+          DEB=$(ls linux-xiaomi-sheng*.deb 2>/dev/null | head -1)
+          if [ -n "$DEB" ]; then
+            dpkg-deb -x "$DEB" kernel-extract
+            cat kernel-extract/boot/Image.gz kernel-extract/boot/sm8550-xiaomi-sheng.dtb > Image.gz-dtb_sheng
+            echo "✓ Kernel extracted from $DEB"
+          else
+            echo "ERROR: No kernel package found"
+            exit 1
+          fi
+
           chmod +x mkbootimg
           ./mkbootimg \
             --kernel Image.gz-dtb_sheng \
