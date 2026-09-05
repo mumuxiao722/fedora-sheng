@@ -39,6 +39,7 @@ make install DESTDIR=%{buildroot}
 %files
 %license LICENSE
 %doc README.md
+/usr/share/doc/xiaomi-sheng-thp/copyright
 /usr/libexec/xiaomi-sheng-thp/xiaomi-sheng-thp
 /usr/lib/systemd/system/xiaomi-sheng-thp.service
 
