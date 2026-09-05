@@ -12,7 +12,7 @@ Source0:        %{name}-%{version}.tar.gz
 %define _debug_source_subpackages 0
 
 BuildArch:      noarch
-Requires:       alsa-ucm-conf
+Requires:       alsa-ucm
 
 %description
 ALSA Use Case Manager (UCM2) configuration for Xiaomi Pad 6S Pro.
