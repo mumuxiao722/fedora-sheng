@@ -5,7 +5,7 @@ Summary:        Xiaomi MIPPS authentication for 120W fast charging
 
 License:        Proprietary
 URL:            https://github.com/ianchb/xiaomi-mipps-auth
-Source0:        %{url}/archive/%{version}.tar.gz
+Source0:        %{name}-%{version}.tar.gz
 
 BuildArch:      noarch
 Requires:       python3

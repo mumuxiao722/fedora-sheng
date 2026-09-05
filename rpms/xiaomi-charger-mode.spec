@@ -5,7 +5,7 @@ Summary:        Xiaomi charger mode display for Pad 6S Pro
 
 License:        Proprietary
 URL:            https://github.com/ianchb/xiaomi-charger-mode
-Source0:        %{url}/archive/%{version}.tar.gz
+Source0:        %{name}-%{version}.tar.gz
 
 BuildArch:      noarch
 Requires:       python3

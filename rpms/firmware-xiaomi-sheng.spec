@@ -5,10 +5,11 @@ Summary:        Firmware blobs for Xiaomi Pad 6s Pro
 
 License:        Proprietary
 URL:            https://github.com/ianchb/sheng-firmware
-Source0:        %{url}/archive/%{version}.tar.gz
+Source0:        %{name}-%{version}.tar.gz
 
 BuildArch:      noarch
 Conflicts:      linux-firmware
+%define __strip /bin/true
 
 %description
 Firmware blobs and configuration files for Xiaomi Pad 6s Pro (sheng).
