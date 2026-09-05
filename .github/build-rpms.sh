@@ -14,11 +14,12 @@ dnf install -y \
   protobuf-c-devel protobuf-c-compiler protobuf-compiler python3-devel \
   polkit-devel libgudev-devel systemd-rpm-macros
 
+# Rebuild RPM database to ensure virtual provides are registered
+rpm --rebuilddb
+
 # Verify critical deps
 rpm -q libqmi-devel libbsd-devel libyaml-devel protobuf-c-devel python3-devel glib2-devel polkit-devel libgudev-devel
-# Debug: check what libqmi-devel actually provides
-rpm -q --provides libqmi-devel | grep -i pkgconfig || echo "WARNING: no pkgconfig provide found in libqmi-devel"
-find / -name "qmi-glib-1.pc" 2>/dev/null || echo "WARNING: qmi-glib-1.pc not found"
+rpm -q --provides libqmi-devel | grep pkgconfig
 echo "✓ Build dependencies verified"
 
 # Set up rpmbuild directory in workspace
