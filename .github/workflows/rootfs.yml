@@ -228,6 +228,9 @@ jobs:
             registry.fedoraproject.org/fedora:${FEDORA_VERSION} \
             bash /workspace/.github/build-rpms.sh "${FEDORA_VERSION}"
 
+      - name: "Clean debuginfo/debugsource RPMs"
+        run: find rpmbuild/RPMS -name "*-debuginfo-*" -o -name "*-debugsource-*" | xargs rm -f
+
       - name: "Upload libssc RPMs"
         uses: actions/upload-artifact@v7
         with:
@@ -272,7 +275,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: firmware-xiaomi-sheng-rpms-fc${{ inputs.fedora_version }}
-          path: rpmbuild/RPMS/*/firmware-xiaomi-sheng-*.rpm
+          path: rpmbuild/RPMS/noarch/firmware-xiaomi-sheng-*.rpm
           retention-days: 3
           if-no-files-found: error
 
@@ -288,7 +291,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: xiaomi-mipps-auth-rpms-fc${{ inputs.fedora_version }}
-          path: rpmbuild/RPMS/*/xiaomi-mipps-auth-*.rpm
+          path: rpmbuild/RPMS/noarch/xiaomi-mipps-auth-*.rpm
           retention-days: 3
           if-no-files-found: error
 
@@ -296,7 +299,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: xiaomi-charger-mode-rpms-fc${{ inputs.fedora_version }}
-          path: rpmbuild/RPMS/*/xiaomi-charger-mode-*.rpm
+          path: rpmbuild/RPMS/noarch/xiaomi-charger-mode-*.rpm
           retention-days: 3
           if-no-files-found: error
 
@@ -304,7 +307,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: xiaomi-sheng-keyboard-backlight-rpms-fc${{ inputs.fedora_version }}
-          path: rpmbuild/RPMS/*/xiaomi-sheng-keyboard-backlight-*.rpm
+          path: rpmbuild/RPMS/noarch/xiaomi-sheng-keyboard-backlight-*.rpm
           retention-days: 3
           if-no-files-found: error
 
@@ -312,7 +315,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: sheng-sensors-rpms-fc${{ inputs.fedora_version }}
-          path: rpmbuild/RPMS/*/sheng-sensors-*.rpm
+          path: rpmbuild/RPMS/noarch/sheng-sensors-*.rpm
           retention-days: 3
           if-no-files-found: error
 
@@ -320,7 +323,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: alsa-xiaomi-sheng-rpms-fc${{ inputs.fedora_version }}
-          path: rpmbuild/RPMS/*/alsa-xiaomi-sheng-*.rpm
+          path: rpmbuild/RPMS/noarch/alsa-xiaomi-sheng-*.rpm
           retention-days: 3
           if-no-files-found: error
 
