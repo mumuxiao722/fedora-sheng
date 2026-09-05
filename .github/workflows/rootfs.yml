@@ -592,6 +592,7 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" dnf clean all
           sudo rm -rf "$ROOTFS_MOUNT/var/cache/dnf"
           sudo rm -f "$ROOTFS_MOUNT/etc/resolv.conf"
+          sudo ln -s ../run/NetworkManager/resolv.conf "$ROOTFS_MOUNT/etc/resolv.conf"
           echo "✓ DNF cache cleaned"
 
       - name: "Generate boot.img"
