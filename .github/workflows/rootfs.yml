@@ -583,26 +583,6 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" systemctl enable adsprpcd-sensorspd
           echo "✓ Services enabled"
 
-      - name: "[DEBUG] Verify Sheng Service Links"
-        run: |
-          echo "=== Sheng package service symlinks ==="
-          for svc in \
-            sheng-devauth.service \
-            xiaomi-sheng-thp.service \
-            xiaomi-sheng-keyboard-helper-angle.service \
-            xiaomi-charger-mode.service \
-            xiaomi-mipps-auth.service \
-            adsprpcd-sensorspd.service; do
-            echo "--- $svc ---"
-            ls -l "$ROOTFS_MOUNT/etc/systemd/system/$svc" 2>&1 || echo "  (not found)"
-            ls -l "$ROOTFS_MOUNT/usr/lib/systemd/system/$svc" 2>&1 || echo "  (not in /usr/lib either)"
-          done
-          echo "=== iio-sensor-proxy drop-in ==="
-          ls -l "$ROOTFS_MOUNT/usr/lib/systemd/system/iio-sensor-proxy.service.d/" 2>&1 || echo "  (not found)"
-          echo "=== All enabled services ==="
-          sudo chroot "$ROOTFS_MOUNT" systemctl list-unit-files --type=service --state=enabled | grep -i -E "sheng|xiaomi|adsprpcd|fastrpc|charger|mipps" || echo "  (none found)"
-          echo "✓ [DEBUG] Service links verified"
-
       - name: "Configure sudo"
         run: |
           echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "$ROOTFS_MOUNT/etc/sudoers.d/wheel"
