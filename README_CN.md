@@ -195,15 +195,31 @@ cd fedora-sheng
 # 设置 rpmbuild 目录
 mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
-# 复制 spec 文件
+# 复制 spec 文件和补丁
 cp rpms/*.spec ~/rpmbuild/SPECS/
-
-# 复制补丁文件（部分包需要）
 cp patches/* ~/rpmbuild/SOURCES/
 
 # 构建指定包（如 fastrpc）
 rpmbuild --define "_topdir $HOME/rpmbuild" -ba ~/rpmbuild/SPECS/fastrpc.spec
 ```
+
+### 各包构建依赖
+
+| 包名 | Fedora 构建依赖 |
+|------|----------------|
+| **libssc** | meson, ninja-build, gcc, glib2-devel, libqmi-devel, protobuf-c-devel, protobuf-c-compiler, python3-devel |
+| **fastrpc** | gcc, gcc-c++, autoconf, automake, libtool, pkg-config, libyaml-devel, libbsd-devel |
+| **iio-sensor-proxy** | meson, ninja-build, gcc, glib2-devel, libgudev-devel, systemd-devel, polkit-devel, **libssc-devel** |
+| **xiaomi-sheng-thp** | gcc-c++, make, glib2-devel, **libssc-devel** |
+| **xiaomi-sheng-keyboard-helper** | gcc, make, glib2-devel |
+| **sheng-devauth** | gcc, make |
+| **kernel-sheng** | clang, llvm, lld, make, flex, bison, openssl-devel, elfutils-devel, bc, zstd, dtc, perl-interpreter, glibc-static |
+| firmware-xiaomi-sheng | *(无)* |
+| sheng-sensors | *(无)* |
+| xiaomi-mipps-auth | *(无)* |
+| xiaomi-charger-mode | *(无)* |
+| xiaomi-sheng-keyboard-backlight | *(无)* |
+| alsa-xiaomi-sheng | *(无)* |
 
 > **注意**  
 > 内核 RPM **无法**在本地构建 — 需要 GitHub Actions 环境（Ubuntu runner + Fedora 容器）。  
