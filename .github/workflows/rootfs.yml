@@ -202,12 +202,8 @@ jobs:
           echo ""
           echo "=== Image.gz-dtb_sheng ==="
           ls -la "${{ github.workspace }}/Image.gz-dtb_sheng"
-          echo ""
-          echo "DEBUG MODE: Skipping RPM packaging and upload"
-          echo "To continue, re-run with debug=false"
 
       - name: "Package Kernel RPM"
-        if: ${{ !inputs.debug }}
         run: |
           KREL="${{ inputs.kernel_branch }}"
           KREL="${KREL#*-}"
@@ -231,7 +227,6 @@ jobs:
           ls -la RPMS/aarch64/
 
       - name: "Upload Kernel Artifact"
-        if: ${{ !inputs.debug }}
         uses: actions/upload-artifact@v7
         with:
           name: kernel-sheng
