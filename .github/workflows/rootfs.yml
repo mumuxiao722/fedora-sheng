@@ -12,7 +12,7 @@ on:
         default: '44'
 
       enable_copr:
-        description: 'Enable COPR repository (required for GNOME Mobile)'
+        description: 'Enable COPR repository'
         type: boolean
         default: false
 

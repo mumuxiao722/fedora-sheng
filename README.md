@@ -49,7 +49,7 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 | Parameter | Description | Options | Default |
 |-----------|-------------|---------|---------|
 | **Fedora Version** | Fedora version to install | `44` / `45` | `44` |
-| **Enable COPR** | Enable COPR repository (required for GNOME Mobile) | `true` / `false` | `false` |
+| **Enable COPR** | Enable COPR repository | `true` / `false` | `false` |
 | **Desktop** | Desktop environment to install | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
 | **GNOME Mobile** | Use GNOME Mobile instead of GNOME (only when Desktop=GNOME) | `true` / `false` | `false` |
 | **Plasma Mobile** | Use Plasma Mobile shell instead of Plasma Desktop (only when Desktop=KDE Plasma) | `true` / `false` | `false` |
