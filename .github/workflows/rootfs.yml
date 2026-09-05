@@ -130,6 +130,14 @@ jobs:
     runs-on: ubuntu-24.04-arm
     if: ${{ inputs.kernel_source == 'custom_build' }}
 
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      CCACHE_MAXSIZE: 2G
+      CCACHE_COMPILERCHECK: content
+      CCACHE_BASEDIR: ${{ github.workspace }}
+      CCACHE_NOHASHDIR: "true"
+      CCACHE_SLOPPINESS: time_macros,pch_defines,include_file_mtime
+
     steps:
       - name: "Checkout Repo"
         uses: actions/checkout@v7
@@ -141,10 +149,18 @@ jobs:
             build-essential flex bison libssl-dev libelf-dev bc \
             cpio kmod libncurses-dev rpm \
             clang llvm lld ccache
-          sudo systemctl stop ccache.service || true
-          ccache --max-size=2G
-          ccache --set-config=compiler_check=content
-          echo "✓ Build tools installed (ccache enabled)"
+          echo "✓ Build tools installed"
+
+      - name: "Restore ccache"
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.ccache
+          key: ccache-${{ runner.os }}-${{ runner.arch }}-${{ github.sha }}
+          restore-keys: |
+            ccache-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: "Reset ccache stats"
+        run: ccache -z
 
       - name: "Clone Kernel Source"
         run: |
@@ -173,7 +189,6 @@ jobs:
             INSTALL_MOD_PATH="${{ github.workspace }}/kernel-staging" \
             modules_install
 
-          ccache -s
           echo "✓ Kernel build complete"
 
           mkdir -p "${{ github.workspace }}/kernel-staging/boot"
@@ -189,7 +204,6 @@ jobs:
               linux/arch/arm64/boot/dts/qcom/sm8550-xiaomi-sheng.dtb \
             > Image.gz-dtb_sheng
           cp Image.gz-dtb_sheng "${{ github.workspace }}/kernel-staging/boot/"
-          echo "✓ Kernel build complete"
 
       - name: "Debug: Show Build Artifacts"
         if: ${{ inputs.debug }}
@@ -202,6 +216,9 @@ jobs:
           echo ""
           echo "=== Image.gz-dtb_sheng ==="
           ls -la "${{ github.workspace }}/Image.gz-dtb_sheng"
+
+      - name: "Show ccache stats"
+        run: ccache -s
 
       - name: "Package Kernel RPM"
         run: |
