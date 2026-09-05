@@ -1,5 +1,7 @@
 # fedora-sheng
 
+[English](README.md)
+
 > **项目状态**  
 > 本项目仍处于**早期开发阶段**，功能可能不完整，构建结果可能存在未知问题。  
 > 如果遇到任何问题，请提交 [Issue](https://github.com/mumuxiao722/fedora-sheng/issues)。
@@ -8,7 +10,7 @@
 
 ## 项目概述
 
-本项目使用 **GitHub Actions** 自动构建适用于小米平板 6S Pro (sheng) 的 Fedora 根文件系统，提供可刷入的 `rootfs.img` 和 `boot.img`。  
+本项目使用 **GitHub Actions** 自动构建适用于小米平板 6S Pro (sheng) 的 Fedora 根文件系统，提供可刷入的 `rootfs.img.zip` 和 `boot.img.zip`。  
 只需在您自己的仓库中启动工作流，即可获得一个开箱即用的 Fedora 环境。
 
 ---
@@ -34,7 +36,7 @@
 ### 3. 下载产物
 
 工作流完成后，打开该运行的摘要页面。  
-在 **Artifacts** 部分，下载 `rootfs.img` 和 `boot.img`。
+在 **Artifacts** 部分，下载 `rootfs-*.zip` 和 `boot-*.zip`。
 
 ---
 
@@ -42,16 +44,33 @@
 
 当您通过 `workflow_dispatch` 触发 **Build Fedora RootFS** 工作流时，可以使用以下输入参数：
 
+### 通用设置
+
 | 参数 | 说明 | 选项 | 默认值 |
 |------|------|------|--------|
-| **Fedora Version** | 要安装的 Fedora 版本 | `45` / `rawhide` | `45` |
+| **Fedora Version** | 要安装的 Fedora 版本 | `44` / `45` | `44` |
 | **Autologin** | 创建的用户是否自动登录 | `true` / `false` | `true` |
 | **Username** | 非 root 用户的用户名 | 字符串 | `username` |
 | **Hostname** | 系统主机名 | 字符串 | `xiaomi-sheng` |
-| **System language** | 生成的根文件系统的系统语言环境 | `None (C.UTF-8)` / `en_US.UTF-8` / `zh_CN.UTF-8` / `zh_TW.UTF-8` / `ja_JP.UTF-8` / `ko_KR.UTF-8` / `de_DE.UTF-8` / `fr_FR.UTF-8` / `es_ES.UTF-8` / `ru_RU.UTF-8` | `None (C.UTF-8)` |
-| **Boot mode** | 确定 Fedora 从哪个分区启动 | `single (userdata)` / `dual (linux)` / `custom` | `dual (linux)` |
-| **Custom partition** | 刷入 rootfs 的分区名称。仅在启动模式为 `custom` 时需要 | 任意分区名称 | *（空）* |
-| **Extra packages** | 要安装的额外软件包（空格分隔） | 字符串 | *（空）* |
+| **System language** | 系统语言环境 | `None (C.UTF-8)` / `en_US.UTF-8` / `zh_CN.UTF-8` / `zh_TW.UTF-8` / `ja_JP.UTF-8` / `ko_KR.UTF-8` / `de_DE.UTF-8` / `fr_FR.UTF-8` / `es_ES.UTF-8` / `ru_RU.UTF-8` | `None (C.UTF-8)` |
+| **Boot mode** | Fedora 从哪个分区启动 | `single (userdata)` / `dual (linux)` / `custom` | `dual (linux)` |
+| **Custom partition** | 分区名称（boot_mode=custom 时必填） | 任意分区名称 | *（空）* |
+| **Extra packages** | 额外安装的软件包（空格分隔） | 字符串 | *（空）* |
+
+### 内核设置
+
+| 参数 | 说明 | 选项 | 默认值 |
+|------|------|------|--------|
+| **Kernel Source** | 使用预构建内核还是从源码构建 | `prebuilt` / `custom_build` | `prebuilt` |
+| **Kernel Prebuilt Source** | 预构建内核来源（仅 prebuilt 时） | `upstream` / `own` | `upstream` |
+| **Kernel Repo URL** | 内核源码仓库地址（仅 custom_build 时） | 有效的 Git URL | `https://github.com/ianchb/sm8550-mainline` |
+| **Kernel Branch** | 检出的分支（仅 custom_build 时） | 分支名称 | `sheng-7.2.2` |
+| **Kernel Config** | 仓库中的配置文件路径（仅 custom_build 时） | 文件路径 | `sm8550.config` |
+
+### 固件设置
+
+| 参数 | 说明 | 选项 | 默认值 |
+|------|------|------|--------|
 | **Firmware Repo URL** | 设备固件文件的 Git 仓库 URL | 有效的 Git URL | `https://github.com/ianchb/sheng-firmware` |
 | **Firmware Branch** | 从固件仓库检出的分支 | 分支名称 | `master` |
 
@@ -59,6 +78,46 @@
 > - 要使用自定义密码，您**必须**在运行工作流之前创建名为 `ROOTFS_PASSWORD` 的仓库密钥。  
 > - 如果未设置 `ROOTFS_PASSWORD`，密码将使用不安全的默认值：`password`。  
 > - 如果选择 **Boot mode = `custom`**，您**必须**填写 **Custom partition** 字段。  
+
+---
+
+## 自定义内核构建
+
+如果您想使用自定义内核而非预构建内核：
+
+### 方式一：通过工作流从源码构建
+
+1. 将 **Kernel Source** 设为 `custom_build`
+2. 填写 **Kernel Repo URL**、**Kernel Branch** 和 **Kernel Config**
+3. 运行工作流 — 它将编译内核并包含在产物中
+
+### 方式二：使用自己的预构建内核 RPM
+
+1. 构建 `kernel-sheng` RPM（格式与预构建相同）
+2. 在您的仓库中创建 tag 为 **`prekernel`** 的 release
+3. 上传 `kernel-sheng-*.rpm` 文件到该 release
+4. 将 **Kernel Source** 设为 `prebuilt`，**Kernel Prebuilt Source** 设为 `own`
+5. 运行工作流 — 它将从 release 下载您的内核 RPM
+
+### 上传内核 RPM 到 release（手动）
+
+`custom_build` 工作流运行后，内核 RPM 作为 workflow artifact 可用。要使其可用于后续预构建运行：
+
+```bash
+# 下载 artifact，然后上传到 release
+gh release create prekernel kernel-sheng-*.rpm \
+  --repo YOUR_USERNAME/fedora-sheng \
+  --title "预构建内核" \
+  --notes "sheng 预构建内核"
+```
+
+或向已有 release 添加 RPM：
+
+```bash
+gh release upload prekernel kernel-sheng-*.rpm \
+  --repo YOUR_USERNAME/fedora-sheng \
+  --clobber
+```
 
 ---
 

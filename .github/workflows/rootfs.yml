@@ -67,7 +67,173 @@ on:
         required: false
         default: ''
 
+      kernel_source:
+        description: |
+          Kernel Source:
+          - prebuilt: Use prebuilt kernel RPM
+          - custom_build: Build from source
+        type: choice
+        options:
+          - 'prebuilt'
+          - 'custom_build'
+        default: 'prebuilt'
+
+      kernel_prebuilt:
+        description: 'Prebuilt kernel source (only when kernel_source=prebuilt)'
+        type: choice
+        options:
+          - 'upstream'
+          - 'own'
+        default: 'upstream'
+
+      kernel_repo:
+        description: 'Kernel Repo URL (only when kernel_source=custom_build)'
+        type: string
+        required: false
+        default: 'https://github.com/ianchb/sm8550-mainline'
+
+      kernel_branch:
+        description: 'Kernel Branch (only when kernel_source=custom_build)'
+        type: string
+        required: false
+        default: 'sheng-7.2.2'
+
+      kernel_config:
+        description: 'Kernel Config file path in repo (only when kernel_source=custom_build)'
+        type: string
+        required: false
+        default: 'sm8550.config'
+
+      firmware_repo:
+        description: 'Firmware Repo URL'
+        type: string
+        required: false
+        default: 'https://github.com/ianchb/sheng-firmware'
+
+      firmware_branch:
+        description: 'Firmware Branch'
+        type: string
+        required: false
+        default: 'master'
+
 jobs:
+  # ==========================================================================
+  # Build Kernel
+  # ==========================================================================
+  build-kernel:
+    name: "Build Kernel"
+    runs-on: ubuntu-24.04-arm
+    if: ${{ inputs.kernel_source == 'custom_build' }}
+
+    steps:
+      - name: "Checkout Repo"
+        uses: actions/checkout@v7
+
+      - name: "Install Build Tools"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential flex bison libssl-dev libelf-dev bc \
+            cpio kmod libncurses-dev rpm
+          echo "✓ Build tools installed"
+
+      - name: "Clone Kernel Source"
+        run: |
+          git clone "${{ inputs.kernel_repo }}" \
+            --branch "${{ inputs.kernel_branch }}" \
+            --depth 1 \
+            linux
+          echo "✓ Kernel source cloned"
+
+      - name: "Build Kernel"
+        id: build
+        run: |
+          cd linux
+          cp "${{ github.workspace }}/${{ inputs.kernel_config }}" .config
+          make -j$(nproc) ARCH=arm64 LLVM=1
+
+          KVER="$(make kernelrelease -s)"
+          echo "kernel_version=$KVER" >> $GITHUB_OUTPUT
+          echo "  Kernel version: $KVER"
+
+          make -j$(nproc) ARCH=arm64 LLVM=1 \
+            INSTALL_MOD_PATH="${{ github.workspace }}/kernel-staging" \
+            modules_install
+
+          mkdir -p "${{ github.workspace }}/kernel-staging/boot"
+          install -Dm644 arch/arm64/boot/Image.gz \
+            "${{ github.workspace }}/kernel-staging/boot/Image.gz"
+          install -Dm644 arch/arm64/boot/dts/qcom/sm8550-xiaomi-sheng.dtb \
+            "${{ github.workspace }}/kernel-staging/boot/sm8550-xiaomi-sheng.dtb"
+          install -Dm644 .config \
+            "${{ github.workspace }}/kernel-staging/boot/config-${KVER}"
+
+          cd "${{ github.workspace }}"
+          cat linux/arch/arm64/boot/Image.gz \
+              linux/arch/arm64/boot/dts/qcom/sm8550-xiaomi-sheng.dtb \
+            > Image.gz-dtb_sheng
+          echo "✓ Kernel build complete"
+
+      - name: "Package Kernel RPM"
+        run: |
+          FEDORA_VER="${{ inputs.fedora_version }}"
+          TOPDIR="${{ github.workspace }}/rpmbuild"
+          mkdir -p "$TOPDIR"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+
+          cat > "$TOPDIR/SPECS/kernel-sheng.spec" << 'SPECEOF'
+          Name:           kernel-sheng
+          Version:        1.0
+          Release:        1
+          Summary:        Kernel for Xiaomi Pad 6S Pro (sheng)
+          License:        GPLv2
+          URL:            https://github.com/ianchb/sm8550-mainline
+          Source0:        kernel-sheng-%{version}.tar.gz
+
+          %undefine __debug_package
+          %undefine _debugsource_packages
+
+          BuildRequires:  gcc, make
+
+          %description
+          Prebuilt kernel for Xiaomi Pad 6S Pro.
+
+          %prep
+          %autosetup -n kernel-staging -p0
+
+          %build
+          echo "Prebuilt kernel, nothing to build"
+
+          %install
+          mkdir -p %{buildroot}/boot
+          mkdir -p %{buildroot}/lib/modules
+          cp -a boot/* %{buildroot}/boot/ 2>/dev/null || true
+          cp -a lib/modules/* %{buildroot}/lib/modules/ 2>/dev/null || true
+
+          %files
+          /boot/Image.gz
+          /boot/sm8550-xiaomi-sheng.dtb
+          /boot/config-*
+          /lib/modules/*
+
+          %changelog
+          SPECEOF
+
+          cd "${{ github.workspace }}/kernel-staging"
+          tar -czf "$TOPDIR/SOURCES/kernel-sheng-1.0.tar.gz" .
+
+          cd "$TOPDIR"
+          rpmbuild --define "_topdir $TOPDIR" -ba SPECS/kernel-sheng.spec
+          echo "✓ Kernel RPM packaged"
+          ls -la RPMS/aarch64/
+
+      - name: "Upload Kernel Artifact"
+        uses: actions/upload-artifact@v7
+        with:
+          name: kernel-sheng
+          path: rpmbuild/RPMS/aarch64/kernel-sheng-*.rpm
+          retention-days: 3
+          if-no-files-found: error
+
   # ==========================================================================
   # Build Custom RPMs (in Fedora container)
   # ==========================================================================
@@ -87,6 +253,8 @@ jobs:
           podman run --rm \
             -v "${{ github.workspace }}:/workspace" \
             -w /workspace \
+            -e FIRMWARE_REPO="${{ inputs.firmware_repo }}" \
+            -e FIRMWARE_BRANCH="${{ inputs.firmware_branch }}" \
             registry.fedoraproject.org/fedora:${FEDORA_VERSION} \
             bash /workspace/.github/build-rpms.sh "${FEDORA_VERSION}"
 
@@ -113,7 +281,7 @@ jobs:
   build-rootfs:
     name: "Build Fedora RootFS"
     runs-on: ubuntu-24.04-arm
-    needs: [build-rpms]
+    needs: [build-rpms, build-kernel]
 
     env:
       ROOTFS_MOUNT: /mnt/rootfs
@@ -135,21 +303,49 @@ jobs:
           path: rpms/
           merge-multiple: true
 
+      - name: "Download Kernel Artifact (custom_build)"
+        if: ${{ inputs.kernel_source == 'custom_build' }}
+        uses: actions/download-artifact@v8
+        with:
+          name: kernel-sheng
+          path: rpms/
+
+      - name: "Download Kernel RPM (prebuilt upstream)"
+        if: ${{ inputs.kernel_source == 'prebuilt' && inputs.kernel_prebuilt == 'upstream' }}
+        run: |
+          gh release download prekernel \
+            --repo mumuxiao722/fedora-sheng \
+            --pattern "*.rpm" \
+            --dest rpms/ \
+            --clobber
+          echo "✓ Kernel RPM downloaded from upstream"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Download Kernel RPM (prebuilt own)"
+        if: ${{ inputs.kernel_source == 'prebuilt' && inputs.kernel_prebuilt == 'own' }}
+        run: |
+          gh release download prekernel \
+            --repo "${{ github.repository }}" \
+            --pattern "*.rpm" \
+            --dest rpms/ \
+            --clobber
+          echo "✓ Kernel RPM downloaded from own release"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: "Parse Partition Label"
         id: partition
         run: |
           case "${{ inputs.boot_mode }}" in
             'single (userdata)')
               echo "label=userdata" >> $GITHUB_OUTPUT
-              echo "boot_img_pattern=boot_sheng_singleboot.img" >> $GITHUB_OUTPUT
               ;;
             'dual (linux)')
               echo "label=linux" >> $GITHUB_OUTPUT
-              echo "boot_img_pattern=boot_sheng_dualboot.img" >> $GITHUB_OUTPUT
               ;;
             'custom')
               echo "label=${{ inputs.custom_partition }}" >> $GITHUB_OUTPUT
-              echo "boot_img_pattern=boot.img" >> $GITHUB_OUTPUT
               ;;
           esac
           echo "✓ Partition label set"
@@ -199,6 +395,19 @@ jobs:
           sudo mount -t sysfs sys "$ROOTFS_MOUNT/sys"
           sudo cp /etc/resolv.conf "$ROOTFS_MOUNT/etc/resolv.conf"
           echo "✓ Virtual file systems mounted"
+
+      - name: "Install Kernel RPM in RootFS"
+        run: |
+          KERNEL_RPM=$(ls rpms/kernel-sheng-*.rpm 2>/dev/null | head -1)
+          if [ -z "$KERNEL_RPM" ]; then
+            echo "ERROR: No kernel RPM found in rpms/"
+            ls -la rpms/
+            exit 1
+          fi
+          sudo cp "$KERNEL_RPM" "$ROOTFS_MOUNT/tmp/"
+          sudo chroot "$ROOTFS_MOUNT" rpm -Uvh "/tmp/$(basename "$KERNEL_RPM")"
+          sudo rm -f "$ROOTFS_MOUNT/tmp/$(basename "$KERNEL_RPM")"
+          echo "✓ Kernel RPM installed"
 
       - name: "Install Custom RPMs"
         run: |
@@ -307,17 +516,6 @@ jobs:
             sudo tee "$ROOTFS_MOUNT/etc/fstab"
           echo "✓ fstab configured: root=PARTLABEL=$PARTITION"
 
-      - name: "Install Kernel Modules in RootFS"
-        run: |
-          DEB=$(ls linux-xiaomi-sheng*.deb 2>/dev/null | head -1)
-          if [ -n "$DEB" ]; then
-            dpkg-deb -x "$DEB" kernel-extract
-            sudo cp -a kernel-extract/lib/modules/* "$ROOTFS_MOUNT/lib/modules/" 2>/dev/null || true
-            echo "✓ Kernel modules installed"
-          else
-            echo "⚠ No kernel package found, skipping modules"
-          fi
-
       - name: "Clean DNF Cache"
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf clean all
@@ -343,30 +541,19 @@ jobs:
           tune2fs -U random rootfs.img
           echo "✓ Image unmounted, UUID set"
 
-      - name: "Download Prebuilt Kernel"
-        run: |
-          LATEST_TAG=$(gh release list --repo ianchb/sm8550-mainline --limit 1 --json tagName -q '.[0].tagName')
-          echo "  Latest tag: $LATEST_TAG"
-          gh release download "$LATEST_TAG" \
-            --repo ianchb/sm8550-mainline \
-            --pattern "linux-xiaomi-sheng*.deb" \
-            --clobber
-          echo "✓ Prebuilt kernel downloaded"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: "Generate boot.img"
         run: |
           PARTITION="${{ steps.partition.outputs.label }}"
           CMDLINE="root=PARTLABEL=$PARTITION"
 
-          DEB=$(ls linux-xiaomi-sheng*.deb 2>/dev/null | head -1)
-          if [ -n "$DEB" ]; then
-            dpkg-deb -x "$DEB" kernel-extract
-            cat kernel-extract/boot/Image.gz kernel-extract/boot/sm8550-xiaomi-sheng.dtb > Image.gz-dtb_sheng
-            echo "✓ Kernel extracted from $DEB"
+          if [ -f "$ROOTFS_MOUNT/boot/Image.gz" ] && [ -f "$ROOTFS_MOUNT/boot/sm8550-xiaomi-sheng.dtb" ]; then
+            cat "$ROOTFS_MOUNT/boot/Image.gz" \
+                "$ROOTFS_MOUNT/boot/sm8550-xiaomi-sheng.dtb" \
+              > Image.gz-dtb_sheng
+            echo "✓ Kernel Image.gz-dtb created from rootfs"
           else
-            echo "ERROR: No kernel package found"
+            echo "ERROR: Kernel files not found in rootfs/boot/"
+            ls -la "$ROOTFS_MOUNT/boot/"
             exit 1
           fi
 

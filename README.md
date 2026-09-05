@@ -10,7 +10,7 @@
 
 ## Overview
 
-This project uses **GitHub Actions** to automatically build a Fedora root filesystem for the Xiaomi Pad 6S Pro (sheng), providing a flashable `rootfs.img` and `boot.img`.  
+This project uses **GitHub Actions** to automatically build a Fedora root filesystem for the Xiaomi Pad 6S Pro (sheng), providing a flashable `rootfs.img.zip` and `boot.img.zip`.  
 Simply start a workflow in your own repository and you will have a ready-to-use Fedora environment.
 
 ---
@@ -36,7 +36,7 @@ Click the green **Run workflow** button to start the build.
 ### 3. Download Artifacts
 
 Once the workflow finishes, open the summary page of that run.  
-Under the **Artifacts** section, download `rootfs.img` and `boot.img`.
+Under the **Artifacts** section, download `rootfs-*.zip` and `boot-*.zip`.
 
 ---
 
@@ -44,23 +44,80 @@ Under the **Artifacts** section, download `rootfs.img` and `boot.img`.
 
 When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, the following inputs are available:
 
+### General
+
 | Parameter | Description | Options | Default |
 |-----------|-------------|---------|---------|
-| **Fedora Version** | Fedora version to install | `45` / `rawhide` | `45` |
-| **Autologin** | Whether the created user should be logged in automatically. | `true` / `false` | `true` |
-| **Username** | Username for the non-root user. | string | `username` |
-| **Hostname** | System hostname. | string | `xiaomi-sheng` |
-| **System language** | System locale for the generated root filesystem. | `None (C.UTF-8)` / `en_US.UTF-8` / `zh_CN.UTF-8` / `zh_TW.UTF-8` / `ja_JP.UTF-8` / `ko_KR.UTF-8` / `de_DE.UTF-8` / `fr_FR.UTF-8` / `es_ES.UTF-8` / `ru_RU.UTF-8` | `None (C.UTF-8)` |
-| **Boot mode** | Determines which partition Fedora boots from. | `single (userdata)` / `dual (linux)` / `custom` | `dual (linux)` |
-| **Custom partition** | Partition name to flash the rootfs to. Required only when Boot mode is `custom`. | any partition name | *(empty)* |
-| **Extra packages** | Extra packages to install (space-separated). | string | *(empty)* |
-| **Firmware Repo URL** | Git repository URL for device firmware files. | valid Git URL | `https://github.com/ianchb/sheng-firmware` |
-| **Firmware Branch** | Branch to checkout from the firmware repository. | branch name | `master` |
+| **Fedora Version** | Fedora version to install | `44` / `45` | `44` |
+| **Autologin** | Whether the created user should be logged in automatically | `true` / `false` | `true` |
+| **Username** | Username for the non-root user | string | `username` |
+| **Hostname** | System hostname | string | `xiaomi-sheng` |
+| **System language** | System locale | `None (C.UTF-8)` / `en_US.UTF-8` / `zh_CN.UTF-8` / `zh_TW.UTF-8` / `ja_JP.UTF-8` / `ko_KR.UTF-8` / `de_DE.UTF-8` / `fr_FR.UTF-8` / `es_ES.UTF-8` / `ru_RU.UTF-8` | `None (C.UTF-8)` |
+| **Boot mode** | Which partition Fedora boots from | `single (userdata)` / `dual (linux)` / `custom` | `dual (linux)` |
+| **Custom partition** | Partition name (required when boot_mode=custom) | any partition name | *(empty)* |
+| **Extra packages** | Extra packages to install (space-separated) | string | *(empty)* |
+
+### Kernel
+
+| Parameter | Description | Options | Default |
+|-----------|-------------|---------|---------|
+| **Kernel Source** | Use prebuilt kernel or build from source | `prebuilt` / `custom_build` | `prebuilt` |
+| **Kernel Prebuilt Source** | Where to get the prebuilt kernel (only when prebuilt) | `upstream` / `own` | `upstream` |
+| **Kernel Repo URL** | Git repo for kernel source (only when custom_build) | valid Git URL | `https://github.com/ianchb/sm8550-mainline` |
+| **Kernel Branch** | Branch to checkout (only when custom_build) | branch name | `sheng-7.2.2` |
+| **Kernel Config** | Config file path in repo (only when custom_build) | file path | `sm8550.config` |
+
+### Firmware
+
+| Parameter | Description | Options | Default |
+|-----------|-------------|---------|---------|
+| **Firmware Repo URL** | Git repository URL for device firmware files | valid Git URL | `https://github.com/ianchb/sheng-firmware` |
+| **Firmware Branch** | Branch to checkout from the firmware repository | branch name | `master` |
 
 > **Notes**  
-> - To use a custom password, you **must** create a repository secret named `ROOTFS_PASSWORD` before running the workflow. The workflow maps this secret to an environment variable and uses it as the password for both the configured user and `root`.  
-> - If `ROOTFS_PASSWORD` is not set, the image will still be built, but the password will fall back to the insecure default value: `password`.  
-> - If you choose **Boot mode = `custom`**, you **must** fill in the **Custom partition** field.  
+> - To use a custom password, you **must** create a repository secret named `ROOTFS_PASSWORD` before running the workflow.  
+> - If `ROOTFS_PASSWORD` is not set, the password will fall back to the insecure default: `password`.  
+> - If you choose **Boot mode = `custom`**, you **must** fill in the **Custom partition** field.
+
+---
+
+## Custom Kernel Build
+
+If you want to use a custom kernel instead of the prebuilt one:
+
+### Option 1: Build from source via workflow
+
+1. Set **Kernel Source** to `custom_build`
+2. Fill in **Kernel Repo URL**, **Kernel Branch**, and **Kernel Config**
+3. Run the workflow — it will compile the kernel and include it in the artifacts
+
+### Option 2: Use your own prebuilt kernel RPM
+
+1. Build a `kernel-sheng` RPM (same format as the prebuilt one)
+2. Create a release with tag **`prekernel`** in your repository
+3. Upload the `kernel-sheng-*.rpm` file to that release
+4. Set **Kernel Source** to `prebuilt` and **Kernel Prebuilt Source** to `own`
+5. Run the workflow — it will download your kernel RPM from the release
+
+### Uploading kernel RPM to release (manual)
+
+After a `custom_build` workflow run, the kernel RPM is available as a workflow artifact. To make it available for future prebuilt runs:
+
+```bash
+# Download the artifact, then upload to release
+gh release create prekernel kernel-sheng-*.rpm \
+  --repo YOUR_USERNAME/fedora-sheng \
+  --title "Prebuilt kernel" \
+  --notes "Prebuilt kernel for sheng"
+```
+
+Or add an existing RPM to an existing release:
+
+```bash
+gh release upload prekernel kernel-sheng-*.rpm \
+  --repo YOUR_USERNAME/fedora-sheng \
+  --clobber
+```
 
 ---
 

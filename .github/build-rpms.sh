@@ -2,8 +2,11 @@
 set -e
 
 FEDORA_VERSION="${1:-44}"
+FIRMWARE_REPO="${FIRMWARE_REPO:-https://github.com/ianchb/sheng-firmware}"
+FIRMWARE_BRANCH="${FIRMWARE_BRANCH:-master}"
 
-echo "=== Building RPMs in Fedora ${FEDORA_VERSION} container ==="
+echo "=== Building RPMs in Fedora ${FEDORA_VERSION} ==="
+echo "  Firmware: ${FIRMWARE_REPO} @ ${FIRMWARE_BRANCH}"
 
 # Install build dependencies
 dnf install -y fedora-repos
@@ -24,7 +27,7 @@ mkdir -p /workspace/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 # Clone source repos to /tmp
 cd /tmp
 
-git clone --depth 1 https://github.com/ianchb/sheng-firmware.git
+git clone --depth 1 --branch "$FIRMWARE_BRANCH" "$FIRMWARE_REPO" sheng-firmware
 git clone --depth 1 https://github.com/alghiffaryfa19/Linux-xiaomi-sheng.git --branch sheng --single-branch sheng-devauth-src
 git clone --depth 1 https://github.com/ianchb/xiaomi-mipps-auth.git
 git clone --depth 1 https://github.com/ianchb/xiaomi-charger-mode.git
