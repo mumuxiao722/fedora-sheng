@@ -28,7 +28,7 @@ mkdir -p /workspace/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 cd /tmp
 
 git clone --depth 1 --branch "$FIRMWARE_BRANCH" "$FIRMWARE_REPO" sheng-firmware
-git clone --depth 1 https://github.com/alghiffaryfa19/Linux-xiaomi-sheng.git --branch sheng --single-branch sheng-devauth-src
+git clone --depth 1 https://github.com/ianchb/sheng_devauth.git sheng-devauth-src
 git clone --depth 1 https://github.com/ianchb/xiaomi-mipps-auth.git
 git clone --depth 1 https://github.com/ianchb/xiaomi-charger-mode.git
 git clone --depth 1 https://github.com/ianchb/xiaomi-sheng-thp.git
@@ -51,9 +51,9 @@ mv sheng-firmware sheng-firmware-1.0
 tar -czf /workspace/rpmbuild/SOURCES/firmware-xiaomi-sheng-1.0.tar.gz sheng-firmware-1.0/
 
 # sheng-devauth (rename dir to match %autosetup -n sheng_devauth-1.0)
-mv sheng-devauth-src/sheng-devauth sheng_devauth-1.0
+mv sheng-devauth-src sheng_devauth-1.0
 tar -czf /workspace/rpmbuild/SOURCES/sheng-devauth-1.0.tar.gz sheng_devauth-1.0/
-mv sheng_devauth-1.0 sheng-devauth-src/
+mv sheng_devauth-1.0 sheng-devauth-src
 
 # xiaomi-mipps-auth
 mv xiaomi-mipps-auth xiaomi-mipps-auth-1.0
@@ -108,6 +108,8 @@ tar -czf /workspace/rpmbuild/SOURCES/iio-sensor-proxy-3.9.tar.gz iio-sensor-prox
 # Copy special source files (Source1, Patch0, etc.)
 cp /workspace/patches/adsprpcd-sensorspd.service /workspace/rpmbuild/SOURCES/
 cp /workspace/patches/wait_for_qmi_service.patch /workspace/rpmbuild/SOURCES/
+cp /workspace/patches/sheng-devauth.service /workspace/rpmbuild/SOURCES/
+cp /workspace/patches/sheng-devauth.service.d-qtee.conf /workspace/rpmbuild/SOURCES/
 
 echo "✓ Source tarballs created"
 

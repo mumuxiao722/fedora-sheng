@@ -10,6 +10,8 @@ Summary:        Xiaomi keyboard authentication daemon for Pad 6S Pro
 License:        Proprietary
 URL:            https://github.com/alghiffaryfa19/Linux-xiaomi-sheng
 Source0:        %{name}-%{version}.tar.gz
+Source1:        sheng-devauth.service
+Source2:        sheng-devauth.service.d-qtee.conf
 
 %define _debug_source_subpackages 0
 
@@ -32,9 +34,9 @@ mkdir -p %{buildroot}/usr/bin
 install -m 755 xiaomi_devauth %{buildroot}/usr/bin/
 
 mkdir -p %{buildroot}/usr/lib/systemd/system
-install -m 644 usr/lib/systemd/system/sheng-devauth.service %{buildroot}/usr/lib/systemd/system/
+install -m 644 %{SOURCE1} %{buildroot}/usr/lib/systemd/system/sheng-devauth.service
 mkdir -p %{buildroot}/usr/lib/systemd/system/sheng-devauth.service.d
-install -m 644 usr/lib/systemd/system/sheng-devauth.service.d/qtee.conf %{buildroot}/usr/lib/systemd/system/sheng-devauth.service.d/
+install -m 644 %{SOURCE2} %{buildroot}/usr/lib/systemd/system/sheng-devauth.service.d/qtee.conf
 
 %post
 %systemd_post sheng-devauth.service

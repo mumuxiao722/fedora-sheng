@@ -1,0 +1,11 @@
+[Unit]
+Description=Xiaomi Keyboard Authentication Daemon
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/xiaomi_devauth
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
