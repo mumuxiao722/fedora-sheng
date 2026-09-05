@@ -177,54 +177,22 @@ jobs:
 
       - name: "Package Kernel RPM"
         run: |
-          KVER="${{ steps.build.outputs.kernel_version }}"
           KREL="${{ inputs.kernel_branch }}"
           KREL="${KREL#*-}"
-          FEDORA_VER="${{ inputs.fedora_version }}"
           TOPDIR="${{ github.workspace }}/rpmbuild"
           mkdir -p "$TOPDIR"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          SPEC="$TOPDIR/SPECS/kernel-sheng.spec"
-          echo "Name:           kernel-sheng" > "$SPEC"
-          echo "Version:        ${KREL}" >> "$SPEC"
-          echo "Release:        1" >> "$SPEC"
-          echo "Summary:        Kernel for Xiaomi Pad 6S Pro (sheng)" >> "$SPEC"
-          echo "License:        GPLv2" >> "$SPEC"
-          echo "URL:            ${{ inputs.kernel_repo }}" >> "$SPEC"
-          echo "Source0:        kernel-sheng-%{version}.tar.gz" >> "$SPEC"
-          echo "" >> "$SPEC"
-          echo "%undefine __debug_package" >> "$SPEC"
-          echo "%undefine _debugsource_packages" >> "$SPEC"
-          echo "" >> "$SPEC"
-          echo "" >> "$SPEC"
-          echo "" >> "$SPEC"
-          echo "%description" >> "$SPEC"
-          echo "Prebuilt kernel for Xiaomi Pad 6S Pro." >> "$SPEC"
-          echo "" >> "$SPEC"
-          echo "%prep" >> "$SPEC"
-          echo "%autosetup -n kernel-staging -p0" >> "$SPEC"
-          echo "" >> "$SPEC"
-          echo "%build" >> "$SPEC"
-          echo "echo Prebuilt kernel, nothing to build" >> "$SPEC"
-          echo "" >> "$SPEC"
-          echo "%install" >> "$SPEC"
-          echo "mkdir -p %{buildroot}/boot" >> "$SPEC"
-          echo "mkdir -p %{buildroot}/lib/modules" >> "$SPEC"
-          echo "cp -a boot/* %{buildroot}/boot/ 2>/dev/null || true" >> "$SPEC"
-          echo "cp -a lib/modules/* %{buildroot}/lib/modules/ 2>/dev/null || true" >> "$SPEC"
-          echo "" >> "$SPEC"
-          echo "%files" >> "$SPEC"
-          echo "/boot/Image.gz" >> "$SPEC"
-          echo "/boot/sm8550-xiaomi-sheng.dtb" >> "$SPEC"
-          echo "/boot/config-*" >> "$SPEC"
-          echo "/lib/modules/*" >> "$SPEC"
-          echo "" >> "$SPEC"
-          echo "%changelog" >> "$SPEC"
+
+          cp rpms/kernel-sheng.spec "$TOPDIR/SPECS/kernel-sheng.spec"
 
           cd "${{ github.workspace }}/kernel-staging"
           tar -czf "$TOPDIR/SOURCES/kernel-sheng-${KREL}.tar.gz" .
 
           cd "$TOPDIR"
-          rpmbuild --define "_topdir $TOPDIR" --nodeps -ba SPECS/kernel-sheng.spec
+          rpmbuild --define "_topdir $TOPDIR" \
+                   --define "_kernel_version ${KREL}" \
+                   --define "_kernel_repo ${{ inputs.kernel_repo }}" \
+                   --define "_kernel_config ${{ github.workspace }}/${{ inputs.kernel_config }}" \
+                   --nodeps -ba SPECS/kernel-sheng.spec
           echo "✓ Kernel RPM packaged (${KREL})"
           ls -la RPMS/aarch64/
 

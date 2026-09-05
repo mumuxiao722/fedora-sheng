@@ -1,6 +1,6 @@
 Name:           kernel-sheng
 Version:        %{_kernel_version}
-Release:        1.fc%{_fedora_version}
+Release:        1
 Summary:        Kernel for Xiaomi Pad 6S Pro (sheng)
 License:        GPLv2
 URL:            %{_kernel_repo}
