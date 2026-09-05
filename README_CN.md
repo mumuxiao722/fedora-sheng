@@ -184,6 +184,8 @@ sudo dnf install -y rpm-build git
 sudo rpm -Uvh libssc-devel-*.rpm libssc-*.rpm
 ```
 
+或者先自行构建 `libssc`，再用构建出的包安装后构建依赖包。
+
 ### 构建步骤
 
 ```bash

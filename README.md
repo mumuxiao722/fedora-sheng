@@ -184,6 +184,8 @@ You also need the `libssc-devel` package built by the GitHub Actions workflow, s
 sudo rpm -Uvh libssc-devel-*.rpm libssc-*.rpm
 ```
 
+Or build `libssc` yourself first and install the local build output before building dependent packages.
+
 ### Build Steps
 
 ```bash
