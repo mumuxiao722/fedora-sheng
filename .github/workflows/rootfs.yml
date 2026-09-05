@@ -93,7 +93,7 @@ on:
         default: 'https://github.com/ianchb/sm8550-mainline'
 
       kernel_branch:
-        description: 'Kernel branch / release tag (e.g. sheng-7.2.2)'
+        description: 'Kernel branch name or release tag (custom_build: upstream branch, prebuilt: release tag)'
         type: string
         required: false
         default: 'sheng-7.2.2'
@@ -182,13 +182,16 @@ jobs:
         if: steps.check.outputs.exists == 'false'
         run: |
           KVER="${{ steps.build.outputs.kernel_version }}"
+          KREL="${{ inputs.kernel_branch }}"
+          # Extract version: sheng-7.2.2 → 7.2.2
+          KREL="${KREL#*-}"
           FEDORA_VER="${{ inputs.fedora_version }}"
           TOPDIR="${{ github.workspace }}/rpmbuild"
           mkdir -p "$TOPDIR"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
           cat > "$TOPDIR/SPECS/kernel-sheng.spec" << SPECEOF
 Name:           kernel-sheng
-Version:        ${KVER}
+Version:        ${KREL}
 Release:        1.fc${FEDORA_VER}
 Summary:        Kernel for Xiaomi Pad 6S Pro (sheng)
 License:        GPLv2
@@ -225,11 +228,11 @@ cp -a lib/modules/* %{buildroot}/lib/modules/ 2>/dev/null || true
 SPECEOF
 
           cd "${{ github.workspace }}/kernel-staging"
-          tar -czf "$TOPDIR/SOURCES/kernel-sheng-${KVER}.tar.gz" .
+          tar -czf "$TOPDIR/SOURCES/kernel-sheng-${KREL}.tar.gz" .
 
           cd "$TOPDIR"
           rpmbuild --define "_topdir $TOPDIR" -ba SPECS/kernel-sheng.spec
-          echo "✓ Kernel RPM packaged (${KVER})"
+          echo "✓ Kernel RPM packaged (${KREL})"
           ls -la RPMS/aarch64/
 
       - name: "Upload Kernel Artifact"

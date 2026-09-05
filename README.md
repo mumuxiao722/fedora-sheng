@@ -64,7 +64,7 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 | **Kernel Source** | Use prebuilt kernel or build from source | `prebuilt` / `custom_build` | `prebuilt` |
 | **Kernel Prebuilt Source** | Where to get the prebuilt kernel (only when prebuilt) | `upstream` / `own` | `upstream` |
 | **Kernel Repo URL** | Git repo for kernel source (only when custom_build) | valid Git URL | `https://github.com/ianchb/sm8550-mainline` |
-| **Kernel Branch** | Branch to checkout / release tag (only when custom_build) | branch name | `sheng-7.2.2` |
+| **Kernel Branch** | Kernel branch name or release tag (custom_build: upstream branch to clone; prebuilt: release tag to download) | branch name / tag | `sheng-7.2.2` |
 | **Kernel Config** | Config file path in repo (only when custom_build) | file path | `sm8550.config` |
 
 ### Firmware
