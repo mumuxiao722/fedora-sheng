@@ -116,11 +116,6 @@ on:
         required: false
         default: 'master'
 
-      debug:
-        description: 'Debug mode (skip RPM packaging, show build artifacts)'
-        type: boolean
-        default: false
-
 jobs:
   # ==========================================================================
   # Build Kernel
@@ -204,18 +199,6 @@ jobs:
               linux/arch/arm64/boot/dts/qcom/sm8550-xiaomi-sheng.dtb \
             > Image.gz-dtb_sheng
           cp Image.gz-dtb_sheng "${{ github.workspace }}/kernel-staging/boot/"
-
-      - name: "Debug: Show Build Artifacts"
-        if: ${{ inputs.debug }}
-        run: |
-          echo "=== kernel-staging contents ==="
-          find "${{ github.workspace }}/kernel-staging" -type f | sort
-          echo ""
-          echo "=== ccache stats ==="
-          ccache -s
-          echo ""
-          echo "=== Image.gz-dtb_sheng ==="
-          ls -la "${{ github.workspace }}/Image.gz-dtb_sheng"
 
       - name: "Package Kernel RPM"
         run: |
