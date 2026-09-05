@@ -187,44 +187,42 @@ jobs:
           FEDORA_VER="${{ inputs.fedora_version }}"
           TOPDIR="${{ github.workspace }}/rpmbuild"
           mkdir -p "$TOPDIR"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-
-          printf '%s\n' \
-            "Name:           kernel-sheng" \
-            "Version:        ${KREL}" \
-            "Release:        1.fc${FEDORA_VER}" \
-            "Summary:        Kernel for Xiaomi Pad 6S Pro (sheng)" \
-            "License:        GPLv2" \
-            "URL:            ${{ inputs.kernel_repo }}" \
-            "Source0:        kernel-sheng-%{version}.tar.gz" \
-            "" \
-            "%undefine __debug_package" \
-            "%undefine _debugsource_packages" \
-            "" \
-            "BuildRequires:  gcc, make" \
-            "" \
-            "%description" \
-            "Prebuilt kernel for Xiaomi Pad 6S Pro." \
-            "" \
-            "%prep" \
-            "%autosetup -n kernel-staging -p0" \
-            "" \
-            "%build" \
-            "echo Prebuilt kernel, nothing to build" \
-            "" \
-            "%install" \
-            "mkdir -p %{buildroot}/boot" \
-            "mkdir -p %{buildroot}/lib/modules" \
-            "cp -a boot/* %{buildroot}/boot/ 2>/dev/null || true" \
-            "cp -a lib/modules/* %{buildroot}/lib/modules/ 2>/dev/null || true" \
-            "" \
-            "%files" \
-            "/boot/Image.gz" \
-            "/boot/sm8550-xiaomi-sheng.dtb" \
-            "/boot/config-*" \
-            "/lib/modules/*" \
-            "" \
-            "%changelog" \
-            > "$TOPDIR/SPECS/kernel-sheng.spec"
+          SPEC="$TOPDIR/SPECS/kernel-sheng.spec"
+          echo "Name:           kernel-sheng" > "$SPEC"
+          echo "Version:        ${KREL}" >> "$SPEC"
+          echo "Release:        1.fc${FEDORA_VER}" >> "$SPEC"
+          echo "Summary:        Kernel for Xiaomi Pad 6S Pro (sheng)" >> "$SPEC"
+          echo "License:        GPLv2" >> "$SPEC"
+          echo "URL:            ${{ inputs.kernel_repo }}" >> "$SPEC"
+          echo "Source0:        kernel-sheng-%{version}.tar.gz" >> "$SPEC"
+          echo "" >> "$SPEC"
+          echo "%undefine __debug_package" >> "$SPEC"
+          echo "%undefine _debugsource_packages" >> "$SPEC"
+          echo "" >> "$SPEC"
+          echo "BuildRequires:  gcc, make" >> "$SPEC"
+          echo "" >> "$SPEC"
+          echo "%description" >> "$SPEC"
+          echo "Prebuilt kernel for Xiaomi Pad 6S Pro." >> "$SPEC"
+          echo "" >> "$SPEC"
+          echo "%prep" >> "$SPEC"
+          echo "%autosetup -n kernel-staging -p0" >> "$SPEC"
+          echo "" >> "$SPEC"
+          echo "%build" >> "$SPEC"
+          echo "echo Prebuilt kernel, nothing to build" >> "$SPEC"
+          echo "" >> "$SPEC"
+          echo "%install" >> "$SPEC"
+          echo "mkdir -p %{buildroot}/boot" >> "$SPEC"
+          echo "mkdir -p %{buildroot}/lib/modules" >> "$SPEC"
+          echo "cp -a boot/* %{buildroot}/boot/ 2>/dev/null || true" >> "$SPEC"
+          echo "cp -a lib/modules/* %{buildroot}/lib/modules/ 2>/dev/null || true" >> "$SPEC"
+          echo "" >> "$SPEC"
+          echo "%files" >> "$SPEC"
+          echo "/boot/Image.gz" >> "$SPEC"
+          echo "/boot/sm8550-xiaomi-sheng.dtb" >> "$SPEC"
+          echo "/boot/config-*" >> "$SPEC"
+          echo "/lib/modules/*" >> "$SPEC"
+          echo "" >> "$SPEC"
+          echo "%changelog" >> "$SPEC"
 
           cd "${{ github.workspace }}/kernel-staging"
           tar -czf "$TOPDIR/SOURCES/kernel-sheng-${KREL}.tar.gz" .
