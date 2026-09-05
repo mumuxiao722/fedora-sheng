@@ -255,8 +255,8 @@ jobs:
             registry.fedoraproject.org/fedora:${FEDORA_VERSION} \
             bash /workspace/.github/build-rpms.sh "${FEDORA_VERSION}"
 
-      - name: "Clean debuginfo/debugsource RPMs"
-        run: find rpmbuild/RPMS -name "*-debuginfo-*" -o -name "*-debugsource-*" | xargs rm -f
+      - name: "Clean debuginfo/devel RPMs"
+        run: find rpmbuild/RPMS -name "*-debuginfo-*" -o -name "*-devel-*" | xargs rm -f
 
       - name: "Upload libssc RPM"
         uses: actions/upload-artifact@v7
@@ -484,7 +484,7 @@ jobs:
 
       - name: "Install Custom RPMs"
         run: |
-          find rpm/ -name "*.rpm" ! -name "*-devel-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
+          find rpm/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
           sudo chroot "$ROOTFS_MOUNT" rpm -Uvh /tmp/*.rpm
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
           echo "✓ Custom RPMs installed"
