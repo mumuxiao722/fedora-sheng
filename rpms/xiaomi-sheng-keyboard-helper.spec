@@ -28,15 +28,7 @@ keyboard input based on the hinge angle for Xiaomi Pad 6S Pro.
 make %{?_smp_mflags}
 
 %install
-mkdir -p %{buildroot}/usr/libexec
-install -m 755 xiaomi-sheng-keyboard-helper %{buildroot}/usr/libexec/
-
-mkdir -p %{buildroot}/usr/lib/systemd/system
-install -m 644 xiaomi-sheng-keyboard-helper-angle.service %{buildroot}/usr/lib/systemd/system/
-install -m 644 xiaomi-sheng-keyboard-helper-micmute.service %{buildroot}/usr/lib/systemd/user/
-
-mkdir -p %{buildroot}/usr/lib/udev/rules.d
-install -m 644 90-xiaomi-sheng-keyboard-helper.rules %{buildroot}/usr/lib/udev/rules.d/
+make install DESTDIR=%{buildroot}
 
 %post
 %systemd_post xiaomi-sheng-keyboard-helper-angle.service
