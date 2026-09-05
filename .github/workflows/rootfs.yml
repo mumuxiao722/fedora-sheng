@@ -186,7 +186,7 @@ jobs:
           SPEC="$TOPDIR/SPECS/kernel-sheng.spec"
           echo "Name:           kernel-sheng" > "$SPEC"
           echo "Version:        ${KREL}" >> "$SPEC"
-          echo "Release:        1.fc${FEDORA_VER}" >> "$SPEC"
+          echo "Release:        1" >> "$SPEC"
           echo "Summary:        Kernel for Xiaomi Pad 6S Pro (sheng)" >> "$SPEC"
           echo "License:        GPLv2" >> "$SPEC"
           echo "URL:            ${{ inputs.kernel_repo }}" >> "$SPEC"
