@@ -199,7 +199,8 @@ rpmbuild --define "_topdir $HOME/rpmbuild" -ba ~/rpmbuild/SPECS/fastrpc.spec
 
 > **注意**  
 > 部分包需要先安装其他自定义包。  
-> 例如 `iio-sensor-proxy` 依赖 `libssc-devel`，请先安装 `libssc-devel` 再构建 `iio-sensor-proxy`。
+> 例如 `iio-sensor-proxy` 和 `xiaomi-sheng-thp` 构建时需要 `libssc-devel`，  
+> `sheng-sensors` 运行时需要 `libssc`。
 
 ---
 
