@@ -15,8 +15,7 @@ dnf install -y \
   polkit-devel libgudev-devel systemd-rpm-macros
 
 # Verify critical deps
-pkg-config --modversion qmi-glib-1
-pkg-config --modversion libprotobuf-c
+rpm -q libqmi-devel libbsd-devel libyaml-devel protobuf-c-devel python3-devel glib2-devel polkit-devel libgudev-devel
 echo "✓ Build dependencies verified"
 
 # Set up rpmbuild directory in workspace
