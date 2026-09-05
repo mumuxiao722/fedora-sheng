@@ -7,7 +7,7 @@ Summary:        Firmware blobs for Xiaomi Pad 6s Pro
 
 License:        Proprietary
 URL:            https://github.com/ianchb/sheng-firmware
-Source0:        %{name}-%{version}.tar.gz
+Source0:        git+https://github.com/ianchb/sheng-firmware.git#branch=master
 
 %define _debug_source_subpackages 0
 
@@ -20,7 +20,7 @@ Firmware blobs and configuration files for Xiaomi Pad 6s Pro (sheng).
 Includes WiFi, Bluetooth, DSP, and other device-specific firmware.
 
 %prep
-%autosetup -n sheng-firmware-%{version}
+%autosetup
 
 %install
 mkdir -p %{buildroot}/usr/lib/firmware

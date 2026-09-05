@@ -1,13 +1,13 @@
 %undefine __debug_package
 %undefine _debugsource_packages
 Name:           xiaomi-charger-mode
-Version:        1.0
+Version:        0.20
 Release:        1%{?dist}
 Summary:        Xiaomi charger mode display for Pad 6S Pro
 
 License:        Proprietary
 URL:            https://github.com/ianchb/xiaomi-charger-mode
-Source0:        %{name}-%{version}.tar.gz
+Source0:        git+https://github.com/ianchb/xiaomi-charger-mode.git#tag=%{version}
 
 %define _debug_source_subpackages 0
 
@@ -20,7 +20,7 @@ Shows a simple charging screen and prevents a full system boot when a charger
 is connected while the device is powered off for Xiaomi Pad 6S Pro.
 
 %prep
-%autosetup -n xiaomi-charger-mode-%{version}
+%autosetup
 
 %install
 mkdir -p %{buildroot}/usr/libexec

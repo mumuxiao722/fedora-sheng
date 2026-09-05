@@ -3,13 +3,13 @@
 %define _debug_package %{nil}
 %define _build_id_links none
 Name:           xiaomi-sheng-keyboard-helper
-Version:        1.0
+Version:        0.2.0
 Release:        1%{?dist}
 Summary:        Keyboard helper for Xiaomi Pad 6S Pro
 
 License:        Proprietary
 URL:            https://github.com/ianchb/xiaomi-sheng-keyboard-helper
-Source0:        %{name}-%{version}.tar.gz
+Source0:        git+https://github.com/ianchb/xiaomi-sheng-keyboard-helper.git#tag=v%{version}
 
 %define _debug_source_subpackages 0
 
@@ -24,7 +24,7 @@ Supports the microphone indicator on the official keyboard and disables
 keyboard input based on the hinge angle for Xiaomi Pad 6S Pro.
 
 %prep
-%autosetup -n xiaomi-sheng-keyboard-helper-%{version}
+%autosetup
 
 %build
 make %{?_smp_mflags}

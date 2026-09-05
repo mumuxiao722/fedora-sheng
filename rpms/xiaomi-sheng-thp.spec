@@ -3,13 +3,13 @@
 %define _debug_package %{nil}
 %define _build_id_links none
 Name:           xiaomi-sheng-thp
-Version:        0.4.0
+Version:        0.3.9
 Release:        1%{?dist}
 Summary:        Touch processing for Xiaomi Pad 6S Pro
 
 License:        Proprietary
 URL:            https://github.com/ianchb/xiaomi-sheng-thp
-Source0:        %{name}-%{version}.tar.gz
+Source0:        git+https://github.com/ianchb/xiaomi-sheng-thp.git#tag=v%{version}
 
 %define _debug_source_subpackages 0
 
@@ -24,7 +24,7 @@ Processes touch data for finger input and stylus support on Xiaomi Pad 6S Pro.
 Supports NT36532E touch controller with multitouch and stylus input.
 
 %prep
-%autosetup -n xiaomi-sheng-thp-%{version}
+%autosetup
 
 %build
 make %{?_smp_mflags}

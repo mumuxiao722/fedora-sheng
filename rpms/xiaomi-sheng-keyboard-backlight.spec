@@ -7,7 +7,7 @@ Summary:        Keyboard backlight control for Xiaomi Pad 6S Pro
 
 License:        Proprietary
 URL:            https://github.com/slhssb/xiaomi-sheng-keyboard-backlight
-Source0:        %{name}-%{version}.tar.gz
+Source0:        git+https://github.com/slhssb/xiaomi-sheng-keyboard-backlight.git#branch=main
 
 %define _debug_source_subpackages 0
 
@@ -20,7 +20,7 @@ Controls keyboard backlight for Xiaomi Pad 6S Pro official keyboard.
 Supports manual/automatic brightness control and saves state across reconnections.
 
 %prep
-%autosetup -n xiaomi-sheng-keyboard-backlight-%{version}
+%autosetup
 
 %install
 mkdir -p %{buildroot}/usr/local/sbin

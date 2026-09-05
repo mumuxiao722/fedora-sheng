@@ -7,7 +7,7 @@ Summary:        FPC1553 fingerprint sensor support for Xiaomi Pad 6S Pro
 
 License:        LGPL-2.1-or-later
 URL:            https://github.com/ianchb/xiaomi-sheng-fingerprint
-Source0:        %{name}-%{version}.tar.gz
+Source0:        git+https://github.com/ianchb/xiaomi-sheng-fingerprint.git#tag=v%{version}
 
 %define _debug_source_subpackages 0
 
@@ -28,7 +28,7 @@ FPC1553 fingerprint sensor support for Xiaomi Pad 6S Pro using Qualcomm
 TEE (TrustZone). Provides libfprint backend and fprintd integration.
 
 %prep
-%autosetup -n xiaomi-sheng-fingerprint-%{version} -p1
+%autosetup -p1
 
 %build
 make %{?_smp_mflags}

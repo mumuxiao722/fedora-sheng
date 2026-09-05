@@ -4,12 +4,12 @@
 %define _build_id_links none
 Name:           iio-sensor-proxy
 Version:        3.9
-Release:        6%{?dist}
+Release:        1%{?dist}
 Summary:        IIO sensors to D-Bus proxy (SSC patched)
 
 License:        GPLv2+
 URL:            https://gitlab.freedesktop.org/hadess/iio-sensor-proxy
-Source0:        %{name}-%{version}.tar.gz
+Source0:        git+https://gitlab.freedesktop.org/hadess/iio-sensor-proxy.git#tag=%{version}
 
 %define _debug_source_subpackages 0
 
@@ -29,7 +29,7 @@ for IIO sensors including accelerometer, gyroscope, light, and proximity sensors
 Patched version for Xiaomi Pad 6S Pro.
 
 %prep
-%autosetup -n %{name}-%{version}
+%autosetup
 
 %build
 meson setup build --prefix=/usr --libdir=/usr/lib64 --buildtype=plain \
@@ -57,6 +57,5 @@ DESTDIR=%{buildroot} meson install -C build
 /usr/lib/udev/rules.d/80-iio-sensor-proxy.rules
 
 %changelog
-
-* Sat Sep 05 2026 opencode <opencode@localhost> - 0.0.0-1
+* Sat Sep 05 2026 opencode <opencode@localhost> - 3.9-1
 - Initial package
