@@ -163,9 +163,7 @@ fastboot flash linux rootfs.img
 fastboot reboot
 ```
 
-重启后，设备应从 slot B 启动并进入 Fedora。  
-
----
+重启后，设备应从 slot B 启动并进入 Fedora。
 
 ---
 
