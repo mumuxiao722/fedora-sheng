@@ -90,18 +90,20 @@ jobs:
             registry.fedoraproject.org/fedora:${FEDORA_VERSION} \
             bash /workspace/.github/build-rpms.sh "${FEDORA_VERSION}"
 
-      - name: "Zip & Upload RPM Artifacts"
+      - name: "Zip RPM Artifacts"
         run: |
+          mkdir -p rpm-zips
           for rpm in rpmbuild/RPMS/aarch64/*.rpm; do
-            zip -j "${rpm}.zip" "$rpm"
+            name=$(basename "$rpm" .rpm)
+            zip -j "rpm-zips/${name}.zip" "$rpm"
           done
           echo "✓ RPMs zipped"
+          ls rpm-zips/
 
       - name: "Upload RPM Artifacts"
         uses: actions/upload-artifact@v7
         with:
-          name: custom-rpms
-          path: rpmbuild/RPMS/aarch64/*.zip
+          path: rpm-zips/*.zip
           retention-days: 3
           if-no-files-found: error
 
@@ -130,8 +132,8 @@ jobs:
       - name: "Download RPM Artifacts"
         uses: actions/download-artifact@v8
         with:
-          name: custom-rpms
           path: rpms/
+          merge-multiple: true
 
       - name: "Parse Partition Label"
         id: partition
@@ -200,6 +202,7 @@ jobs:
 
       - name: "Install Custom RPMs"
         run: |
+          cd rpms && for z in *.zip; do unzip -o "$z"; done && cd ..
           sudo cp rpms/*.rpm "$ROOTFS_MOUNT/tmp/"
           sudo chroot "$ROOTFS_MOUNT" rpm -Uvh /tmp/*.rpm
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
