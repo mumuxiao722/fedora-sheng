@@ -24,7 +24,7 @@ on:
       hostname:
         description: 'Hostname'
         type: string
-        default: 'xiaomi-sheng'
+        default: 'fedora-sheng'
 
       language:
         description: 'System language'
