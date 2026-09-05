@@ -561,6 +561,7 @@ jobs:
         run: |
           sudo chroot "$ROOTFS_MOUNT" systemctl enable NetworkManager
           sudo chroot "$ROOTFS_MOUNT" systemctl enable sshd
+          sudo chroot "$ROOTFS_MOUNT" systemctl enable systemd-timesyncd
           sudo chroot "$ROOTFS_MOUNT" systemctl enable qrtr-ns || {
             sudo mkdir -p "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service.d"
             echo "[Unit]" | sudo tee "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
