@@ -620,9 +620,6 @@ jobs:
 
       - name: "Clean DNF Cache"
         run: |
-          echo "=== [DEBUG] resolv.conf before delete ==="
-          ls -l "$ROOTFS_MOUNT/etc/resolv.conf" 2>&1 || echo "  (not found)"
-          cat "$ROOTFS_MOUNT/etc/resolv.conf" 2>&1 || echo "  (empty or missing)"
           sudo chroot "$ROOTFS_MOUNT" dnf clean all
           sudo rm -rf "$ROOTFS_MOUNT/var/cache/dnf"
           sudo rm -f "$ROOTFS_MOUNT/etc/resolv.conf"
