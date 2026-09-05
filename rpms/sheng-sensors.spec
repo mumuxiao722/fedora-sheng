@@ -7,7 +7,7 @@ Summary:        Sensor configuration files for Xiaomi Pad 6S Pro
 
 License:        Proprietary
 URL:            https://github.com/alghiffaryfa19/sheng-sensors-file
-Source0:        git+https://github.com/alghiffaryfa19/sheng-sensors-file.git#branch=master
+Source0:        %{name}-%{version}.tar.gz
 
 %define _debug_source_subpackages 0
 

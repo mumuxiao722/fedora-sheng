@@ -9,7 +9,7 @@ Summary:        Qualcomm FastRPC userspace library
 
 License:        BSD-3-Clause
 URL:            https://github.com/qualcomm/fastrpc
-Source0:        git+https://github.com/qualcomm/fastrpc.git#tag=v%{version}
+Source0:        %{name}-%{version}.tar.gz
 
 %define _debug_source_subpackages 0
 Source1:        adsprpcd-sensorspd.service
@@ -31,7 +31,7 @@ FastRPC implementation for Qualcomm DSP communication. Provides userspace
 libraries and daemons for ADSP, CDSP, and SDSP communication.
 
 %prep
-%autosetup
+%autosetup -n fastrpc-%{version}
 
 %build
 autoreconf -is

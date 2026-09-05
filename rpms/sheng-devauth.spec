@@ -9,7 +9,7 @@ Summary:        Xiaomi keyboard authentication daemon for Pad 6S Pro
 
 License:        Proprietary
 URL:            https://github.com/alghiffaryfa19/Linux-xiaomi-sheng
-Source0:        git+https://github.com/ianchb/sheng_devauth.git#branch=master
+Source0:        %{name}-%{version}.tar.gz
 Source1:        sheng-devauth.service
 Source2:        sheng-devauth.service.d-qtee.conf
 
@@ -24,7 +24,7 @@ Service used in pair with kernel driver to authenticate Xiaomi Keyboard
 via Qualcomm TEE (TrustZone) for Xiaomi Pad 6S Pro.
 
 %prep
-%autosetup
+%autosetup -n sheng_devauth-%{version}
 
 %build
 make %{?_smp_mflags}

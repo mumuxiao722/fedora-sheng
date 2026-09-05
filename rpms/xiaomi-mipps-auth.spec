@@ -1,13 +1,13 @@
 %undefine __debug_package
 %undefine _debugsource_packages
 Name:           xiaomi-mipps-auth
-Version:        0.21
+Version:        1.0
 Release:        1%{?dist}
 Summary:        Xiaomi MIPPS authentication for 120W fast charging
 
 License:        Proprietary
 URL:            https://github.com/ianchb/xiaomi-mipps-auth
-Source0:        git+https://github.com/ianchb/xiaomi-mipps-auth.git#tag=%{version}
+Source0:        %{name}-%{version}.tar.gz
 
 %define _debug_source_subpackages 0
 
@@ -21,7 +21,7 @@ Automatically negotiates MIPPS when a charger is connected, enabling fast
 charging up to 120W and providing charging notifications for Xiaomi Pad 6S Pro.
 
 %prep
-%autosetup
+%autosetup -n xiaomi-mipps-auth-%{version}
 
 %install
 mkdir -p %{buildroot}/usr/libexec

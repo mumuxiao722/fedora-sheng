@@ -1,13 +1,13 @@
 %undefine __debug_package
 %undefine _debugsource_packages
 Name:           xiaomi-pen-status
-Version:        0.2.3
+Version:        1.0
 Release:        1%{?dist}
 Summary:        Stylus status display for Xiaomi Pad 6S Pro
 
 License:        Proprietary
 URL:            https://github.com/ianchb/xiaomi-pen-status
-Source0:        git+https://github.com/ianchb/xiaomi-pen-status.git#tag=v%{version}
+Source0:        %{name}-%{version}.tar.gz
 
 %define _debug_source_subpackages 0
 
@@ -27,7 +27,7 @@ Shows stylus connection and battery status, and automatically attempts
 the initial Bluetooth connection for Xiaomi Pad 6S Pro.
 
 %prep
-%autosetup
+%autosetup -n xiaomi-pen-status-%{version}
 
 %build
 qmake6
