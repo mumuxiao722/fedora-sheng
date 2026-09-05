@@ -3,7 +3,7 @@
 %define _debug_package %{nil}
 %define _build_id_links none
 Name:           xiaomi-sheng-thp
-Version:        0.4.0
+Version:        0.3.9
 Release:        1%{?dist}
 Summary:        Touch processing for Xiaomi Pad 6S Pro
 

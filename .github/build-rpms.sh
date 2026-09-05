@@ -56,23 +56,23 @@ mv sheng-devauth-src sheng_devauth-1.0
 tar -czf /workspace/rpmbuild/SOURCES/sheng-devauth-1.0.tar.gz sheng_devauth-1.0/
 mv sheng_devauth-1.0 sheng-devauth-src
 
-mv xiaomi-mipps-auth xiaomi-mipps-auth-1.0
-tar -czf /workspace/rpmbuild/SOURCES/xiaomi-mipps-auth-1.0.tar.gz xiaomi-mipps-auth-1.0/
+mv xiaomi-mipps-auth xiaomi-mipps-auth-0.21
+tar -czf /workspace/rpmbuild/SOURCES/xiaomi-mipps-auth-0.21.tar.gz xiaomi-mipps-auth-0.21/
 
-mv xiaomi-charger-mode xiaomi-charger-mode-1.0
-tar -czf /workspace/rpmbuild/SOURCES/xiaomi-charger-mode-1.0.tar.gz xiaomi-charger-mode-1.0/
+mv xiaomi-charger-mode xiaomi-charger-mode-0.20
+tar -czf /workspace/rpmbuild/SOURCES/xiaomi-charger-mode-0.20.tar.gz xiaomi-charger-mode-0.20/
 
-mv xiaomi-sheng-thp xiaomi-sheng-thp-0.4.0
-tar -czf /workspace/rpmbuild/SOURCES/xiaomi-sheng-thp-0.4.0.tar.gz xiaomi-sheng-thp-0.4.0/
+mv xiaomi-sheng-thp xiaomi-sheng-thp-0.3.9
+tar -czf /workspace/rpmbuild/SOURCES/xiaomi-sheng-thp-0.3.9.tar.gz xiaomi-sheng-thp-0.3.9/
 
-mv xiaomi-pen-status xiaomi-pen-status-1.0
-tar -czf /workspace/rpmbuild/SOURCES/xiaomi-pen-status-1.0.tar.gz xiaomi-pen-status-1.0/
+mv xiaomi-pen-status xiaomi-pen-status-0.2.3
+tar -czf /workspace/rpmbuild/SOURCES/xiaomi-pen-status-0.2.3.tar.gz xiaomi-pen-status-0.2.3/
 
 mv xiaomi-sheng-keyboard-backlight xiaomi-sheng-keyboard-backlight-1.0
 tar -czf /workspace/rpmbuild/SOURCES/xiaomi-sheng-keyboard-backlight-1.0.tar.gz xiaomi-sheng-keyboard-backlight-1.0/
 
-mv xiaomi-sheng-keyboard-helper xiaomi-sheng-keyboard-helper-1.0
-tar -czf /workspace/rpmbuild/SOURCES/xiaomi-sheng-keyboard-helper-1.0.tar.gz xiaomi-sheng-keyboard-helper-1.0/
+mv xiaomi-sheng-keyboard-helper xiaomi-sheng-keyboard-helper-0.2.0
+tar -czf /workspace/rpmbuild/SOURCES/xiaomi-sheng-keyboard-helper-0.2.0.tar.gz xiaomi-sheng-keyboard-helper-0.2.0/
 
 mv xiaomi-sheng-fingerprint xiaomi-sheng-fingerprint-0.1.4
 tar -czf /workspace/rpmbuild/SOURCES/xiaomi-sheng-fingerprint-0.1.4.tar.gz xiaomi-sheng-fingerprint-0.1.4/

@@ -3,7 +3,7 @@
 %define _debug_package %{nil}
 %define _build_id_links none
 Name:           xiaomi-sheng-keyboard-helper
-Version:        1.0
+Version:        0.2.0
 Release:        1%{?dist}
 Summary:        Keyboard helper for Xiaomi Pad 6S Pro
 

@@ -1,7 +1,7 @@
 %undefine __debug_package
 %undefine _debugsource_packages
 Name:           xiaomi-mipps-auth
-Version:        1.0
+Version:        0.21
 Release:        1%{?dist}
 Summary:        Xiaomi MIPPS authentication for 120W fast charging
 

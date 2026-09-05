@@ -1,7 +1,7 @@
 %undefine __debug_package
 %undefine _debugsource_packages
 Name:           xiaomi-charger-mode
-Version:        1.0
+Version:        0.20
 Release:        1%{?dist}
 Summary:        Xiaomi charger mode display for Pad 6S Pro
 

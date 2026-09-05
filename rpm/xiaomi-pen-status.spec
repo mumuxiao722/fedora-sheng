@@ -1,7 +1,7 @@
 %undefine __debug_package
 %undefine _debugsource_packages
 Name:           xiaomi-pen-status
-Version:        1.0
+Version:        0.2.3
 Release:        1%{?dist}
 Summary:        Stylus status display for Xiaomi Pad 6S Pro
 
