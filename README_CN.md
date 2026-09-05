@@ -176,9 +176,12 @@ fastboot reboot
 ```bash
 # Fedora 44/45
 sudo dnf install -y rpm-build git
+```
 
-# 构建依赖 libssc 的包时需要安装
-sudo dnf install -y libssc-devel
+你还需要 GitHub Actions 构建产出的 `libssc-devel` 包，因为 `iio-sensor-proxy` 和 `xiaomi-sheng-thp` 构建时依赖它。从 **Actions** 产物中下载并安装：
+
+```bash
+sudo rpm -Uvh libssc-devel-*.rpm libssc-*.rpm
 ```
 
 ### 构建步骤
@@ -198,9 +201,8 @@ rpmbuild --define "_topdir $HOME/rpmbuild" -ba ~/rpmbuild/SPECS/fastrpc.spec
 ```
 
 > **注意**  
-> 部分包需要先安装其他自定义包。  
-> 例如 `iio-sensor-proxy` 和 `xiaomi-sheng-thp` 构建时需要 `libssc-devel`，  
-> `sheng-sensors` 运行时需要 `libssc`。
+> 内核 RPM **无法**在本地构建 — 需要 GitHub Actions 环境（Ubuntu runner + Fedora 容器）。  
+> 请使用 workflow 构建内核，或使用预编译内核选项。
 
 ---
 

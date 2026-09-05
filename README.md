@@ -176,9 +176,12 @@ You can build the RPM packages locally without GitHub Actions.
 ```bash
 # Fedora 44/45
 sudo dnf install -y rpm-build git
+```
 
-# For building packages that depend on libssc
-sudo dnf install -y libssc-devel
+You also need the `libssc-devel` package built by the GitHub Actions workflow, since `iio-sensor-proxy` and `xiaomi-sheng-thp` depend on it at build time. Download it from the **Actions** artifacts and install:
+
+```bash
+sudo rpm -Uvh libssc-devel-*.rpm libssc-*.rpm
 ```
 
 ### Build Steps
@@ -198,9 +201,8 @@ rpmbuild --define "_topdir $HOME/rpmbuild" -ba ~/rpmbuild/SPECS/fastrpc.spec
 ```
 
 > **Note**  
-> Some packages require other custom packages to be installed first.  
-> For example, `iio-sensor-proxy` and `xiaomi-sheng-thp` require `libssc-devel` at build time,  
-> and `sheng-sensors` requires `libssc` at runtime.
+> The kernel RPM **cannot** be built locally — it requires the GitHub Actions environment (Ubuntu runner + Fedora container).  
+> Use the workflow to build the kernel, or use the prebuilt kernel option.
 
 ---
 
