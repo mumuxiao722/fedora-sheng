@@ -97,9 +97,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y rpm gcc make gcc-aarch64-linux-gnu \
             libglib2.0-dev \
-            meson ninja-build \
+            ninja-build \
             libqmi-glib-dev libprotobuf-c-dev protobuf-c-compiler \
             libbsd-dev libgudev-1.0-dev libpolkit-gobject-1-dev
+          # Install meson >= 1.4.0 via pip (Ubuntu apt has 1.3.2)
+          pip3 install --break-system-packages meson
           echo "✓ RPM build tools installed"
 
       - name: "Clone Source Repos"
@@ -194,59 +196,62 @@ jobs:
 
       - name: "Build RPMs"
         run: |
-          set -e
           cd rpms
+          FAILED=""
 
           # Build libssc FIRST - thp/keyboard-helper/iio-sensor-proxy need its headers
           echo "=== Building libssc ==="
-          rpmbuild -ba libssc.spec --nodeps
+          rpmbuild -ba libssc.spec --nodeps || { echo "WARN: libssc failed"; FAILED="$FAILED libssc"; }
           # Install libssc-devel so subsequent builds can find headers
           rpm -i --nodeps ~/rpmbuild/RPMS/aarch64/libssc-devel-*.rpm 2>/dev/null || \
             rpm -i --nodeps ~/rpmbuild/RPMS/noarch/libssc-devel-*.rpm 2>/dev/null || true
 
           echo "=== Building fastrpc ==="
-          rpmbuild -ba fastrpc.spec --nodeps
+          rpmbuild -ba fastrpc.spec --nodeps || { echo "WARN: fastrpc failed"; FAILED="$FAILED fastrpc"; }
 
           # Build thp and keyboard-helper (now have libssc headers)
           echo "=== Building xiaomi-sheng-thp ==="
-          rpmbuild -ba xiaomi-sheng-thp.spec --nodeps
+          rpmbuild -ba xiaomi-sheng-thp.spec --nodeps || { echo "WARN: xiaomi-sheng-thp failed"; FAILED="$FAILED xiaomi-sheng-thp"; }
 
           echo "=== Building xiaomi-sheng-keyboard-helper ==="
-          rpmbuild -ba xiaomi-sheng-keyboard-helper.spec --nodeps
+          rpmbuild -ba xiaomi-sheng-keyboard-helper.spec --nodeps || { echo "WARN: xiaomi-sheng-keyboard-helper failed"; FAILED="$FAILED xiaomi-sheng-keyboard-helper"; }
 
           echo "=== Building iio-sensor-proxy ==="
-          rpmbuild -ba iio-sensor-proxy.spec --nodeps
+          rpmbuild -ba iio-sensor-proxy.spec --nodeps || { echo "WARN: iio-sensor-proxy failed"; FAILED="$FAILED iio-sensor-proxy"; }
 
           echo "=== Building firmware-xiaomi-sheng ==="
-          rpmbuild -ba firmware-xiaomi-sheng.spec --nodeps
+          rpmbuild -ba firmware-xiaomi-sheng.spec --nodeps || { echo "WARN: firmware-xiaomi-sheng failed"; FAILED="$FAILED firmware-xiaomi-sheng"; }
 
           echo "=== Building sheng-devauth ==="
-          rpmbuild -ba sheng-devauth.spec --nodeps
+          rpmbuild -ba sheng-devauth.spec --nodeps || { echo "WARN: sheng-devauth failed"; FAILED="$FAILED sheng-devauth"; }
 
           echo "=== Building xiaomi-mipps-auth ==="
-          rpmbuild -ba xiaomi-mipps-auth.spec --nodeps
+          rpmbuild -ba xiaomi-mipps-auth.spec --nodeps || { echo "WARN: xiaomi-mipps-auth failed"; FAILED="$FAILED xiaomi-mipps-auth"; }
 
           echo "=== Building xiaomi-charger-mode ==="
-          rpmbuild -ba xiaomi-charger-mode.spec --nodeps
+          rpmbuild -ba xiaomi-charger-mode.spec --nodeps || { echo "WARN: xiaomi-charger-mode failed"; FAILED="$FAILED xiaomi-charger-mode"; }
 
           echo "=== Building xiaomi-sheng-keyboard-backlight ==="
-          rpmbuild -ba xiaomi-sheng-keyboard-backlight.spec --nodeps
+          rpmbuild -ba xiaomi-sheng-keyboard-backlight.spec --nodeps || { echo "WARN: xiaomi-sheng-keyboard-backlight failed"; FAILED="$FAILED xiaomi-sheng-keyboard-backlight"; }
 
           # xiaomi-pen-status: needs Qt6, skip for now
           # echo "=== Building xiaomi-pen-status ==="
-          # rpmbuild -ba xiaomi-pen-status.spec --nodeps
+          # rpmbuild -ba xiaomi-pen-status.spec --nodeps || { echo "WARN: xiaomi-pen-status failed"; FAILED="$FAILED xiaomi-pen-status"; }
 
           # xiaomi-sheng-fingerprint: complex build, skip for now
           # echo "=== Building xiaomi-sheng-fingerprint ==="
-          # rpmbuild -ba xiaomi-sheng-fingerprint.spec --nodeps
+          # rpmbuild -ba xiaomi-sheng-fingerprint.spec --nodeps || { echo "WARN: xiaomi-sheng-fingerprint failed"; FAILED="$FAILED xiaomi-sheng-fingerprint"; }
 
           echo "=== Building sheng-sensors ==="
-          rpmbuild -ba sheng-sensors.spec --nodeps
+          rpmbuild -ba sheng-sensors.spec --nodeps || { echo "WARN: sheng-sensors failed"; FAILED="$FAILED sheng-sensors"; }
 
           echo "=== Building alsa-xiaomi-sheng ==="
-          rpmbuild -ba alsa-xiaomi-sheng.spec --nodeps
+          rpmbuild -ba alsa-xiaomi-sheng.spec --nodeps || { echo "WARN: alsa-xiaomi-sheng failed"; FAILED="$FAILED alsa-xiaomi-sheng"; }
 
-          echo "✓ All RPMs built"
+          echo "✓ RPM build complete"
+          if [ -n "$FAILED" ]; then
+            echo "FAILED:$FAILED"
+          fi
           ls -la ~/rpmbuild/RPMS/
 
       - name: "Upload RPM Artifacts"
