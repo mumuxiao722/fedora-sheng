@@ -48,8 +48,8 @@ DESTDIR=%{buildroot} meson install -C build
 %doc README.md
 /usr/bin/monitor-sensor
 /usr/libexec/iio-sensor-proxy
-/usr/share/dbus-1/system-services/org.freedesktop.IOSensorProxy.service
-/usr/share/polkit-1/actions/org.freedesktop.IOSensorProxy.policy
+/usr/share/dbus-1/system.d/net.hadess.SensorProxy.conf
+/usr/share/polkit-1/actions/net.hadess.SensorProxy.policy
 /usr/lib/systemd/system/iio-sensor-proxy.service
 /usr/lib/udev/rules.d/80-iio-sensor-proxy.rules
 
