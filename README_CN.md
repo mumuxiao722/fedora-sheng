@@ -171,59 +171,21 @@ fastboot reboot
 
 你可以在本地构建 RPM 包，无需 GitHub Actions。
 
-### 依赖
-
-```bash
-# Fedora 44/45
-sudo dnf install -y rpm-build git
-```
-
-你还需要 GitHub Actions 构建产出的 `libssc-devel` 包，因为 `iio-sensor-proxy` 和 `xiaomi-sheng-thp` 构建时依赖它。从 **Actions** 产物中下载并安装：
-
-```bash
-sudo rpm -Uvh libssc-devel-*.rpm libssc-*.rpm
-```
-
-或者先自行构建 `libssc`，再用构建出的包安装后构建依赖包。
-
-### 构建步骤
-
 ```bash
 git clone https://github.com/mumuxiao722/fedora-sheng.git
 cd fedora-sheng
 
-# 设置 rpmbuild 目录
 mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-
-# 复制 spec 文件和补丁
 cp rpms/*.spec ~/rpmbuild/SPECS/
 cp patches/* ~/rpmbuild/SOURCES/
 
-# 构建指定包（如 fastrpc）
+# 自动安装构建依赖并构建（如 fastrpc）
+sudo dnf builddep ~/rpmbuild/SPECS/fastrpc.spec
 rpmbuild --define "_topdir $HOME/rpmbuild" -ba ~/rpmbuild/SPECS/fastrpc.spec
 ```
 
-### 各包构建依赖
-
-| 包名 | Fedora 构建依赖 |
-|------|----------------|
-| **libssc** | meson, ninja-build, gcc, glib2-devel, libqmi-devel, protobuf-c-devel, protobuf-c-compiler, python3-devel |
-| **fastrpc** | gcc, gcc-c++, autoconf, automake, libtool, pkg-config, libyaml-devel, libbsd-devel |
-| **iio-sensor-proxy** | meson, ninja-build, gcc, glib2-devel, libgudev-devel, systemd-devel, polkit-devel, **libssc-devel** |
-| **xiaomi-sheng-thp** | gcc-c++, make, glib2-devel, **libssc-devel** |
-| **xiaomi-sheng-keyboard-helper** | gcc, make, glib2-devel |
-| **sheng-devauth** | gcc, make |
-| **kernel-sheng** | clang, llvm, lld, make, flex, bison, openssl-devel, elfutils-devel, bc, zstd, dtc, perl-interpreter, glibc-static |
-| firmware-xiaomi-sheng | *(无)* |
-| sheng-sensors | *(无)* |
-| xiaomi-mipps-auth | *(无)* |
-| xiaomi-charger-mode | *(无)* |
-| xiaomi-sheng-keyboard-backlight | *(无)* |
-| alsa-xiaomi-sheng | *(无)* |
-
 > **注意**  
-> 内核 RPM **无法**在本地构建 — 需要 GitHub Actions 环境（Ubuntu runner + Fedora 容器）。  
-> 请使用 workflow 构建内核，或使用预编译内核选项。
+> 本地构建可能缺少 `dnf builddep` 无法解决的依赖。
 
 ---
 

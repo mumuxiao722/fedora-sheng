@@ -171,59 +171,21 @@ After rebooting, the device should start from slot B and boot into Fedora.
 
 You can build the RPM packages locally without GitHub Actions.
 
-### Prerequisites
-
-```bash
-# Fedora 44/45
-sudo dnf install -y rpm-build git
-```
-
-You also need the `libssc-devel` package built by the GitHub Actions workflow, since `iio-sensor-proxy` and `xiaomi-sheng-thp` depend on it at build time. Download it from the **Actions** artifacts and install:
-
-```bash
-sudo rpm -Uvh libssc-devel-*.rpm libssc-*.rpm
-```
-
-Or build `libssc` yourself first and install the local build output before building dependent packages.
-
-### Build Steps
-
 ```bash
 git clone https://github.com/mumuxiao722/fedora-sheng.git
 cd fedora-sheng
 
-# Set up rpmbuild directory
 mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-
-# Copy spec files and patches
 cp rpms/*.spec ~/rpmbuild/SPECS/
 cp patches/* ~/rpmbuild/SOURCES/
 
-# Build a specific package (e.g., fastrpc)
+# Auto-install build dependencies and build (e.g., fastrpc)
+sudo dnf builddep ~/rpmbuild/SPECS/fastrpc.spec
 rpmbuild --define "_topdir $HOME/rpmbuild" -ba ~/rpmbuild/SPECS/fastrpc.spec
 ```
 
-### Build Dependencies by Package
-
-| Package | Fedora BuildRequires |
-|---------|---------------------|
-| **libssc** | meson, ninja-build, gcc, glib2-devel, libqmi-devel, protobuf-c-devel, protobuf-c-compiler, python3-devel |
-| **fastrpc** | gcc, gcc-c++, autoconf, automake, libtool, pkg-config, libyaml-devel, libbsd-devel |
-| **iio-sensor-proxy** | meson, ninja-build, gcc, glib2-devel, libgudev-devel, systemd-devel, polkit-devel, **libssc-devel** |
-| **xiaomi-sheng-thp** | gcc-c++, make, glib2-devel, **libssc-devel** |
-| **xiaomi-sheng-keyboard-helper** | gcc, make, glib2-devel |
-| **sheng-devauth** | gcc, make |
-| **kernel-sheng** | clang, llvm, lld, make, flex, bison, openssl-devel, elfutils-devel, bc, zstd, dtc, perl-interpreter, glibc-static |
-| firmware-xiaomi-sheng | *(none)* |
-| sheng-sensors | *(none)* |
-| xiaomi-mipps-auth | *(none)* |
-| xiaomi-charger-mode | *(none)* |
-| xiaomi-sheng-keyboard-backlight | *(none)* |
-| alsa-xiaomi-sheng | *(none)* |
-
 > **Note**  
-> The kernel RPM **cannot** be built locally — it requires the GitHub Actions environment (Ubuntu runner + Fedora container).  
-> Use the workflow to build the kernel, or use the prebuilt kernel option.
+> Local builds may have missing dependencies that `dnf builddep` cannot resolve.
 
 ---
 
