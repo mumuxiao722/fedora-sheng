@@ -7,7 +7,7 @@ License:        Proprietary
 URL:            https://github.com/ianchb/xiaomi-pen-status
 Source0:        %{name}-%{version}.tar.gz
 
-%define _debug_package 0
+%define _debug_source_subpackages 0
 
 BuildRequires:  gcc-c++
 BuildRequires:  make
@@ -40,3 +40,6 @@ install -m 755 xiaomi-pen-status %{buildroot}/usr/bin/
 /usr/bin/xiaomi-pen-status
 
 %changelog
+
+* Sat Sep 05 2026 opencode <opencode@localhost> - 0.0.0-1
+- Initial package

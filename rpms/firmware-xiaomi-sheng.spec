@@ -7,7 +7,7 @@ License:        Proprietary
 URL:            https://github.com/ianchb/sheng-firmware
 Source0:        %{name}-%{version}.tar.gz
 
-%define _debug_package 0
+%define _debug_source_subpackages 0
 
 BuildArch:      noarch
 Conflicts:      linux-firmware
@@ -28,3 +28,6 @@ cp -r * %{buildroot}/usr/lib/firmware/
 /usr/lib/firmware/*
 
 %changelog
+
+* Sat Sep 05 2026 opencode <opencode@localhost> - 0.0.0-1
+- Initial package

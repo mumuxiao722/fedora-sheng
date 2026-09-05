@@ -7,7 +7,7 @@ License:        GPLv2+
 URL:            https://gitlab.freedesktop.org/hadess/iio-sensor-proxy
 Source0:        %{name}-%{version}.tar.gz
 
-%define _debug_package 0
+%define _debug_source_subpackages 0
 
 BuildRequires:  meson >= 0.54.0
 BuildRequires:  ninja-build
@@ -52,3 +52,6 @@ DESTDIR=%{buildroot} meson install -C build
 /usr/lib/udev/rules.d/80-iio-sensor-proxy.rules
 
 %changelog
+
+* Sat Sep 05 2026 opencode <opencode@localhost> - 0.0.0-1
+- Initial package

@@ -7,7 +7,7 @@ License:        BSD-3-Clause
 URL:            https://github.com/qualcomm/fastrpc
 Source0:        %{name}-%{version}.tar.gz
 
-%define _debug_package 0
+%define _debug_source_subpackages 0
 Source1:        adsprpcd-sensorspd.service
 
 BuildRequires:  gcc
@@ -105,3 +105,6 @@ install -Dpm 644 %{SOURCE1} %{buildroot}/usr/lib/systemd/system/adsprpcd-sensors
 /usr/lib/sysusers.d/fastrpc.conf
 
 %changelog
+
+* Sat Sep 05 2026 opencode <opencode@localhost> - 0.0.0-1
+- Initial package

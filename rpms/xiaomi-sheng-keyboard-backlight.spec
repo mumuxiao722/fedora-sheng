@@ -7,7 +7,7 @@ License:        Proprietary
 URL:            https://github.com/slhssb/xiaomi-sheng-keyboard-backlight
 Source0:        %{name}-%{version}.tar.gz
 
-%define _debug_package 0
+%define _debug_source_subpackages 0
 
 BuildArch:      noarch
 Requires:       python3
@@ -48,3 +48,6 @@ install -m 644 90-kbd-backlight.rules %{buildroot}/usr/lib/udev/rules.d/
 /usr/lib/udev/rules.d/90-kbd-backlight.rules
 
 %changelog
+
+* Sat Sep 05 2026 opencode <opencode@localhost> - 0.0.0-1
+- Initial package

@@ -7,7 +7,7 @@ License:        LGPL-2.1-or-later
 URL:            https://github.com/ianchb/debian-sheng
 Source0:        %{name}-%{version}.tar.gz
 
-%define _debug_package 0
+%define _debug_source_subpackages 0
 
 BuildArch:      noarch
 Requires:       alsa-ucm-conf
@@ -33,3 +33,6 @@ install -m 644 usr/share/alsa/ucm2/Xiaomi/sheng/HiFi.conf %{buildroot}/usr/share
 /usr/share/alsa/ucm2/Xiaomi/sheng/HiFi.conf
 
 %changelog
+
+* Sat Sep 05 2026 opencode <opencode@localhost> - 0.0.0-1
+- Initial package

@@ -7,7 +7,7 @@ License:        Proprietary
 URL:            https://github.com/ianchb/xiaomi-sheng-keyboard-helper
 Source0:        %{name}-%{version}.tar.gz
 
-%define _debug_package 0
+%define _debug_source_subpackages 0
 
 BuildRequires:  gcc
 BuildRequires:  make
@@ -52,3 +52,6 @@ udevadm control --reload-rules
 /usr/lib/udev/rules.d/90-xiaomi-sheng-keyboard-helper.rules
 
 %changelog
+
+* Sat Sep 05 2026 opencode <opencode@localhost> - 0.0.0-1
+- Initial package

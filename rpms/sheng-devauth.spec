@@ -7,7 +7,7 @@ License:        Proprietary
 URL:            https://github.com/alghiffaryfa19/Linux-xiaomi-sheng
 Source0:        %{name}-%{version}.tar.gz
 
-%define _debug_package 0
+%define _debug_source_subpackages 0
 
 Requires:       systemd
 
@@ -32,3 +32,6 @@ install -m 644 usr/lib/systemd/system/sheng-devauth.service %{buildroot}/usr/lib
 /usr/lib/systemd/system/sheng-devauth.service
 
 %changelog
+
+* Sat Sep 05 2026 opencode <opencode@localhost> - 0.0.0-1
+- Initial package

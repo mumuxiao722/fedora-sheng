@@ -7,7 +7,7 @@ License:        Proprietary
 URL:            https://github.com/ianchb/xiaomi-charger-mode
 Source0:        %{name}-%{version}.tar.gz
 
-%define _debug_package 0
+%define _debug_source_subpackages 0
 
 BuildArch:      noarch
 Requires:       python3
@@ -38,3 +38,6 @@ install -m 644 xiaomi-charger-mode.service %{buildroot}/usr/lib/systemd/system/
 /usr/lib/systemd/system/xiaomi-charger-mode.service
 
 %changelog
+
+* Sat Sep 05 2026 opencode <opencode@localhost> - 0.0.0-1
+- Initial package

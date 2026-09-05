@@ -7,7 +7,7 @@ License:        Proprietary
 URL:            https://github.com/alghiffaryfa19/sheng-sensors-file
 Source0:        %{name}-%{version}.tar.gz
 
-%define _debug_package 0
+%define _debug_source_subpackages 0
 
 BuildArch:      noarch
 Requires:       iio-sensor-proxy
@@ -53,3 +53,6 @@ systemctl daemon-reload
 /usr/share/qcom/sm8550/Xiaomi/sheng/
 
 %changelog
+
+* Sat Sep 05 2026 opencode <opencode@localhost> - 0.0.0-1
+- Initial package

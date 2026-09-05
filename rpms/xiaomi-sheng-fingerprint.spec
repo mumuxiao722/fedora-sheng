@@ -7,7 +7,7 @@ License:        LGPL-2.1-or-later
 URL:            https://github.com/ianchb/xiaomi-sheng-fingerprint
 Source0:        %{name}-%{version}.tar.gz
 
-%define _debug_package 0
+%define _debug_source_subpackages 0
 
 BuildRequires:  gcc
 BuildRequires:  make
@@ -50,3 +50,6 @@ patchelf --set-rpath '$ORIGIN' %{buildroot}/usr/lib/xiaomi-sheng-fingerprint/lib
 /usr/lib/xiaomi-sheng-fingerprint/libfpc1553-qtee.so
 
 %changelog
+
+* Sat Sep 05 2026 opencode <opencode@localhost> - 0.0.0-1
+- Initial package

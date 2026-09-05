@@ -7,7 +7,7 @@ License:        Proprietary
 URL:            https://github.com/ianchb/xiaomi-sheng-thp
 Source0:        %{name}-%{version}.tar.gz
 
-%define _debug_package 0
+%define _debug_source_subpackages 0
 
 BuildRequires:  gcc-c++
 BuildRequires:  make
@@ -41,3 +41,6 @@ make install DESTDIR=%{buildroot}
 /usr/lib/systemd/system/xiaomi-sheng-thp.service
 
 %changelog
+
+* Sat Sep 05 2026 opencode <opencode@localhost> - 0.0.0-1
+- Initial package

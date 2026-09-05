@@ -7,7 +7,7 @@ License:        LGPL-2.1-or-later
 URL:            https://codeberg.org/DylanVanAssche/libssc
 Source0:        %{name}-%{version}.tar.gz
 
-%define _debug_package 0
+%define _debug_source_subpackages 0
 Patch0:         wait_for_qmi_service.patch
 
 BuildRequires:  meson >= 1.4.0
@@ -80,3 +80,6 @@ Header files and pkg-config for developing applications that use libssc.
 /usr/lib64/pkgconfig/libssc.pc
 
 %changelog
+
+* Sat Sep 05 2026 opencode <opencode@localhost> - 0.0.0-1
+- Initial package
