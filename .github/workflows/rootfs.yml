@@ -195,7 +195,7 @@ jobs:
           echo "%undefine __debug_package" >> "$SPEC"
           echo "%undefine _debugsource_packages" >> "$SPEC"
           echo "" >> "$SPEC"
-          echo "BuildRequires:  gcc, make" >> "$SPEC"
+          echo "" >> "$SPEC"
           echo "" >> "$SPEC"
           echo "%description" >> "$SPEC"
           echo "Prebuilt kernel for Xiaomi Pad 6S Pro." >> "$SPEC"
