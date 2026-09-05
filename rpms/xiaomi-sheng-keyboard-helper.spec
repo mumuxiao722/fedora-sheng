@@ -38,7 +38,7 @@ install -m 644 90-xiaomi-sheng-keyboard-helper.rules %{buildroot}/usr/lib/udev/r
 %post
 %systemd_post xiaomi-sheng-keyboard-helper-angle.service
 %systemd_user_post xiaomi-sheng-keyboard-helper-micmute.service
-udevadm control --reload-rules 2>/dev/null || true
+udevadm control --reload-rules
 
 %preun
 %systemd_preun xiaomi-sheng-keyboard-helper-angle.service

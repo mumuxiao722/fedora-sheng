@@ -16,6 +16,9 @@ BuildRequires:  pkgconfig(gio-2.0)
 BuildRequires:  pkgconfig(qmi-glib-1) >= 1.33.4
 BuildRequires:  pkgconfig(libprotobuf-c)
 BuildRequires:  protobuf-c-compiler
+BuildRequires:  protobuf-compiler
+BuildRequires:  python3-devel
+Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description
 libssc userspace library for Qualcomm SSC (Sensor Signal Conditioner).
@@ -31,6 +34,11 @@ meson compile -C build
 
 %install
 DESTDIR=%{buildroot} meson install -C build
+# Remove test binary
+rm -f %{buildroot}/usr/libexec/installed-tests/libssc/ssc-server
+rm -rf %{buildroot}/usr/libexec/installed-tests
+# Remove Python mock server (not needed on device)
+rm -rf %{buildroot}/usr/lib/python3
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -39,7 +47,8 @@ DESTDIR=%{buildroot} meson install -C build
 %license LICENSE
 %doc README.md
 /usr/bin/ssccli
-/usr/lib64/libssc.so.2*
+/usr/lib64/libssc.so.2
+/usr/lib64/libssc.so
 
 %package devel
 Summary:        Development files for libssc
@@ -49,7 +58,23 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 Header files and pkg-config for developing applications that use libssc.
 
 %files devel
-/usr/include/libssc/
+/usr/include/libssc/libssc.h
+/usr/include/libssc/libssc-sensor.h
+/usr/include/libssc/libssc-sensor-accelerometer.h
+/usr/include/libssc/libssc-sensor-compass.h
+/usr/include/libssc/libssc-sensor-gyroscope.h
+/usr/include/libssc/libssc-sensor-light.h
+/usr/include/libssc/libssc-sensor-magnetometer.h
+/usr/include/libssc/libssc-sensor-proximity.h
+/usr/include/libssc/libssc-version-private.h
+/usr/include/libssc/ssc-common.pb-c.h
+/usr/include/libssc/ssc-sensor-accelerometer.pb-c.h
+/usr/include/libssc/ssc-sensor-gyroscope.pb-c.h
+/usr/include/libssc/ssc-sensor-light.pb-c.h
+/usr/include/libssc/ssc-sensor-magnetometer.pb-c.h
+/usr/include/libssc/ssc-sensor-proximity.pb-c.h
+/usr/include/libssc/ssc-sensor-rotationvector.pb-c.h
+/usr/include/libssc/ssc-sensor-suid.pb-c.h
 /usr/lib64/pkgconfig/libssc.pc
 
 %changelog

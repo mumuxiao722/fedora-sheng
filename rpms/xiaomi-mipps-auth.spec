@@ -31,7 +31,7 @@ install -m 644 90-xiaomi-mipps-auth.rules %{buildroot}/usr/lib/udev/rules.d/
 
 %post
 %systemd_post xiaomi-mipps-auth.service
-udevadm control --reload-rules 2>/dev/null || true
+udevadm control --reload-rules
 
 %preun
 %systemd_preun xiaomi-mipps-auth.service

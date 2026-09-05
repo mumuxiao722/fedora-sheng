@@ -41,8 +41,8 @@ install -m 644 usr/share/qcom/conf.d/sheng.yaml %{buildroot}/usr/share/qcom/conf
 cp -r usr/share/qcom/sm8550 %{buildroot}/usr/share/qcom/
 
 %post
-udevadm control --reload-rules 2>/dev/null || true
-systemctl daemon-reload 2>/dev/null || true
+udevadm control --reload-rules
+systemctl daemon-reload
 
 %files
 /usr/lib/systemd/system/iio-sensor-proxy.service.d/10-sheng-sensors.conf

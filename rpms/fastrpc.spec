@@ -15,6 +15,7 @@ BuildRequires:  automake
 BuildRequires:  libtool
 BuildRequires:  pkg-config
 BuildRequires:  libyaml-devel
+BuildRequires:  libbsd-devel
 BuildRequires:  systemd-rpm-macros
 Requires:       libyaml
 Requires:       systemd
@@ -33,29 +34,38 @@ autoreconf -is
     --libdir=/usr/lib64 \
     --with-systemdsystemunitdir=/usr/lib/systemd/system \
     --with-udevrulesdir=/usr/lib/udev/rules.d \
-    --with-sysusersdir=/usr/lib/sysusers.d \
-    --disable-test
+    --with-sysusersdir=/usr/lib/sysusers.d
 make %{?_smp_mflags}
 
 %install
 %make_install
-# Remove test files, headers, man pages (not needed for production)
-rm -rf %{buildroot}/usr/bin/dsp_check %{buildroot}/usr/bin/fastrpc_test 2>/dev/null || true
-rm -rf %{buildroot}/usr/include 2>/dev/null || true
-rm -rf %{buildroot}/usr/lib64/fastrpc_test 2>/dev/null || true
-rm -rf %{buildroot}/usr/share/fastrpc_test 2>/dev/null || true
-rm -rf %{buildroot}/usr/share/man 2>/dev/null || true
-# Remove unversioned symlinks (keep versioned .so.1.0.0 only)
-rm -f %{buildroot}/usr/lib64/libadsprpc.so 2>/dev/null || true
-rm -f %{buildroot}/usr/lib64/libcdsprpc.so 2>/dev/null || true
-rm -f %{buildroot}/usr/lib64/libsdsprpc.so 2>/dev/null || true
-rm -f %{buildroot}/usr/lib64/libadsp_default_listener.so 2>/dev/null || true
-rm -f %{buildroot}/usr/lib64/libcdsp_default_listener.so 2>/dev/null || true
-rm -f %{buildroot}/usr/lib64/libsdsp_default_listener.so 2>/dev/null || true
-# Remove libtool archives and skel/stub libraries
-rm -f %{buildroot}/usr/lib64/*.la 2>/dev/null || true
-rm -rf %{buildroot}/usr/lib64/lib*skel* 2>/dev/null || true
-rm -rf %{buildroot}/usr/lib64/lib*stub* 2>/dev/null || true
+# Remove test binaries
+rm -f %{buildroot}/usr/bin/dsp_check
+rm -f %{buildroot}/usr/bin/fastrpc_test
+# Remove headers
+rm -rf %{buildroot}/usr/include
+# Remove test libraries directory
+rm -rf %{buildroot}/usr/lib64/fastrpc_test
+# Remove test data
+rm -rf %{buildroot}/usr/share/fastrpc_test
+# Remove man pages
+rm -rf %{buildroot}/usr/share/man
+# Remove libtool archives
+rm -f %{buildroot}/usr/lib64/libadsp_default_listener.la
+rm -f %{buildroot}/usr/lib64/libadsprpc.la
+rm -f %{buildroot}/usr/lib64/libcdsp_default_listener.la
+rm -f %{buildroot}/usr/lib64/libcdsprpc.la
+rm -f %{buildroot}/usr/lib64/libsdsp_default_listener.la
+rm -f %{buildroot}/usr/lib64/libsdsprpc.la
+# Remove upstream services (we use our own adsprpcd-sensorspd.service)
+rm -f %{buildroot}/usr/lib/systemd/system/adsprpcd.service
+rm -f %{buildroot}/usr/lib/systemd/system/adsprpcd_audiopd.service
+rm -f %{buildroot}/usr/lib/systemd/system/cdsp1rpcd.service
+rm -f %{buildroot}/usr/lib/systemd/system/cdsprpcd.service
+rm -f %{buildroot}/usr/lib/systemd/system/gdsp0rpcd.service
+rm -f %{buildroot}/usr/lib/systemd/system/gdsp1rpcd.service
+rm -f %{buildroot}/usr/lib/systemd/system/sdsprpcd.service
+# Install our custom service
 install -Dpm 644 %{SOURCE1} %{buildroot}/usr/lib/systemd/system/adsprpcd-sensorspd.service
 
 %post
@@ -70,14 +80,26 @@ install -Dpm 644 %{SOURCE1} %{buildroot}/usr/lib/systemd/system/adsprpcd-sensors
 /usr/sbin/cdsprpcd
 /usr/sbin/sdsprpcd
 /usr/sbin/gdsprpcd
-/usr/lib64/libadsprpc.so*
-/usr/lib64/libcdsprpc.so*
-/usr/lib64/libsdsprpc.so*
-/usr/lib64/libadsp_default_listener.so*
-/usr/lib64/libcdsp_default_listener.so*
-/usr/lib64/libsdsp_default_listener.so*
-/usr/lib/systemd/system/*.service
-/usr/lib/udev/rules.d/*.rules
-/usr/lib/sysusers.d/*.conf
+/usr/lib64/libadsprpc.so.1.0.0
+/usr/lib64/libadsprpc.so.1
+/usr/lib64/libadsprpc.so
+/usr/lib64/libcdsprpc.so.1.0.0
+/usr/lib64/libcdsprpc.so.1
+/usr/lib64/libcdsprpc.so
+/usr/lib64/libsdsprpc.so.1.0.0
+/usr/lib64/libsdsprpc.so.1
+/usr/lib64/libsdsprpc.so
+/usr/lib64/libadsp_default_listener.so.1.0.0
+/usr/lib64/libadsp_default_listener.so.1
+/usr/lib64/libadsp_default_listener.so
+/usr/lib64/libcdsp_default_listener.so.1.0.0
+/usr/lib64/libcdsp_default_listener.so.1
+/usr/lib64/libcdsp_default_listener.so
+/usr/lib64/libsdsp_default_listener.so.1.0.0
+/usr/lib64/libsdsp_default_listener.so.1
+/usr/lib64/libsdsp_default_listener.so
+/usr/lib/systemd/system/adsprpcd-sensorspd.service
+/usr/lib/udev/rules.d/60-fastrpc.rules
+/usr/lib/sysusers.d/fastrpc.conf
 
 %changelog

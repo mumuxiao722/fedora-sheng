@@ -7,9 +7,9 @@ on:
         description: 'Fedora Version'
         type: choice
         options:
+          - 44
           - 45
-          - rawhide
-        default: '45'
+        default: '44'
 
       autologin:
         description: 'Autologin'
@@ -197,27 +197,25 @@ jobs:
       - name: "Build RPMs"
         run: |
           cd rpms
-          FAILED=""
 
           # Build libssc FIRST - thp/keyboard-helper/iio-sensor-proxy need its headers
           echo "=== Building libssc ==="
-          rpmbuild -ba libssc.spec --nodeps || { echo "WARN: libssc failed"; FAILED="$FAILED libssc"; }
+          rpmbuild -ba libssc.spec --nodeps
           # Install libssc-devel so subsequent builds can find headers
-          rpm -i --nodeps ~/rpmbuild/RPMS/aarch64/libssc-devel-*.rpm 2>/dev/null || \
-            rpm -i --nodeps ~/rpmbuild/RPMS/noarch/libssc-devel-*.rpm 2>/dev/null || true
+          rpm -i --nodeps ~/rpmbuild/RPMS/aarch64/libssc-devel-*.rpm
 
           echo "=== Building fastrpc ==="
-          rpmbuild -ba fastrpc.spec --nodeps || { echo "WARN: fastrpc failed"; FAILED="$FAILED fastrpc"; }
+          rpmbuild -ba fastrpc.spec --nodeps
 
           # Build thp and keyboard-helper (now have libssc headers)
           echo "=== Building xiaomi-sheng-thp ==="
-          rpmbuild -ba xiaomi-sheng-thp.spec --nodeps || { echo "WARN: xiaomi-sheng-thp failed"; FAILED="$FAILED xiaomi-sheng-thp"; }
+          rpmbuild -ba xiaomi-sheng-thp.spec --nodeps
 
           echo "=== Building xiaomi-sheng-keyboard-helper ==="
-          rpmbuild -ba xiaomi-sheng-keyboard-helper.spec --nodeps || { echo "WARN: xiaomi-sheng-keyboard-helper failed"; FAILED="$FAILED xiaomi-sheng-keyboard-helper"; }
+          rpmbuild -ba xiaomi-sheng-keyboard-helper.spec --nodeps
 
           echo "=== Building iio-sensor-proxy ==="
-          rpmbuild -ba iio-sensor-proxy.spec --nodeps || { echo "WARN: iio-sensor-proxy failed"; FAILED="$FAILED iio-sensor-proxy"; }
+          rpmbuild -ba iio-sensor-proxy.spec --nodeps
 
           echo "=== Building firmware-xiaomi-sheng ==="
           rpmbuild -ba firmware-xiaomi-sheng.spec --nodeps
@@ -250,10 +248,6 @@ jobs:
 
           echo "✓ RPM build complete"
           ls -la ~/rpmbuild/RPMS/
-          if [ -n "$FAILED" ]; then
-            echo "FAILED:$FAILED"
-            exit 1
-          fi
 
       - name: "Upload RPM Artifacts"
         uses: actions/upload-artifact@v7
@@ -326,9 +320,6 @@ jobs:
 
       - name: "Install Fedora via DNF"
         run: |
-          # Register binfmt for cross-architecture support
-          sudo update-binfmts --enable qemu-aarch64 2>/dev/null || true
-
           sudo dnf \
             --installroot="$ROOTFS_MOUNT" \
             --releasever="${{ inputs.fedora_version }}" \
@@ -339,15 +330,13 @@ jobs:
             install -y \
             @core \
             systemd systemd-sysv \
-            sudo vim wget curl \
+            sudo curl \
             NetworkManager openssh-server \
             wpa_supplicant dbus \
             ca-certificates \
-            chrony \
             iw \
             lm-sensors \
             wireless-regdb \
-            net-tools \
             glib2 \
             libqmi \
             libmbim \
@@ -365,17 +354,17 @@ jobs:
 
       - name: "Install Custom RPMs"
         run: |
-          sudo cp rpms/*.rpm "$ROOTFS_MOUNT/tmp/" 2>/dev/null || true
-          sudo chroot "$ROOTFS_MOUNT" rpm -Uvh /tmp/*.rpm 2>/dev/null || true
-          sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm 2>/dev/null || true
+          sudo cp rpms/*.rpm "$ROOTFS_MOUNT/tmp/"
+          sudo chroot "$ROOTFS_MOUNT" rpm -Uvh /tmp/*.rpm
+          sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
           echo "✓ Custom RPMs installed"
 
       - name: "Versionlock Custom Packages"
         run: |
           # Prevent Fedora updates from overwriting our custom libssc/iio-sensor-proxy
-          sudo chroot "$ROOTFS_MOUNT" dnf install -y python3-dnf-plugin-versionlock 2>/dev/null || true
-          sudo chroot "$ROOTFS_MOUNT" dnf versionlock add libssc 2>/dev/null || true
-          sudo chroot "$ROOTFS_MOUNT" dnf versionlock add iio-sensor-proxy 2>/dev/null || true
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y python3-dnf-plugin-versionlock
+          sudo chroot "$ROOTFS_MOUNT" dnf versionlock add libssc
+          sudo chroot "$ROOTFS_MOUNT" dnf versionlock add iio-sensor-proxy
           echo "✓ Versionlock applied"
 
       - name: "Install Extra Packages"
@@ -402,7 +391,7 @@ jobs:
             echo "✓ System locale stays C.UTF-8"
           else
             sudo chroot "$ROOTFS_MOUNT" dnf install -y glibc-langpack-en
-            sudo chroot "$ROOTFS_MOUNT" localectl set-locale LANG="$LANG_CHOICE" 2>/dev/null || true
+            sudo chroot "$ROOTFS_MOUNT" localectl set-locale LANG="$LANG_CHOICE"
             echo "LANG=$LANG_CHOICE" | sudo tee "$ROOTFS_MOUNT/etc/locale.conf"
             echo "✓ Locale set to $LANG_CHOICE"
           fi
@@ -435,7 +424,7 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" systemctl enable NetworkManager
           sudo chroot "$ROOTFS_MOUNT" systemctl enable sshd
           # QRTR服务 - Qualcomm IPC Router，传感器通信必需
-          sudo chroot "$ROOTFS_MOUNT" systemctl enable qrtr-ns 2>/dev/null || {
+          sudo chroot "$ROOTFS_MOUNT" systemctl enable qrtr-ns || {
             sudo mkdir -p "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service.d"
             echo "[Unit]" | sudo tee "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
             echo "Description=Qualcomm IPC Router Service (QRTR)" | sudo tee -a "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
@@ -447,7 +436,7 @@ jobs:
             echo "" | sudo tee -a "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
             echo "[Install]" | sudo tee -a "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
             echo "WantedBy=multi-user.target" | sudo tee -a "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
-            sudo chroot "$ROOTFS_MOUNT" systemctl enable qrtr-ns 2>/dev/null || true
+            sudo chroot "$ROOTFS_MOUNT" systemctl enable qrtr-ns
           }
           echo "✓ Services enabled"
 
@@ -481,16 +470,16 @@ jobs:
       - name: "Unmount Virtual File Systems"
         if: always()
         run: |
-          sudo umount "$ROOTFS_MOUNT/dev/pts" 2>/dev/null || true
-          sudo umount "$ROOTFS_MOUNT/dev" 2>/dev/null || true
-          sudo umount "$ROOTFS_MOUNT/proc" 2>/dev/null || true
-          sudo umount "$ROOTFS_MOUNT/sys" 2>/dev/null || true
+          sudo umount "$ROOTFS_MOUNT/dev/pts"
+          sudo umount "$ROOTFS_MOUNT/dev"
+          sudo umount "$ROOTFS_MOUNT/proc"
+          sudo umount "$ROOTFS_MOUNT/sys"
           echo "✓ Virtual file systems unmounted"
 
       - name: "Unmount Image & Set UUID"
         run: |
-          sudo umount "$ROOTFS_MOUNT" 2>/dev/null || true
-          tune2fs -U random rootfs.img || true
+          sudo umount "$ROOTFS_MOUNT"
+          tune2fs -U random rootfs.img
           echo "✓ Image unmounted, UUID set"
 
       - name: "Generate boot.img"

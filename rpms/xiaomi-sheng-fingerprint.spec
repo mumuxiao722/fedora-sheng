@@ -33,28 +33,18 @@ make %{?_smp_mflags}
 mkdir -p %{buildroot}/usr/lib/xiaomi-sheng-fingerprint
 install -m 755 build/libfpc1553-qtee.so %{buildroot}/usr/lib/xiaomi-sheng-fingerprint/
 
-# Install systemd service files
-mkdir -p %{buildroot}/usr/lib/systemd/system
-install -m 644 systemd/fprintd.service.d/*.conf %{buildroot}/usr/lib/systemd/system/ 2>/dev/null || true
-
-# Install udev rules
-mkdir -p %{buildroot}/usr/lib/udev/rules.d
-install -m 644 udev/*.rules %{buildroot}/usr/lib/udev/rules.d/ 2>/dev/null || true
-
 # Fix rpath
-patchelf --set-rpath '$ORIGIN' %{buildroot}/usr/lib/xiaomi-sheng-fingerprint/libfpc1553-qtee.so 2>/dev/null || true
+patchelf --set-rpath '$ORIGIN' %{buildroot}/usr/lib/xiaomi-sheng-fingerprint/libfpc1553-qtee.so
 
 %post
-%systemd_post fprintd.service 2>/dev/null || true
+%systemd_post fprintd.service
 
 %preun
-%systemd_preun fprintd.service 2>/dev/null || true
+%systemd_preun fprintd.service
 
 %files
 %license LICENSE
 %doc README.md
 /usr/lib/xiaomi-sheng-fingerprint/libfpc1553-qtee.so
-/usr/lib/udev/rules.d/*.rules
-/usr/lib/systemd/system/*.conf
 
 %changelog
