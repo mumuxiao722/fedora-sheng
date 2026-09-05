@@ -102,11 +102,20 @@ jobs:
             registry.fedoraproject.org/fedora:${FEDORA_VERSION} \
             bash /workspace/.github/build-rpms.sh "${FEDORA_VERSION}"
 
+      - name: "Zip & Upload RPM Artifacts"
+        run: |
+          for rpm in rpmbuild/RPMS/aarch64/*.rpm; do
+            name=$(basename "$rpm" .rpm)
+            zip -j "${rpm}.zip" "$rpm"
+          done
+          echo "✓ RPMs zipped"
+          ls -la rpmbuild/RPMS/aarch64/*.zip
+
       - name: "Upload RPM Artifacts"
         uses: actions/upload-artifact@v7
         with:
           name: custom-rpms
-          path: rpmbuild/RPMS/**/*.rpm
+          path: rpmbuild/RPMS/aarch64/*.zip
           retention-days: 3
           if-no-files-found: error
 
@@ -347,20 +356,24 @@ jobs:
             -o boot.img
           echo "✓ boot.img generated (cmdline: $CMDLINE)"
 
+      - name: "Zip & Upload RootFS Image"
+        run: zip rootfs.img.zip rootfs.img
+
       - name: "Upload RootFS Image"
         uses: actions/upload-artifact@v7
         with:
           name: rootfs-fedora-${{ inputs.fedora_version }}-${{ steps.partition.outputs.label }}
-          path: rootfs.img
+          path: rootfs.img.zip
           retention-days: 14
           if-no-files-found: error
-          compression-level: 1
+
+      - name: "Zip & Upload Boot Image"
+        run: zip boot.img.zip boot.img
 
       - name: "Upload Boot Image"
         uses: actions/upload-artifact@v7
         with:
           name: boot-fedora-${{ inputs.fedora_version }}-${{ steps.partition.outputs.label }}
-          path: boot.img
+          path: boot.img.zip
           retention-days: 14
           if-no-files-found: warn
-          compression-level: 1
