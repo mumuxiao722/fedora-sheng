@@ -11,6 +11,35 @@ on:
           - 45
         default: '44'
 
+      desktop:
+        description: 'Desktop Environment (server = no DE)'
+        type: choice
+        options:
+          - 'GNOME'
+          - 'KDE Plasma'
+          - 'server'
+        default: 'GNOME'
+
+      plasma_mobile:
+        description: 'Enable Plasma Mobile instead of Plasma Desktop (only when desktop=KDE Plasma)'
+        type: boolean
+        default: false
+
+      gnome_mobile:
+        description: 'Enable GNOME Mobile instead of GNOME (only when desktop=GNOME)'
+        type: boolean
+        default: false
+
+      enable_copr:
+        description: 'Enable COPR repository (required for GNOME Mobile)'
+        type: boolean
+        default: false
+
+      quiet_boot:
+        description: 'Enable Plymouth splash and quiet boot'
+        type: boolean
+        default: true
+
       autologin:
         description: 'Autologin'
         type: boolean
@@ -115,35 +144,6 @@ on:
         type: string
         required: false
         default: 'master'
-
-      desktop:
-        description: 'Desktop Environment (server = no DE)'
-        type: choice
-        options:
-          - 'GNOME'
-          - 'KDE Plasma'
-          - 'server'
-        default: 'GNOME'
-
-      plasma_mobile:
-        description: 'Enable Plasma Mobile instead of Plasma Desktop (only when desktop=KDE Plasma)'
-        type: boolean
-        default: false
-
-      gnome_mobile:
-        description: 'Enable GNOME Mobile instead of GNOME (only when desktop=GNOME)'
-        type: boolean
-        default: false
-
-      enable_copr:
-        description: 'Enable COPR repository (required for GNOME Mobile)'
-        type: boolean
-        default: false
-
-      quiet_boot:
-        description: 'Enable Plymouth splash and quiet boot'
-        type: boolean
-        default: true
 
 jobs:
   # ==========================================================================
