@@ -579,6 +579,25 @@ jobs:
           }
           echo "✓ Services enabled"
 
+      - name: "[DEBUG] Verify Sheng Service Links"
+        run: |
+          echo "=== Sheng package service symlinks ==="
+          for svc in \
+            sheng-devauth.service \
+            sheng-sensors.service \
+            xiaomi-sheng-thp.service \
+            xiaomi-sheng-keyboard-helper.service \
+            xiaomi-charger-mode.service \
+            xiaomi-mipps-auth.service \
+            adsprpcd-sensorspd.service; do
+            echo "--- $svc ---"
+            ls -l "$ROOTFS_MOUNT/etc/systemd/system/$svc" 2>&1 || echo "  (not found)"
+            ls -l "$ROOTFS_MOUNT/usr/lib/systemd/system/$svc" 2>&1 || echo "  (not in /usr/lib either)"
+          done
+          echo "=== All enabled services ==="
+          sudo chroot "$ROOTFS_MOUNT" systemctl list-unit-files --type=service --state=enabled | grep -i -E "sheng|xiaomi|adsprpcd|fastrpc|charger|mipps" || echo "  (none found)"
+          echo "✓ [DEBUG] Service links verified"
+
       - name: "Configure sudo"
         run: |
           echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "$ROOTFS_MOUNT/etc/sudoers.d/wheel"
@@ -601,11 +620,14 @@ jobs:
 
       - name: "Clean DNF Cache"
         run: |
+          echo "=== [DEBUG] resolv.conf before delete ==="
+          ls -l "$ROOTFS_MOUNT/etc/resolv.conf" 2>&1 || echo "  (not found)"
+          cat "$ROOTFS_MOUNT/etc/resolv.conf" 2>&1 || echo "  (empty or missing)"
           sudo chroot "$ROOTFS_MOUNT" dnf clean all
           sudo rm -rf "$ROOTFS_MOUNT/var/cache/dnf"
           sudo rm -f "$ROOTFS_MOUNT/etc/resolv.conf"
-          sudo ln -s ../run/systemd/resolve/stub-resolv.conf "$ROOTFS_MOUNT/etc/resolv.conf"
-          echo "✓ DNF cache cleaned, resolv.conf → systemd-resolved"
+          sudo ln -s ../run/NetworkManager/resolv.conf "$ROOTFS_MOUNT/etc/resolv.conf"
+          echo "✓ DNF cache cleaned"
 
       - name: "Generate boot.img"
         run: |
