@@ -116,6 +116,11 @@ on:
         required: false
         default: 'master'
 
+      debug:
+        description: 'Debug mode (skip RPM packaging, show build artifacts)'
+        type: boolean
+        default: false
+
 jobs:
   # ==========================================================================
   # Build Kernel
@@ -135,8 +140,11 @@ jobs:
           sudo apt-get install -y \
             build-essential flex bison libssl-dev libelf-dev bc \
             cpio kmod libncurses-dev rpm \
-            clang llvm lld
-          echo "✓ Build tools installed"
+            clang llvm lld ccache
+          sudo systemctl stop ccache.service || true
+          ccache --max-size=2G
+          ccache --set-config=compiler_check=content
+          echo "✓ Build tools installed (ccache enabled)"
 
       - name: "Clone Kernel Source"
         run: |
@@ -151,6 +159,10 @@ jobs:
         run: |
           cd linux
           cp "${{ github.workspace }}/${{ inputs.kernel_config }}" .config
+
+          export CC="ccache clang"
+          export CXX="ccache clang++"
+
           make -j$(nproc) ARCH=arm64 LLVM=1
 
           KVER="$(make kernelrelease -s)"
@@ -160,6 +172,9 @@ jobs:
           make -j$(nproc) ARCH=arm64 LLVM=1 \
             INSTALL_MOD_PATH="${{ github.workspace }}/kernel-staging" \
             modules_install
+
+          ccache -s
+          echo "✓ Kernel build complete"
 
           mkdir -p "${{ github.workspace }}/kernel-staging/boot"
           install -Dm644 arch/arm64/boot/Image.gz \
@@ -176,7 +191,23 @@ jobs:
           cp Image.gz-dtb_sheng "${{ github.workspace }}/kernel-staging/boot/"
           echo "✓ Kernel build complete"
 
+      - name: "Debug: Show Build Artifacts"
+        if: ${{ inputs.debug }}
+        run: |
+          echo "=== kernel-staging contents ==="
+          find "${{ github.workspace }}/kernel-staging" -type f | sort
+          echo ""
+          echo "=== ccache stats ==="
+          ccache -s
+          echo ""
+          echo "=== Image.gz-dtb_sheng ==="
+          ls -la "${{ github.workspace }}/Image.gz-dtb_sheng"
+          echo ""
+          echo "DEBUG MODE: Skipping RPM packaging and upload"
+          echo "To continue, re-run with debug=false"
+
       - name: "Package Kernel RPM"
+        if: ${{ !inputs.debug }}
         run: |
           KREL="${{ inputs.kernel_branch }}"
           KREL="${KREL#*-}"
@@ -200,6 +231,7 @@ jobs:
           ls -la RPMS/aarch64/
 
       - name: "Upload Kernel Artifact"
+        if: ${{ !inputs.debug }}
         uses: actions/upload-artifact@v7
         with:
           name: kernel-sheng
