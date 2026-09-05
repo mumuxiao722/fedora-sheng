@@ -202,7 +202,9 @@ jobs:
           echo "=== Building libssc ==="
           rpmbuild -ba libssc.spec --nodeps
           # Install libssc-devel so subsequent builds can find headers
-          rpm -i --nodeps ~/rpmbuild/RPMS/aarch64/libssc-devel-*.rpm
+          sudo rpm -i --nodeps ~/rpmbuild/RPMS/aarch64/libssc-devel-*.rpm
+          sudo rpm -i --nodeps ~/rpmbuild/RPMS/aarch64/libssc-0.4.4-*.rpm
+          sudo ldconfig
 
           echo "=== Building fastrpc ==="
           rpmbuild -ba fastrpc.spec --nodeps
