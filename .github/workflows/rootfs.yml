@@ -357,23 +357,23 @@ jobs:
           echo "✓ boot.img generated (cmdline: $CMDLINE)"
 
       - name: "Zip & Upload RootFS Image"
-        run: zip rootfs.img.zip rootfs.img
+        run: zip "rootfs-${{ inputs.fedora_version }}-${{ steps.partition.outputs.label }}.zip" rootfs.img
 
       - name: "Upload RootFS Image"
         uses: actions/upload-artifact@v7
         with:
-          name: rootfs-fedora-${{ inputs.fedora_version }}-${{ steps.partition.outputs.label }}
-          path: rootfs.img.zip
+          name: rootfs-${{ inputs.fedora_version }}-${{ steps.partition.outputs.label }}
+          path: rootfs-*.zip
           retention-days: 14
           if-no-files-found: error
 
       - name: "Zip & Upload Boot Image"
-        run: zip boot.img.zip boot.img
+        run: zip "boot-${{ inputs.fedora_version }}-${{ steps.partition.outputs.label }}.zip" boot.img
 
       - name: "Upload Boot Image"
         uses: actions/upload-artifact@v7
         with:
-          name: boot-fedora-${{ inputs.fedora_version }}-${{ steps.partition.outputs.label }}
-          path: boot.img.zip
+          name: boot-${{ inputs.fedora_version }}-${{ steps.partition.outputs.label }}
+          path: boot-*.zip
           retention-days: 14
           if-no-files-found: warn
