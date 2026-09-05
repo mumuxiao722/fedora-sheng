@@ -94,9 +94,9 @@
 ### 方式二：使用自己的预构建内核 RPM
 
 1. 运行 `custom_build` 工作流编译内核
-2. 从 Actions 运行结果中下载 `kernel-sheng-*.rpm` artifact
+2. 从 Actions 运行结果中下载 `kernel-sheng.zip` artifact
 3. 创建一个 release，tag 名称自定（如 `my-kernel-v1`）
-4. 上传 `kernel-sheng-*.rpm` 到该 release
+4. 上传 `kernel-sheng.zip` 到该 release（文件**必须**命名为 `kernel-sheng.zip`）
 5. 将 **Kernel Source** 设为 `prebuilt`，**Kernel Prebuilt Source** 设为 `own`
 6. 在 **Kernel Branch** 中填入你的 tag 名称
 7. 运行工作流 — 它将从 release 下载内核 RPM

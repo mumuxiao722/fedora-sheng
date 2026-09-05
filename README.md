@@ -94,9 +94,9 @@ If you want to use a custom kernel instead of the prebuilt one:
 ### Option 2: Use your own prebuilt kernel RPM
 
 1. Run a `custom_build` workflow to build the kernel
-2. Download the `kernel-sheng-*.rpm` artifact from the Actions run
+2. Download the `kernel-sheng.zip` artifact from the Actions run
 3. Create a release with any tag name you like (e.g. `my-kernel-v1`)
-4. Upload the `kernel-sheng-*.rpm` to that release
+4. Upload the `kernel-sheng.zip` to that release (file **must** be named `kernel-sheng.zip`)
 5. Set **Kernel Source** to `prebuilt`, **Kernel Prebuilt Source** to `own`
 6. Enter your tag name in **Kernel Branch**
 7. Run the workflow — it will download the kernel RPM from your release
