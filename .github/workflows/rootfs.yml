@@ -260,21 +260,99 @@ jobs:
             registry.fedoraproject.org/fedora:${FEDORA_VERSION} \
             bash /workspace/.github/build-rpms.sh "${FEDORA_VERSION}"
 
-      - name: "Zip RPM Artifacts"
-        run: |
-          mkdir -p rpm-zips
-          for rpm in rpmbuild/RPMS/aarch64/*.rpm; do
-            name=$(basename "$rpm" .rpm)
-            zip -j "rpm-zips/${name}.zip" "$rpm"
-          done
-          echo "✓ RPMs zipped"
-          ls rpm-zips/
-
-      - name: "Upload RPM Artifacts"
+      - name: "Upload libssc RPMs"
         uses: actions/upload-artifact@v7
         with:
-          name: fedora-rpms-${{ inputs.fedora_version }}
-          path: rpmbuild/RPMS/aarch64/*.rpm
+          name: libssc-rpms-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/libssc-*.rpm
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload fastrpc RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: fastrpc-rpms-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/fastrpc-*.rpm
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload xiaomi-sheng-thp RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: xiaomi-sheng-thp-rpms-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/xiaomi-sheng-thp-*.rpm
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload xiaomi-sheng-keyboard-helper RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: xiaomi-sheng-keyboard-helper-rpms-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/xiaomi-sheng-keyboard-helper-*.rpm
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload iio-sensor-proxy RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: iio-sensor-proxy-rpms-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/iio-sensor-proxy-*.rpm
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload firmware-xiaomi-sheng RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: firmware-xiaomi-sheng-rpms-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/firmware-xiaomi-sheng-*.rpm
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload sheng-devauth RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: sheng-devauth-rpms-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/sheng-devauth-*.rpm
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload xiaomi-mipps-auth RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: xiaomi-mipps-auth-rpms-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/xiaomi-mipps-auth-*.rpm
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload xiaomi-charger-mode RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: xiaomi-charger-mode-rpms-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/xiaomi-charger-mode-*.rpm
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload xiaomi-sheng-keyboard-backlight RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: xiaomi-sheng-keyboard-backlight-rpms-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/xiaomi-sheng-keyboard-backlight-*.rpm
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload sheng-sensors RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: sheng-sensors-rpms-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/sheng-sensors-*.rpm
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload alsa-xiaomi-sheng RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: alsa-xiaomi-sheng-rpms-fc${{ inputs.fedora_version }}
+          path: rpmbuild/RPMS/aarch64/alsa-xiaomi-sheng-*.rpm
           retention-days: 3
           if-no-files-found: error
 
@@ -285,6 +363,7 @@ jobs:
     name: "Build Fedora RootFS"
     runs-on: ubuntu-24.04-arm
     needs: [build-rpms, build-kernel]
+    if: ${{ !cancelled() && needs.build-rpms.result == 'success' && (needs.build-kernel.result == 'success' || needs.build-kernel.result == 'skipped') }}
 
     env:
       ROOTFS_MOUNT: /mnt/rootfs
