@@ -231,11 +231,11 @@ jobs:
       - name: "Clean debuginfo/debugsource RPMs"
         run: find rpmbuild/RPMS -name "*-debuginfo-*" -o -name "*-debugsource-*" | xargs rm -f
 
-      - name: "Upload RPMs"
+      - name: "Zip RPMs"
         run: cd rpmbuild/RPMS && for rpm in aarch64/*.rpm noarch/*.rpm; do [ -f "$rpm" ] || continue; name=$(basename "$rpm" .rpm); zip "${{ github.workspace }}/rpms/${name}.zip" "$rpm"; done
         shell: bash
 
-      - name: "Upload RPMs"
+      - name: "Upload libssc RPM"
         uses: actions/upload-artifact@v7
         with:
           name: libssc-rpms-fc${{ inputs.fedora_version }}
@@ -243,7 +243,7 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
-      - name: "Upload RPMs"
+      - name: "Upload fastrpc RPM"
         uses: actions/upload-artifact@v7
         with:
           name: fastrpc-rpms-fc${{ inputs.fedora_version }}
@@ -251,7 +251,7 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
-      - name: "Upload RPMs"
+      - name: "Upload xiaomi-sheng-thp RPM"
         uses: actions/upload-artifact@v7
         with:
           name: xiaomi-sheng-thp-rpms-fc${{ inputs.fedora_version }}
@@ -259,7 +259,7 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
-      - name: "Upload RPMs"
+      - name: "Upload xiaomi-sheng-keyboard-helper RPM"
         uses: actions/upload-artifact@v7
         with:
           name: xiaomi-sheng-keyboard-helper-rpms-fc${{ inputs.fedora_version }}
@@ -267,7 +267,7 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
-      - name: "Upload RPMs"
+      - name: "Upload iio-sensor-proxy RPM"
         uses: actions/upload-artifact@v7
         with:
           name: iio-sensor-proxy-rpms-fc${{ inputs.fedora_version }}
@@ -275,7 +275,7 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
-      - name: "Upload RPMs"
+      - name: "Upload firmware-xiaomi-sheng RPM"
         uses: actions/upload-artifact@v7
         with:
           name: firmware-xiaomi-sheng-rpms-fc${{ inputs.fedora_version }}
@@ -283,7 +283,7 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
-      - name: "Upload RPMs"
+      - name: "Upload sheng-devauth RPM"
         uses: actions/upload-artifact@v7
         with:
           name: sheng-devauth-rpms-fc${{ inputs.fedora_version }}
@@ -291,7 +291,7 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
-      - name: "Upload RPMs"
+      - name: "Upload xiaomi-mipps-auth RPM"
         uses: actions/upload-artifact@v7
         with:
           name: xiaomi-mipps-auth-rpms-fc${{ inputs.fedora_version }}
@@ -299,7 +299,7 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
-      - name: "Upload RPMs"
+      - name: "Upload xiaomi-charger-mode RPM"
         uses: actions/upload-artifact@v7
         with:
           name: xiaomi-charger-mode-rpms-fc${{ inputs.fedora_version }}
@@ -307,7 +307,7 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
-      - name: "Upload RPMs"
+      - name: "Upload xiaomi-sheng-keyboard-backlight RPM"
         uses: actions/upload-artifact@v7
         with:
           name: xiaomi-sheng-keyboard-backlight-rpms-fc${{ inputs.fedora_version }}
@@ -315,7 +315,7 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
-      - name: "Upload RPMs"
+      - name: "Upload sheng-sensors RPM"
         uses: actions/upload-artifact@v7
         with:
           name: sheng-sensors-rpms-fc${{ inputs.fedora_version }}
@@ -323,7 +323,7 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
-      - name: "Upload RPMs"
+      - name: "Upload alsa-xiaomi-sheng RPM"
         uses: actions/upload-artifact@v7
         with:
           name: alsa-xiaomi-sheng-rpms-fc${{ inputs.fedora_version }}
@@ -331,7 +331,7 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
-      - name: "Upload RPMs"
+      - name: "Upload libssc-devel RPM"
         uses: actions/upload-artifact@v7
         with:
           name: libssc-devel-rpms-fc${{ inputs.fedora_version }}
