@@ -396,7 +396,7 @@ jobs:
           gh release download "${{ inputs.kernel_branch }}" \
             --repo mumuxiao722/fedora-sheng \
             --pattern "kernel-sheng.zip" \
-            --dest rpm/ \
+            --dir rpm/ \
             --clobber
           cd rpm && unzip -o kernel-sheng.zip && cd ..
           echo "✓ Kernel RPM downloaded from upstream (${{ inputs.kernel_branch }})"
@@ -409,7 +409,7 @@ jobs:
           gh release download "${{ inputs.kernel_branch }}" \
             --repo "${{ github.repository }}" \
             --pattern "kernel-sheng.zip" \
-            --dest rpm/ \
+            --dir rpm/ \
             --clobber
           cd rpm && unzip -o kernel-sheng.zip && cd ..
           echo "✓ Kernel RPM downloaded from own release (${{ inputs.kernel_branch }})"
