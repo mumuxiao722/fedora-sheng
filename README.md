@@ -101,18 +101,6 @@ If you want to use a custom kernel instead of the prebuilt one:
 6. Enter your tag name in **Kernel Branch**
 7. Run the workflow — it will download the kernel RPM from your release
 
-### Uploading kernel RPM to release (manual)
-
-After a `custom_build` workflow run, the kernel RPM is available as a workflow artifact:
-
-1. Go to Actions → select the `custom_build` run
-2. Under **Artifacts**, download `kernel-sheng.zip`
-3. Unzip to get `kernel-sheng-*.rpm`
-4. Create a release with any tag name (e.g. `my-kernel-v1`)
-5. Upload the RPM file to the release
-
-Then when building rootfs, set **Kernel Prebuilt Source** to `own` and enter the tag name in **Kernel Branch**.
-
 ---
 
 ## Packages

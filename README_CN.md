@@ -101,18 +101,6 @@
 6. 在 **Kernel Branch** 中填入你的 tag 名称
 7. 运行工作流 — 它将从 release 下载内核 RPM
 
-### 上传内核 RPM 到 release（手动）
-
-`custom_build` 工作流运行后，内核 RPM 作为 workflow artifact 可用：
-
-1. 进入 Actions → 选择 `custom_build` 运行
-2. 在 **Artifacts** 中下载 `kernel-sheng.zip`
-3. 解压得到 `kernel-sheng-*.rpm`
-4. 创建一个 release，tag 名称自定（如 `my-kernel-v1`）
-5. 上传 RPM 文件到该 release
-
-之后构建 rootfs 时，将 **Kernel Prebuilt Source** 设为 `own`，并在 **Kernel Branch** 中填入 tag 名称。
-
 ---
 
 ## 软件包
