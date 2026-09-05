@@ -105,11 +105,9 @@ jobs:
       - name: "Zip & Upload RPM Artifacts"
         run: |
           for rpm in rpmbuild/RPMS/aarch64/*.rpm; do
-            name=$(basename "$rpm" .rpm)
             zip -j "${rpm}.zip" "$rpm"
           done
           echo "✓ RPMs zipped"
-          ls -la rpmbuild/RPMS/aarch64/*.zip
 
       - name: "Upload RPM Artifacts"
         uses: actions/upload-artifact@v7

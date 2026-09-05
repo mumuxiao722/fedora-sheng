@@ -10,7 +10,7 @@ dnf install -y \
   rpm-build gcc gcc-c++ make autoconf automake libtool \
   meson ninja-build pkg-config git \
   glib2-devel libqmi-devel libmbim-devel libyaml-devel libbsd-devel \
-  protobuf-c-compiler protobuf-compiler python3-devel \
+  protobuf-c-devel protobuf-c-compiler protobuf-compiler python3-devel \
   polkit-devel libgudev-devel systemd-rpm-macros
 
 # Set up rpmbuild directory in workspace
