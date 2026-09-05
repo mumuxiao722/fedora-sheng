@@ -224,7 +224,7 @@ jobs:
           tar -czf "$TOPDIR/SOURCES/kernel-sheng-${KREL}.tar.gz" .
 
           cd "$TOPDIR"
-          rpmbuild --define "_topdir $TOPDIR" -ba SPECS/kernel-sheng.spec
+          rpmbuild --define "_topdir $TOPDIR" --nodeps -ba SPECS/kernel-sheng.spec
           echo "✓ Kernel RPM packaged (${KREL})"
           ls -la RPMS/aarch64/
 
