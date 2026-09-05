@@ -453,7 +453,7 @@ jobs:
             dnf \
               --installroot=/mnt/rootfs \
               --releasever=${FEDORA_VERSION} \
-              --setopt=reposdir=/etc/yum.repos.d \
+              --use-host-config \
               --setopt=install_weak_deps=False \
               --setopt=tsflags=nodocs \
               install -y \
