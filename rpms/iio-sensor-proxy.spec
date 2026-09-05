@@ -1,5 +1,7 @@
 %undefine __debug_package
 %undefine _debugsource_packages
+%define _debug_package %{nil}
+%define _build_id_links none
 Name:           iio-sensor-proxy
 Version:        3.9
 Release:        6%{?dist}

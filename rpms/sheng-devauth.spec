@@ -1,5 +1,7 @@
 %undefine __debug_package
 %undefine _debugsource_packages
+%define _debug_package %{nil}
+%define _build_id_links none
 Name:           sheng-devauth
 Version:        1.0
 Release:        1%{?dist}
@@ -11,6 +13,8 @@ Source0:        %{name}-%{version}.tar.gz
 
 %define _debug_source_subpackages 0
 
+BuildRequires:  gcc
+BuildRequires:  make
 Requires:       systemd
 
 %description
@@ -20,9 +24,17 @@ via Qualcomm TEE (TrustZone) for Xiaomi Pad 6S Pro.
 %prep
 %autosetup -n sheng_devauth-%{version}
 
+%build
+make %{?_smp_mflags}
+
 %install
+mkdir -p %{buildroot}/usr/bin
+install -m 755 xiaomi_devauth %{buildroot}/usr/bin/
+
 mkdir -p %{buildroot}/usr/lib/systemd/system
 install -m 644 usr/lib/systemd/system/sheng-devauth.service %{buildroot}/usr/lib/systemd/system/
+mkdir -p %{buildroot}/usr/lib/systemd/system/sheng-devauth.service.d
+install -m 644 usr/lib/systemd/system/sheng-devauth.service.d/qtee.conf %{buildroot}/usr/lib/systemd/system/sheng-devauth.service.d/
 
 %post
 %systemd_post sheng-devauth.service
@@ -31,7 +43,9 @@ install -m 644 usr/lib/systemd/system/sheng-devauth.service %{buildroot}/usr/lib
 %systemd_preun sheng-devauth.service
 
 %files
+/usr/bin/xiaomi_devauth
 /usr/lib/systemd/system/sheng-devauth.service
+/usr/lib/systemd/system/sheng-devauth.service.d/qtee.conf
 
 %changelog
 
