@@ -478,6 +478,7 @@ jobs:
           sudo mount --bind /dev/pts "$ROOTFS_MOUNT/dev/pts"
           sudo mount -t proc proc "$ROOTFS_MOUNT/proc"
           sudo mount -t sysfs sys "$ROOTFS_MOUNT/sys"
+          sudo rm -f "$ROOTFS_MOUNT/etc/resolv.conf"
           sudo cp /etc/resolv.conf "$ROOTFS_MOUNT/etc/resolv.conf"
           echo "✓ Virtual file systems mounted"
 
