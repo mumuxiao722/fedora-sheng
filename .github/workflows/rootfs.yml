@@ -130,7 +130,6 @@ jobs:
         uses: actions/checkout@v7
 
       - name: "Install Build Tools"
-        if: steps.check.outputs.exists == 'false'
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -140,7 +139,6 @@ jobs:
           echo "✓ Build tools installed"
 
       - name: "Clone Kernel Source"
-        if: steps.check.outputs.exists == 'false'
         run: |
           git clone "${{ inputs.kernel_repo }}" \
             --branch "${{ inputs.kernel_branch }}" \
@@ -150,7 +148,6 @@ jobs:
 
       - name: "Build Kernel"
         id: build
-        if: steps.check.outputs.exists == 'false'
         run: |
           cd linux
           cp "${{ github.workspace }}/${{ inputs.kernel_config }}" .config
@@ -179,7 +176,6 @@ jobs:
           echo "✓ Kernel build complete"
 
       - name: "Package Kernel RPM"
-        if: steps.check.outputs.exists == 'false'
         run: |
           KVER="${{ steps.build.outputs.kernel_version }}"
           KREL="${{ inputs.kernel_branch }}"
@@ -233,7 +229,6 @@ jobs:
           ls -la RPMS/aarch64/
 
       - name: "Upload Kernel Artifact"
-        if: steps.check.outputs.exists == 'false'
         uses: actions/upload-artifact@v7
         with:
           name: kernel-sheng
