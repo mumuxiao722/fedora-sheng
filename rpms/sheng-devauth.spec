@@ -27,6 +27,6 @@ install -m 644 usr/lib/systemd/system/sheng-devauth.service %{buildroot}/usr/lib
 %systemd_preun sheng-devauth.service
 
 %files
-%{_unitdir}/sheng-devauth.service
+/usr/lib/systemd/system/sheng-devauth.service
 
 %changelog

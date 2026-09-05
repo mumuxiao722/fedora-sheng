@@ -26,7 +26,7 @@ via QMI protocol. Patched version for Xiaomi Pad 6S Pro.
 %autosetup -n libssc-%{version} -p1
 
 %build
-meson setup build --prefix=%{_prefix} --libdir=%{_libdir} --buildtype=plain
+meson setup build --prefix=/usr --libdir=/usr/lib64 --buildtype=plain
 meson compile -C build
 
 %install

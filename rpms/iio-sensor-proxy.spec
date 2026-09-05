@@ -25,9 +25,9 @@ Patched version for Xiaomi Pad 6S Pro.
 %autosetup -n %{name}-%{version}
 
 %build
-meson setup build --prefix=%{_prefix} --libdir=%{_libdir} --buildtype=plain \
+meson setup build --prefix=/usr --libdir=/usr/lib64 --buildtype=plain \
     -Dssc-support=enabled \
-    -Dsystemdsystemunitdir=%{_unitdir}
+    -Dsystemdsystemunitdir=/usr/lib/systemd/system
 meson compile -C build
 
 %install
@@ -46,7 +46,7 @@ DESTDIR=%{buildroot} meson install -C build
 %{_libexecdir}/iio-sensor-proxy
 %{_datadir}/dbus-1/system-services/org.freedesktop.IOSensorProxy.service
 %{_datadir}/polkit-1/actions/org.freedesktop.IOSensorProxy.policy
-%{_unitdir}/iio-sensor-proxy.service
-%{_udevrulesdir}/80-iio-sensor-proxy.rules
+/usr/lib/systemd/system/iio-sensor-proxy.service
+/usr/lib/udev/rules.d/80-iio-sensor-proxy.rules
 
 %changelog

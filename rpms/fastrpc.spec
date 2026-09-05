@@ -28,34 +28,34 @@ libraries and daemons for ADSP, CDSP, and SDSP communication.
 
 %build
 autoreconf -is
-%configure \
-    --with-systemdsystemunitdir=%{_unitdir} \
-    --with-udevrulesdir=%{_udevrulesdir} \
-    --with-sysusersdir=%{_sysusersdir}
+./configure \
+    --prefix=/usr \
+    --libdir=/usr/lib64 \
+    --with-systemdsystemunitdir=/usr/lib/systemd/system \
+    --with-udevrulesdir=/usr/lib/udev/rules.d \
+    --with-sysusersdir=/usr/lib/sysusers.d
 make %{?_smp_mflags}
 
 %install
 %make_install
-install -Dpm 644 %{SOURCE1} %{buildroot}%{_unitdir}/adsprpcd-sensorspd.service
+install -Dpm 644 %{SOURCE1} %{buildroot}/usr/lib/systemd/system/adsprpcd-sensorspd.service
 
 %post
 %systemd_post adsprpcd-sensorspd.service
-%sysusers_create_compat %{SOURCE1}
 
 %preun
 %systemd_preun adsprpcd-sensorspd.service
 
 %files
-%license LICENSE
 %doc README.md
-%{_bindir}/adsprpcd
-%{_bindir}/cdsprpcd
-%{_bindir}/sdsprpcd
-%{_libdir}/libadsprpc.so.*
-%{_libdir}/libcdsprpc.so.*
-%{_libdir}/libsdsprpc.so.*
-%{_unitdir}/adsprpcd-sensorspd.service
-%{_udevrulesdir}/*.rules
-%{_sysusersdir}/*.conf
+/usr/sbin/adsprpcd
+/usr/sbin/cdsprpcd
+/usr/sbin/sdsprpcd
+/usr/lib64/libadsprpc.so.*
+/usr/lib64/libcdsprpc.so.*
+/usr/lib64/libsdsprpc.so.*
+/usr/lib/systemd/system/*.service
+/usr/lib/udev/rules.d/*.rules
+/usr/lib/sysusers.d/*.conf
 
 %changelog
