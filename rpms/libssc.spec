@@ -38,7 +38,7 @@ DESTDIR=%{buildroot} meson install -C build
 rm -f %{buildroot}/usr/libexec/installed-tests/libssc/ssc-server
 rm -rf %{buildroot}/usr/libexec/installed-tests
 # Remove Python mock server (not needed on device)
-rm -rf %{buildroot}/usr/lib/python3
+rm -rf %{buildroot}/usr/lib/python3*
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig

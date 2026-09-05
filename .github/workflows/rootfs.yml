@@ -205,13 +205,6 @@ jobs:
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
           echo "✓ Custom RPMs installed"
 
-      - name: "Versionlock Custom Packages"
-        run: |
-          sudo chroot "$ROOTFS_MOUNT" dnf install -y python3-dnf-plugin-versionlock
-          sudo chroot "$ROOTFS_MOUNT" dnf versionlock add libssc
-          sudo chroot "$ROOTFS_MOUNT" dnf versionlock add iio-sensor-proxy
-          echo "✓ Versionlock applied"
-
       - name: "Install Extra Packages"
         if: ${{ inputs.extra_packages != '' }}
         run: |
@@ -219,6 +212,13 @@ jobs:
           echo "  Extra packages: $EXTRA_PKGS"
           sudo chroot "$ROOTFS_MOUNT" dnf install -y $EXTRA_PKGS
           echo "✓ Extra packages installed"
+
+      - name: "Versionlock Custom Packages"
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y python3-dnf-plugin-versionlock
+          sudo chroot "$ROOTFS_MOUNT" dnf versionlock add libssc
+          sudo chroot "$ROOTFS_MOUNT" dnf versionlock add iio-sensor-proxy
+          echo "✓ Versionlock applied"
 
       - name: "Set Hostname"
         run: |
