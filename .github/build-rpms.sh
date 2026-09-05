@@ -36,7 +36,7 @@ git clone --depth 1 https://github.com/ianchb/xiaomi-pen-status.git
 git clone --depth 1 https://github.com/slhssb/xiaomi-sheng-keyboard-backlight.git
 git clone --depth 1 https://github.com/ianchb/xiaomi-sheng-keyboard-helper.git
 git clone --depth 1 https://github.com/qualcomm/fastrpc.git
-git clone --depth 1 https://codeberg.org/DylanVanAssche/libssc.git
+git clone --depth 1 https://github.com/GUF296/libssc.git
 git clone --depth 1 https://gitlab.freedesktop.org/hadess/iio-sensor-proxy.git
 git clone --depth 1 https://github.com/ianchb/xiaomi-sheng-fingerprint.git
 git clone --depth 1 https://github.com/alghiffaryfa19/sheng-sensors-file.git
