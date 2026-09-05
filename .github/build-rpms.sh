@@ -38,15 +38,11 @@ git clone --depth 1 --branch v0.1.4 https://github.com/ianchb/xiaomi-sheng-finge
 git clone --depth 1 https://github.com/slhssb/xiaomi-sheng-keyboard-backlight.git
 git clone --depth 1 https://github.com/alghiffaryfa19/sheng-sensors-file.git
 
-wget -q https://github.com/qualcomm/fastrpc/archive/refs/tags/v1.0.2.zip
-unzip -q v1.0.2.zip
-rm -f v1.0.2.zip
+git clone --depth 1 --branch v1.0.2 https://github.com/qualcomm/fastrpc.git
 
 git clone https://codeberg.org/DylanVanAssche/libssc.git libssc
 
-wget -q "https://gitlab.freedesktop.org/hadess/iio-sensor-proxy/-/archive/3.9/iio-sensor-proxy-3.9.tar.gz"
-tar -xf iio-sensor-proxy-3.9.tar.gz
-rm -f iio-sensor-proxy-3.9.tar.gz
+git clone --depth 1 --branch 3.9 https://gitlab.freedesktop.org/hadess/iio-sensor-proxy.git
 
 echo "✓ Source repos cloned"
 
@@ -89,11 +85,13 @@ cd /workspace/alsa-xiaomi-sheng
 tar -czf /workspace/rpmbuild/SOURCES/alsa-xiaomi-sheng-1.0.tar.gz .
 cd /tmp
 
+mv fastrpc fastrpc-1.0.2
 tar -czf /workspace/rpmbuild/SOURCES/fastrpc-1.0.2.tar.gz fastrpc-1.0.2/
 
 mv libssc libssc-0.4.4
 tar -czf /workspace/rpmbuild/SOURCES/libssc-0.4.4.tar.gz libssc-0.4.4/
 
+mv iio-sensor-proxy iio-sensor-proxy-3.9
 tar -czf /workspace/rpmbuild/SOURCES/iio-sensor-proxy-3.9.tar.gz iio-sensor-proxy-3.9/
 
 # Copy special source files (Source1, Patch0, etc.)
