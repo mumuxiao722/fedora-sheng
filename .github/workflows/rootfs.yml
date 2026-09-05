@@ -173,6 +173,7 @@ jobs:
           cat linux/arch/arm64/boot/Image.gz \
               linux/arch/arm64/boot/dts/qcom/sm8550-xiaomi-sheng.dtb \
             > Image.gz-dtb_sheng
+          cp Image.gz-dtb_sheng "${{ github.workspace }}/kernel-staging/boot/"
           echo "✓ Kernel build complete"
 
       - name: "Package Kernel RPM"
@@ -185,7 +186,9 @@ jobs:
           cp rpms/kernel-sheng.spec "$TOPDIR/SPECS/kernel-sheng.spec"
 
           cd "${{ github.workspace }}/kernel-staging"
-          tar -czf "$TOPDIR/SOURCES/kernel-sheng-${KREL}.tar.gz" .
+          mkdir -p "kernel-sheng-${KREL}"
+          mv boot lib "kernel-sheng-${KREL}/"
+          tar -czf "$TOPDIR/SOURCES/kernel-sheng-${KREL}.tar.gz" "kernel-sheng-${KREL}"
 
           cd "$TOPDIR"
           rpmbuild --define "_topdir $TOPDIR" \

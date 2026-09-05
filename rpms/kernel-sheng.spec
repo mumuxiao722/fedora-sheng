@@ -14,6 +14,7 @@ Source0:        kernel-sheng-%{version}.tar.gz
 Prebuilt kernel for Xiaomi Pad 6S Pro.
 
 %prep
+tar xf %{SOURCE0} --strip-components=1
 
 %build
 
