@@ -579,10 +579,12 @@ jobs:
           }
           sudo chroot "$ROOTFS_MOUNT" systemctl enable sheng-devauth
           sudo chroot "$ROOTFS_MOUNT" systemctl enable xiaomi-sheng-thp
-          sudo chroot "$ROOTFS_MOUNT" systemctl enable xiaomi-sheng-keyboard-helper-angle
           sudo chroot "$ROOTFS_MOUNT" systemctl enable xiaomi-charger-mode
-          sudo chroot "$ROOTFS_MOUNT" systemctl enable xiaomi-mipps-auth
           sudo chroot "$ROOTFS_MOUNT" systemctl enable adsprpcd-sensorspd
+          # keyboard-helper-angle and mipps-auth lack [Install] section, create symlinks manually
+          sudo mkdir -p "$ROOTFS_MOUNT/etc/systemd/system/multi-user.target.wants"
+          sudo ln -sf /usr/lib/systemd/system/xiaomi-sheng-keyboard-helper-angle.service "$ROOTFS_MOUNT/etc/systemd/system/multi-user.target.wants/"
+          sudo ln -sf /usr/lib/systemd/system/xiaomi-mipps-auth.service "$ROOTFS_MOUNT/etc/systemd/system/multi-user.target.wants/"
           echo "✓ Services enabled"
 
       - name: "[DEBUG] Verify Sheng Service Links"
