@@ -16,6 +16,7 @@ BuildRequires:  ninja-build
 BuildRequires:  gcc
 BuildRequires:  glib2-devel >= 2.76
 BuildRequires:  libgudev-devel >= 237
+BuildRequires:  systemd-devel
 BuildRequires:  polkit-devel >= 0.91
 BuildRequires:  libssc-devel >= 0.2.1
 BuildRequires:  systemd-rpm-macros
