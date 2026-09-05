@@ -123,7 +123,7 @@ on:
           - 'GNOME'
           - 'KDE Plasma'
           - 'server'
-        default: 'KDE Plasma'
+        default: 'GNOME'
 
       plasma_mobile:
         description: 'Enable Plasma Mobile instead of Plasma Desktop (only when desktop=KDE Plasma)'

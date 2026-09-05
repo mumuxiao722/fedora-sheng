@@ -57,15 +57,15 @@
 | **Custom partition** | 分区名称（boot_mode=custom 时必填） | 任意分区名称 | *（空）* |
 | **Extra packages** | 额外安装的软件包（空格分隔） | 字符串 | *（空）* |
 | **Enable COPR** | 启用 COPR 仓库（GNOME Mobile 需要） | `true` / `false` | `false` |
+| **Quiet Boot** | 启用 Plymouth 启动画面和安静启动信息 | `true` / `false` | `true` |
 
 ### 桌面环境设置
 
 | 参数 | 说明 | 选项 | 默认值 |
 |------|------|------|--------|
-| **Desktop** | 要安装的桌面环境 | `GNOME` / `KDE Plasma` / `server` | `KDE Plasma` |
+| **Desktop** | 要安装的桌面环境 | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
 | **Plasma Mobile** | 使用 Plasma Mobile 界面而非 Plasma Desktop（仅 Desktop=KDE Plasma 时有效） | `true` / `false` | `false` |
 | **GNOME Mobile** | 使用 GNOME Mobile 而非 GNOME（仅 Desktop=GNOME 时有效） | `true` / `false` | `false` |
-| **Quiet Boot** | 启用 Plymouth 启动画面和安静启动信息 | `true` / `false` | `true` |
 
 ### 内核设置
 
