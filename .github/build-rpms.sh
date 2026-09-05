@@ -6,12 +6,18 @@ FEDORA_VERSION="${1:-44}"
 echo "=== Building RPMs in Fedora ${FEDORA_VERSION} container ==="
 
 # Install build dependencies
+dnf install -y fedora-repos
 dnf install -y \
   rpm-build gcc gcc-c++ make autoconf automake libtool \
   meson ninja-build pkg-config git \
   glib2-devel libqmi-devel libmbim-devel libyaml-devel libbsd-devel \
   protobuf-c-devel protobuf-c-compiler protobuf-compiler python3-devel \
   polkit-devel libgudev-devel systemd-rpm-macros
+
+# Verify critical deps
+pkg-config --modversion qmi-glib-1
+pkg-config --modversion libprotobuf-c
+echo "✓ Build dependencies verified"
 
 # Set up rpmbuild directory in workspace
 mkdir -p /workspace/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
