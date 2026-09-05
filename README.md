@@ -167,6 +167,42 @@ After rebooting, the device should start from slot B and boot into Fedora.
 
 ---
 
+## Local RPM Build
+
+You can build the RPM packages locally without GitHub Actions.
+
+### Prerequisites
+
+```bash
+# Fedora 44/45
+sudo dnf install -y rpm-build git
+
+# For building packages that depend on libssc
+sudo dnf install -y libssc-devel
+```
+
+### Build Steps
+
+```bash
+git clone https://github.com/mumuxiao722/fedora-sheng.git
+cd fedora-sheng
+
+# Set up rpmbuild directory
+mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+
+# Copy spec files
+cp rpms/*.spec ~/rpmbuild/SPECS/
+
+# Build a specific package (e.g., fastrpc)
+rpmbuild --define "_topdir $HOME/rpmbuild" -ba ~/rpmbuild/SPECS/fastrpc.spec
+```
+
+> **Note**  
+> Some packages require other custom packages to be installed first.  
+> For example, `iio-sensor-proxy` depends on `libssc-devel`, so install `libssc-devel` before building `iio-sensor-proxy`.
+
+---
+
 ## Credits
 
 This project benefits from the following outstanding work and community support:

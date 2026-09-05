@@ -167,6 +167,42 @@ fastboot reboot
 
 ---
 
+## 本地构建 RPM 包
+
+你可以在本地构建 RPM 包，无需 GitHub Actions。
+
+### 依赖
+
+```bash
+# Fedora 44/45
+sudo dnf install -y rpm-build git
+
+# 构建依赖 libssc 的包时需要安装
+sudo dnf install -y libssc-devel
+```
+
+### 构建步骤
+
+```bash
+git clone https://github.com/mumuxiao722/fedora-sheng.git
+cd fedora-sheng
+
+# 设置 rpmbuild 目录
+mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+
+# 复制 spec 文件
+cp rpms/*.spec ~/rpmbuild/SPECS/
+
+# 构建指定包（如 fastrpc）
+rpmbuild --define "_topdir $HOME/rpmbuild" -ba ~/rpmbuild/SPECS/fastrpc.spec
+```
+
+> **注意**  
+> 部分包需要先安装其他自定义包。  
+> 例如 `iio-sensor-proxy` 依赖 `libssc-devel`，请先安装 `libssc-devel` 再构建 `iio-sensor-proxy`。
+
+---
+
 ## 致谢
 
 本项目得益于以下优秀工作：
