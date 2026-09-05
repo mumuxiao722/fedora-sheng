@@ -9,8 +9,7 @@ Source0:        %{name}-%{version}.tar.gz
 
 BuildRequires:  gcc
 BuildRequires:  make
-BuildRequires:  pkgconfig(glib-2.0)
-BuildRequires:  pkgconfig(gio-2.0)
+BuildRequires:  glib2-devel
 Requires:       systemd
 Requires:       xiaomi-sheng-thp
 

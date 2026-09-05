@@ -11,9 +11,9 @@ BuildRequires:  gcc
 BuildRequires:  make
 BuildRequires:  meson >= 0.50.0
 BuildRequires:  ninja-build
-BuildRequires:  pkgconfig(glib-2.0) >= 2.56
-BuildRequires:  pkgconfig(gusb-2.0) >= 0.4.9
-BuildRequires:  pkgconfig(libfprint-2) >= 1.94.0
+BuildRequires:  glib2-devel >= 2.56
+BuildRequires:  libgusb-devel >= 0.4.9
+BuildRequires:  libfprint-devel >= 1.94.0
 BuildRequires:  systemd-rpm-macros
 BuildRequires:  patchelf
 Requires:       fprintd >= 1.94.5

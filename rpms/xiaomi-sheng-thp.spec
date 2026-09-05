@@ -9,9 +9,8 @@ Source0:        %{name}-%{version}.tar.gz
 
 BuildRequires:  gcc-c++
 BuildRequires:  make
-BuildRequires:  pkgconfig(glib-2.0)
-BuildRequires:  pkgconfig(gio-2.0)
-BuildRequires:  pkgconfig(libssc)
+BuildRequires:  glib2-devel
+BuildRequires:  libssc-devel
 Requires:       systemd
 
 %description

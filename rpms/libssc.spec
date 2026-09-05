@@ -11,10 +11,10 @@ Patch0:         wait_for_qmi_service.patch
 BuildRequires:  meson >= 1.4.0
 BuildRequires:  ninja-build
 BuildRequires:  gcc
-BuildRequires:  pkgconfig(glib-2.0) >= 2.56
-BuildRequires:  pkgconfig(gio-2.0)
-BuildRequires:  pkgconfig(qmi-glib-1) >= 1.33.4
-BuildRequires:  pkgconfig(libprotobuf-c)
+BuildRequires:  glib2-devel >= 2.56
+BuildRequires:  libqmi-devel >= 1.33.4
+BuildRequires:  libqmi-devel
+BuildRequires:  protobuf-c-devel
 BuildRequires:  protobuf-c-compiler
 BuildRequires:  protobuf-compiler
 BuildRequires:  python3-devel

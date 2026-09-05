@@ -10,10 +10,10 @@ Source0:        %{name}-%{version}.tar.gz
 BuildRequires:  meson >= 0.54.0
 BuildRequires:  ninja-build
 BuildRequires:  gcc
-BuildRequires:  pkgconfig(glib-2.0) >= 2.76
-BuildRequires:  pkgconfig(gudev-1.0) >= 237
-BuildRequires:  pkgconfig(polkit-gobject-1) >= 0.91
-BuildRequires:  pkgconfig(libssc) >= 0.2.1
+BuildRequires:  glib2-devel >= 2.76
+BuildRequires:  libgudev-devel >= 237
+BuildRequires:  polkit-devel >= 0.91
+BuildRequires:  libssc-devel >= 0.2.1
 BuildRequires:  systemd-rpm-macros
 
 %description
