@@ -81,7 +81,7 @@ on:
 
 jobs:
   # ==========================================================================
-  # Build Custom RPMs
+  # Build Custom RPMs (in Fedora container)
   # ==========================================================================
   build-rpms:
     name: "Build Custom RPMs"
@@ -91,173 +91,24 @@ jobs:
       - name: "Checkout Repo"
         uses: actions/checkout@v7
 
-      - name: "Install RPM Build Tools"
+      - name: "Build RPMs in Fedora Container"
         run: |
-          set -e
-          sudo apt-get update
-          sudo apt-get install -y rpm gcc make gcc-aarch64-linux-gnu \
-            libglib2.0-dev \
-            ninja-build \
-            libqmi-glib-dev libmbim-glib-dev libprotobuf-c-dev protobuf-c-compiler protobuf-compiler \
-            libbsd-dev libgudev-1.0-dev libpolkit-gobject-1-dev
-          # Install meson >= 1.4.0 via pip (Ubuntu apt has 1.3.2)
-          pip3 install --break-system-packages meson
-          echo "✓ RPM build tools installed"
+          FEDORA_VERSION=${{ inputs.fedora_version }}
+          podman pull registry.fedoraproject.org/fedora:${FEDORA_VERSION}
 
-      - name: "Clone Source Repos"
-        run: |
-          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-
-          # Clone all source repos
-          git clone --depth 1 https://github.com/ianchb/sheng-firmware.git /tmp/sheng-firmware
-          git clone --depth 1 https://github.com/alghiffaryfa19/Linux-xiaomi-sheng.git --branch sheng --single-branch /tmp/sheng-devauth-src
-          git clone --depth 1 https://github.com/ianchb/xiaomi-mipps-auth.git /tmp/xiaomi-mipps-auth
-          git clone --depth 1 https://github.com/ianchb/xiaomi-charger-mode.git /tmp/xiaomi-charger-mode
-          git clone --depth 1 https://github.com/ianchb/xiaomi-sheng-thp.git /tmp/xiaomi-sheng-thp
-          git clone --depth 1 https://github.com/ianchb/xiaomi-pen-status.git /tmp/xiaomi-pen-status
-          git clone --depth 1 https://github.com/slhssb/xiaomi-sheng-keyboard-backlight.git /tmp/xiaomi-sheng-keyboard-backlight
-          git clone --depth 1 https://github.com/ianchb/xiaomi-sheng-keyboard-helper.git /tmp/xiaomi-sheng-keyboard-helper
-          git clone --depth 1 https://github.com/qualcomm/fastrpc.git /tmp/fastrpc
-          git clone --depth 1 https://codeberg.org/DylanVanAssche/libssc.git /tmp/libssc
-          git clone --depth 1 https://gitlab.freedesktop.org/hadess/iio-sensor-proxy.git /tmp/iio-sensor-proxy
-          git clone --depth 1 https://github.com/ianchb/xiaomi-sheng-fingerprint.git /tmp/xiaomi-sheng-fingerprint
-          git clone --depth 1 https://github.com/alghiffaryfa19/sheng-sensors-file.git /tmp/sheng-sensors-file
-          echo "✓ Source repos cloned"
-
-      - name: "Create Source Tarballs"
-        run: |
-          cd /tmp
-
-          # firmware-xiaomi-sheng
-          mv sheng-firmware sheng-firmware-1.0
-          tar -czf ~/rpmbuild/SOURCES/firmware-xiaomi-sheng-1.0.tar.gz sheng-firmware-1.0/
-
-          # sheng-devauth (rename dir to match %autosetup -n sheng_devauth-1.0)
-          mv sheng-devauth-src/sheng-devauth sheng_devauth-1.0
-          tar -czf ~/rpmbuild/SOURCES/sheng-devauth-1.0.tar.gz sheng_devauth-1.0/
-          mv sheng_devauth-1.0 sheng-devauth-src/
-
-          # xiaomi-mipps-auth
-          mv xiaomi-mipps-auth xiaomi-mipps-auth-1.0
-          tar -czf ~/rpmbuild/SOURCES/xiaomi-mipps-auth-1.0.tar.gz xiaomi-mipps-auth-1.0/
-
-          # xiaomi-charger-mode
-          mv xiaomi-charger-mode xiaomi-charger-mode-1.0
-          tar -czf ~/rpmbuild/SOURCES/xiaomi-charger-mode-1.0.tar.gz xiaomi-charger-mode-1.0/
-
-          # xiaomi-sheng-thp
-          mv xiaomi-sheng-thp xiaomi-sheng-thp-0.4.0
-          tar -czf ~/rpmbuild/SOURCES/xiaomi-sheng-thp-0.4.0.tar.gz xiaomi-sheng-thp-0.4.0/
-
-          # xiaomi-pen-status
-          mv xiaomi-pen-status xiaomi-pen-status-1.0
-          tar -czf ~/rpmbuild/SOURCES/xiaomi-pen-status-1.0.tar.gz xiaomi-pen-status-1.0/
-
-          # xiaomi-sheng-keyboard-backlight
-          mv xiaomi-sheng-keyboard-backlight xiaomi-sheng-keyboard-backlight-1.0
-          tar -czf ~/rpmbuild/SOURCES/xiaomi-sheng-keyboard-backlight-1.0.tar.gz xiaomi-sheng-keyboard-backlight-1.0/
-
-          # xiaomi-sheng-keyboard-helper
-          mv xiaomi-sheng-keyboard-helper xiaomi-sheng-keyboard-helper-1.0
-          tar -czf ~/rpmbuild/SOURCES/xiaomi-sheng-keyboard-helper-1.0.tar.gz xiaomi-sheng-keyboard-helper-1.0/
-
-          # xiaomi-sheng-fingerprint
-          mv xiaomi-sheng-fingerprint xiaomi-sheng-fingerprint-0.1.4
-          tar -czf ~/rpmbuild/SOURCES/xiaomi-sheng-fingerprint-0.1.4.tar.gz xiaomi-sheng-fingerprint-0.1.4/
-
-          # sheng-sensors (from alghiffaryfa19, flatten directory)
-          cd /tmp/sheng-sensors-file
-          tar -czf ~/rpmbuild/SOURCES/sheng-sensors-20240917.tar.gz .
-          cd /tmp
-
-          # alsa-xiaomi-sheng (from repo, flatten directory)
-          cd "$GITHUB_WORKSPACE/alsa-xiaomi-sheng"
-          tar -czf ~/rpmbuild/SOURCES/alsa-xiaomi-sheng-1.0.tar.gz .
-          cd /tmp
-
-          # fastrpc (need parent dir for %autosetup)
-          cd /tmp && mv fastrpc fastrpc-1.0.2
-          tar -czf ~/rpmbuild/SOURCES/fastrpc-1.0.2.tar.gz fastrpc-1.0.2/
-
-          # libssc (need parent dir for %autosetup)
-          cd /tmp && mv libssc libssc-0.4.4
-          tar -czf ~/rpmbuild/SOURCES/libssc-0.4.4.tar.gz libssc-0.4.4/
-
-          # iio-sensor-proxy (need parent dir for %autosetup)
-          cd /tmp && mv iio-sensor-proxy iio-sensor-proxy-3.9
-          tar -czf ~/rpmbuild/SOURCES/iio-sensor-proxy-3.9.tar.gz iio-sensor-proxy-3.9/
-
-          # Copy special source files (Source1, Patch0, etc.)
-          cp "$GITHUB_WORKSPACE/patches/adsprpcd-sensorspd.service" ~/rpmbuild/SOURCES/
-          cp "$GITHUB_WORKSPACE/patches/wait_for_qmi_service.patch" ~/rpmbuild/SOURCES/
-
-          echo "✓ Source tarballs created"
-          ls -la ~/rpmbuild/SOURCES/
-
-      - name: "Build RPMs"
-        run: |
-          cd rpms
-
-          # Build libssc FIRST - thp/keyboard-helper/iio-sensor-proxy need its headers
-          echo "=== Building libssc ==="
-          rpmbuild -ba libssc.spec --nodeps
-          # Install libssc-devel so subsequent builds can find headers
-          sudo rpm -i --nodeps ~/rpmbuild/RPMS/aarch64/libssc-devel-*.rpm
-          sudo rpm -i --nodeps ~/rpmbuild/RPMS/aarch64/libssc-0.4.4-*.rpm
-          sudo ldconfig
-
-          echo "=== Building fastrpc ==="
-          rpmbuild -ba fastrpc.spec --nodeps
-
-          # Build thp and keyboard-helper (now have libssc headers)
-          echo "=== Building xiaomi-sheng-thp ==="
-          rpmbuild -ba xiaomi-sheng-thp.spec --nodeps
-
-          echo "=== Building xiaomi-sheng-keyboard-helper ==="
-          rpmbuild -ba xiaomi-sheng-keyboard-helper.spec --nodeps
-
-          echo "=== Building iio-sensor-proxy ==="
-          rpmbuild -ba iio-sensor-proxy.spec --nodeps
-
-          echo "=== Building firmware-xiaomi-sheng ==="
-          rpmbuild -ba firmware-xiaomi-sheng.spec --nodeps
-
-          echo "=== Building sheng-devauth ==="
-          rpmbuild -ba sheng-devauth.spec --nodeps
-
-          echo "=== Building xiaomi-mipps-auth ==="
-          rpmbuild -ba xiaomi-mipps-auth.spec --nodeps
-
-          echo "=== Building xiaomi-charger-mode ==="
-          rpmbuild -ba xiaomi-charger-mode.spec --nodeps
-
-          echo "=== Building xiaomi-sheng-keyboard-backlight ==="
-          rpmbuild -ba xiaomi-sheng-keyboard-backlight.spec --nodeps
-
-          # xiaomi-pen-status: needs Qt6, skip for now
-          # echo "=== Building xiaomi-pen-status ==="
-          # rpmbuild -ba xiaomi-pen-status.spec --nodeps || { echo "WARN: xiaomi-pen-status failed"; FAILED="$FAILED xiaomi-pen-status"; }
-
-          # xiaomi-sheng-fingerprint: complex build, skip for now
-          # echo "=== Building xiaomi-sheng-fingerprint ==="
-          # rpmbuild -ba xiaomi-sheng-fingerprint.spec --nodeps || { echo "WARN: xiaomi-sheng-fingerprint failed"; FAILED="$FAILED xiaomi-sheng-fingerprint"; }
-
-          echo "=== Building sheng-sensors ==="
-          rpmbuild -ba sheng-sensors.spec --nodeps
-
-          echo "=== Building alsa-xiaomi-sheng ==="
-          rpmbuild -ba alsa-xiaomi-sheng.spec --nodeps
-
-          echo "✓ RPM build complete"
-          ls -la ~/rpmbuild/RPMS/
+          podman run --rm \
+            -v "${{ github.workspace }}:/workspace" \
+            -w /workspace \
+            registry.fedoraproject.org/fedora:${FEDORA_VERSION} \
+            bash /workspace/.github/build-rpms.sh "${FEDORA_VERSION}"
 
       - name: "Upload RPM Artifacts"
         uses: actions/upload-artifact@v7
         with:
           name: custom-rpms
-          path: /home/runner/rpmbuild/RPMS/**/*.rpm
+          path: rpmbuild/RPMS/**/*.rpm
           retention-days: 3
-          if-no-files-found: warn
+          if-no-files-found: error
 
   # ==========================================================================
   # Build RootFS
@@ -278,9 +129,7 @@ jobs:
       - name: "Install Build Tools"
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            rpm tar xz e2fsprogs \
-            qemu-user-static binfmt-support
+          sudo apt-get install -y rpm tar xz e2fsprogs
           echo "✓ Build tools installed"
 
       - name: "Download RPM Artifacts"
@@ -363,7 +212,6 @@ jobs:
 
       - name: "Versionlock Custom Packages"
         run: |
-          # Prevent Fedora updates from overwriting our custom libssc/iio-sensor-proxy
           sudo chroot "$ROOTFS_MOUNT" dnf install -y python3-dnf-plugin-versionlock
           sudo chroot "$ROOTFS_MOUNT" dnf versionlock add libssc
           sudo chroot "$ROOTFS_MOUNT" dnf versionlock add iio-sensor-proxy
@@ -425,7 +273,6 @@ jobs:
         run: |
           sudo chroot "$ROOTFS_MOUNT" systemctl enable NetworkManager
           sudo chroot "$ROOTFS_MOUNT" systemctl enable sshd
-          # QRTR服务 - Qualcomm IPC Router，传感器通信必需
           sudo chroot "$ROOTFS_MOUNT" systemctl enable qrtr-ns || {
             sudo mkdir -p "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service.d"
             echo "[Unit]" | sudo tee "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
