@@ -482,6 +482,20 @@ jobs:
           sudo cp /etc/resolv.conf "$ROOTFS_MOUNT/etc/resolv.conf"
           echo "✓ Virtual file systems mounted"
 
+      - name: "Install Custom RPM Dependencies"
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
+            alsa-ucm-conf \
+            libbsd \
+            libgudev \
+            protobuf-c-libs
+          sudo chroot "$ROOTFS_MOUNT" dnf mark install \
+            alsa-ucm-conf \
+            libbsd \
+            libgudev \
+            protobuf-c-libs
+          echo "✓ Custom RPM dependencies installed"
+
       - name: "Install Custom RPMs"
         run: |
           find rpm/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
