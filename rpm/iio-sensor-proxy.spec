@@ -46,6 +46,9 @@ DESTDIR=%{buildroot} meson install -C build
 %preun
 %systemd_preun iio-sensor-proxy.service
 
+%postun
+%systemd_postun_with_restart iio-sensor-proxy.service
+
 %files
 %license COPYING
 %doc README.md

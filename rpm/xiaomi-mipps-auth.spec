@@ -40,6 +40,9 @@ udevadm control --reload-rules
 %preun
 %systemd_preun xiaomi-mipps-auth.service
 
+%postun
+%systemd_postun_with_restart xiaomi-mipps-auth.service
+
 %files
 /usr/libexec/xiaomi-mipps-auth
 /usr/lib/systemd/system/xiaomi-mipps-auth.service

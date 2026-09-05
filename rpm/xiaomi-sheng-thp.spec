@@ -38,6 +38,9 @@ make install DESTDIR=%{buildroot}
 %preun
 %systemd_preun xiaomi-sheng-thp.service
 
+%postun
+%systemd_postun_with_restart xiaomi-sheng-thp.service
+
 %files
 %license LICENSE
 %doc README.md

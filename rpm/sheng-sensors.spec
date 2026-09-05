@@ -46,7 +46,10 @@ cp -r usr/share/qcom/sm8550 %{buildroot}/usr/share/qcom/
 
 %post
 udevadm control --reload-rules
-systemctl daemon-reload
+%systemd_post iio-sensor-proxy.service
+
+%postun
+%systemd_postun_with_restart iio-sensor-proxy.service
 
 %files
 /usr/lib/systemd/system/iio-sensor-proxy.service.d/10-sheng-sensors.conf

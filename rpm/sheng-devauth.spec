@@ -44,6 +44,9 @@ install -m 644 %{SOURCE2} %{buildroot}/usr/lib/systemd/system/sheng-devauth.serv
 %preun
 %systemd_preun sheng-devauth.service
 
+%postun
+%systemd_postun_with_restart sheng-devauth.service
+
 %files
 /usr/bin/xiaomi_devauth
 /usr/lib/systemd/system/sheng-devauth.service

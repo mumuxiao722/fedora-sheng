@@ -80,6 +80,9 @@ install -Dpm 644 %{SOURCE1} %{buildroot}/usr/lib/systemd/system/adsprpcd-sensors
 %preun
 %systemd_preun adsprpcd-sensorspd.service
 
+%postun
+%systemd_postun_with_restart adsprpcd-sensorspd.service
+
 %files
 %doc README.md
 /usr/sbin/adsprpcd

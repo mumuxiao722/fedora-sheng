@@ -41,6 +41,10 @@ udevadm control --reload-rules
 %systemd_preun xiaomi-sheng-keyboard-helper-angle.service
 %systemd_user_preun xiaomi-sheng-keyboard-helper-micmute.service
 
+%postun
+%systemd_postun_with_restart xiaomi-sheng-keyboard-helper-angle.service
+%systemd_user_postun_with_restart xiaomi-sheng-keyboard-helper-micmute.service
+
 %files
 /usr/libexec/xiaomi-sheng-keyboard-helper
 /usr/lib/systemd/system/xiaomi-sheng-keyboard-helper-angle.service

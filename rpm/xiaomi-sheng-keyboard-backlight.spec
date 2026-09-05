@@ -42,6 +42,9 @@ install -m 644 90-kbd-backlight.rules %{buildroot}/usr/lib/udev/rules.d/
 %preun
 %systemd_user_preun kbd-backlight-sync.service
 
+%postun
+%systemd_user_postun_with_restart kbd-backlight-sync.service
+
 %files
 /usr/local/sbin/kbd-backlight
 /usr/local/sbin/kbd-backlight-sync

@@ -46,6 +46,9 @@ patchelf --set-rpath '$ORIGIN' %{buildroot}/usr/lib/xiaomi-sheng-fingerprint/lib
 %preun
 %systemd_preun fprintd.service
 
+%postun
+%systemd_postun_with_restart fprintd.service
+
 %files
 %license LICENSE
 %doc README.md

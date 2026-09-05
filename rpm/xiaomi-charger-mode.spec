@@ -35,6 +35,9 @@ install -m 644 xiaomi-charger-mode.service %{buildroot}/usr/lib/systemd/system/
 %preun
 %systemd_preun xiaomi-charger-mode.service
 
+%postun
+%systemd_postun_with_restart xiaomi-charger-mode.service
+
 %files
 /usr/libexec/xiaomi-charger-mode
 /usr/lib/systemd/system/xiaomi-charger-mode.service
