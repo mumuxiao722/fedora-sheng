@@ -25,13 +25,13 @@ Patched version for Xiaomi Pad 6S Pro.
 %autosetup -n %{name}-%{version}
 
 %build
-%meson \
+meson setup build --prefix=%{_prefix} --libdir=%{_libdir} --buildtype=plain \
     -Dssc-support=enabled \
     -Dsystemdsystemunitdir=%{_unitdir}
-%meson_build
+meson compile -C build
 
 %install
-%meson_install
+DESTDIR=%{buildroot} meson install -C build
 
 %post
 %systemd_post iio-sensor-proxy.service

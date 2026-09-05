@@ -15,7 +15,6 @@ BuildRequires:  pkgconfig(glib-2.0) >= 2.56
 BuildRequires:  pkgconfig(gio-2.0)
 BuildRequires:  pkgconfig(qmi-glib-1) >= 1.33.4
 BuildRequires:  pkgconfig(libprotobuf-c)
-BuildRequires:  protobuf-compiler
 BuildRequires:  protobuf-c-compiler
 
 %description
@@ -27,11 +26,11 @@ via QMI protocol. Patched version for Xiaomi Pad 6S Pro.
 %autosetup -n libssc-%{version} -p1
 
 %build
-%meson
-%meson_build
+meson setup build --prefix=%{_prefix} --libdir=%{_libdir} --buildtype=plain
+meson compile -C build
 
 %install
-%meson_install
+DESTDIR=%{buildroot} meson install -C build
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -41,6 +40,16 @@ via QMI protocol. Patched version for Xiaomi Pad 6S Pro.
 %doc README.md
 %{_bindir}/ssccli
 %{_libdir}/libssc.so.2*
+
+%package devel
+Summary:        Development files for libssc
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+
+%description devel
+Header files and pkg-config for developing applications that use libssc.
+
+%files devel
+%{_includedir}/libssc/
 %{_libdir}/pkgconfig/libssc.pc
 
 %changelog

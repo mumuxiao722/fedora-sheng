@@ -93,9 +93,13 @@ jobs:
 
       - name: "Install RPM Build Tools"
         run: |
+          set -e
           sudo apt-get update
           sudo apt-get install -y rpm gcc make gcc-aarch64-linux-gnu \
-            libglib2.0-dev
+            libglib2.0-dev \
+            meson ninja-build \
+            libqmi-dev libprotobuf-c-dev protobuf-c-compiler \
+            libbsd-dev libgudev-1.0-dev libpolkit-gobject-1-dev
           echo "✓ RPM build tools installed"
 
       - name: "Clone Source Repos"
@@ -188,52 +192,59 @@ jobs:
           echo "✓ Source tarballs created"
           ls -la ~/rpmbuild/SOURCES/
 
-      - name: "Build Simple RPMs"
+      - name: "Build RPMs"
         run: |
+          set -e
           cd rpms
 
-          # Build all RPMs (--nodeps: skip BuildRequires check on Ubuntu)
-          # firmware (noarch)
-          rpmbuild -ba firmware-xiaomi-sheng.spec --nodeps || echo "WARN: firmware-xiaomi-sheng failed"
+          # Build libssc FIRST - thp/keyboard-helper/iio-sensor-proxy need its headers
+          echo "=== Building libssc ==="
+          rpmbuild -ba libssc.spec --nodeps
+          # Install libssc-devel so subsequent builds can find headers
+          rpm -i --nodeps ~/rpmbuild/RPMS/aarch64/libssc-devel-*.rpm 2>/dev/null || \
+            rpm -i --nodeps ~/rpmbuild/RPMS/noarch/libssc-devel-*.rpm 2>/dev/null || true
 
-          # sheng-devauth (upstream is Debian package structure, no Makefile)
-          rpmbuild -ba sheng-devauth.spec --nodeps || echo "WARN: sheng-devauth failed"
+          echo "=== Building fastrpc ==="
+          rpmbuild -ba fastrpc.spec --nodeps
 
-          # xiaomi-mipps-auth (noarch)
-          rpmbuild -ba xiaomi-mipps-auth.spec --nodeps || echo "WARN: xiaomi-mipps-auth failed"
+          # Build thp and keyboard-helper (now have libssc headers)
+          echo "=== Building xiaomi-sheng-thp ==="
+          rpmbuild -ba xiaomi-sheng-thp.spec --nodeps
 
-          # xiaomi-charger-mode (noarch)
-          rpmbuild -ba xiaomi-charger-mode.spec --nodeps || echo "WARN: xiaomi-charger-mode failed"
+          echo "=== Building xiaomi-sheng-keyboard-helper ==="
+          rpmbuild -ba xiaomi-sheng-keyboard-helper.spec --nodeps
 
-          # xiaomi-sheng-thp
-          rpmbuild -ba xiaomi-sheng-thp.spec --nodeps || echo "WARN: xiaomi-sheng-thp failed"
+          echo "=== Building iio-sensor-proxy ==="
+          rpmbuild -ba iio-sensor-proxy.spec --nodeps
 
-          # xiaomi-pen-status (needs Qt6, skip for now)
-          # rpmbuild -ba xiaomi-pen-status.spec --nodeps || echo "WARN: xiaomi-pen-status failed"
+          echo "=== Building firmware-xiaomi-sheng ==="
+          rpmbuild -ba firmware-xiaomi-sheng.spec --nodeps
 
-          # xiaomi-sheng-keyboard-backlight (noarch)
-          rpmbuild -ba xiaomi-sheng-keyboard-backlight.spec --nodeps || echo "WARN: xiaomi-sheng-keyboard-backlight failed"
+          echo "=== Building sheng-devauth ==="
+          rpmbuild -ba sheng-devauth.spec --nodeps
 
-          # xiaomi-sheng-keyboard-helper
-          rpmbuild -ba xiaomi-sheng-keyboard-helper.spec --nodeps || echo "WARN: xiaomi-sheng-keyboard-helper failed"
+          echo "=== Building xiaomi-mipps-auth ==="
+          rpmbuild -ba xiaomi-mipps-auth.spec --nodeps
 
-          # xiaomi-sheng-fingerprint (complex build, skip for now)
-          # rpmbuild -ba xiaomi-sheng-fingerprint.spec --nodeps || echo "WARN: xiaomi-sheng-fingerprint failed"
+          echo "=== Building xiaomi-charger-mode ==="
+          rpmbuild -ba xiaomi-charger-mode.spec --nodeps
 
-          # fastrpc
-          rpmbuild -ba fastrpc.spec --nodeps || echo "WARN: fastrpc failed"
+          echo "=== Building xiaomi-sheng-keyboard-backlight ==="
+          rpmbuild -ba xiaomi-sheng-keyboard-backlight.spec --nodeps
 
-          # sheng-libssc
-          rpmbuild -ba sheng-libssc.spec --nodeps || echo "WARN: sheng-libssc failed"
+          # xiaomi-pen-status: needs Qt6, skip for now
+          # echo "=== Building xiaomi-pen-status ==="
+          # rpmbuild -ba xiaomi-pen-status.spec --nodeps
 
-          # sheng-iio-sensor-proxy
-          rpmbuild -ba sheng-iio-sensor-proxy.spec --nodeps || echo "WARN: sheng-iio-sensor-proxy failed"
+          # xiaomi-sheng-fingerprint: complex build, skip for now
+          # echo "=== Building xiaomi-sheng-fingerprint ==="
+          # rpmbuild -ba xiaomi-sheng-fingerprint.spec --nodeps
 
-          # sheng-sensors (noarch)
-          rpmbuild -ba sheng-sensors.spec --nodeps || echo "WARN: sheng-sensors failed"
+          echo "=== Building sheng-sensors ==="
+          rpmbuild -ba sheng-sensors.spec --nodeps
 
-          # alsa-xiaomi-sheng (noarch)
-          rpmbuild -ba alsa-xiaomi-sheng.spec --nodeps || echo "WARN: alsa-xiaomi-sheng failed"
+          echo "=== Building alsa-xiaomi-sheng ==="
+          rpmbuild -ba alsa-xiaomi-sheng.spec --nodeps
 
           echo "✓ All RPMs built"
           ls -la ~/rpmbuild/RPMS/
