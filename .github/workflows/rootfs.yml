@@ -217,9 +217,6 @@ jobs:
           echo "=== Image.gz-dtb_sheng ==="
           ls -la "${{ github.workspace }}/Image.gz-dtb_sheng"
 
-      - name: "Show ccache stats"
-        run: ccache -s
-
       - name: "Package Kernel RPM"
         run: |
           KREL="${{ inputs.kernel_branch }}"
