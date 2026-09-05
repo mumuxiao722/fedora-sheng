@@ -7,6 +7,8 @@ License:        GPLv2+
 URL:            https://gitlab.freedesktop.org/hadess/iio-sensor-proxy
 Source0:        %{name}-%{version}.tar.gz
 
+%define _debug_package 0
+
 BuildRequires:  meson >= 0.54.0
 BuildRequires:  ninja-build
 BuildRequires:  gcc

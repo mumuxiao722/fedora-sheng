@@ -7,6 +7,8 @@ License:        LGPL-2.1-or-later
 URL:            https://github.com/ianchb/debian-sheng
 Source0:        %{name}-%{version}.tar.gz
 
+%define _debug_package 0
+
 BuildArch:      noarch
 Requires:       alsa-ucm-conf
 

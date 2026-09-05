@@ -7,6 +7,8 @@ License:        Proprietary
 URL:            https://github.com/slhssb/xiaomi-sheng-keyboard-backlight
 Source0:        %{name}-%{version}.tar.gz
 
+%define _debug_package 0
+
 BuildArch:      noarch
 Requires:       python3
 Requires:       systemd

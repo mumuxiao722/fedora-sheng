@@ -7,6 +7,8 @@ License:        Proprietary
 URL:            https://github.com/ianchb/xiaomi-pen-status
 Source0:        %{name}-%{version}.tar.gz
 
+%define _debug_package 0
+
 BuildRequires:  gcc-c++
 BuildRequires:  make
 BuildRequires:  qmake6

@@ -7,6 +7,8 @@ License:        Proprietary
 URL:            https://github.com/ianchb/sheng-firmware
 Source0:        %{name}-%{version}.tar.gz
 
+%define _debug_package 0
+
 BuildArch:      noarch
 Conflicts:      linux-firmware
 %define __strip /bin/true

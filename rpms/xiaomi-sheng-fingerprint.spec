@@ -7,6 +7,8 @@ License:        LGPL-2.1-or-later
 URL:            https://github.com/ianchb/xiaomi-sheng-fingerprint
 Source0:        %{name}-%{version}.tar.gz
 
+%define _debug_package 0
+
 BuildRequires:  gcc
 BuildRequires:  make
 BuildRequires:  meson >= 0.50.0

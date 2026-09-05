@@ -7,6 +7,8 @@ License:        Proprietary
 URL:            https://github.com/alghiffaryfa19/sheng-sensors-file
 Source0:        %{name}-%{version}.tar.gz
 
+%define _debug_package 0
+
 BuildArch:      noarch
 Requires:       iio-sensor-proxy
 Requires:       libssc

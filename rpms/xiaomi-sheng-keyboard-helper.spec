@@ -7,6 +7,8 @@ License:        Proprietary
 URL:            https://github.com/ianchb/xiaomi-sheng-keyboard-helper
 Source0:        %{name}-%{version}.tar.gz
 
+%define _debug_package 0
+
 BuildRequires:  gcc
 BuildRequires:  make
 BuildRequires:  glib2-devel

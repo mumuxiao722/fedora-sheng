@@ -7,6 +7,8 @@ License:        Proprietary
 URL:            https://github.com/alghiffaryfa19/Linux-xiaomi-sheng
 Source0:        %{name}-%{version}.tar.gz
 
+%define _debug_package 0
+
 Requires:       systemd
 
 %description
