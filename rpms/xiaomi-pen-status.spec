@@ -35,6 +35,6 @@ install -m 755 xiaomi-pen-status %{buildroot}/usr/bin/
 
 %files
 %license LICENSE
-%{_bindir}/xiaomi-pen-status
+/usr/bin/xiaomi-pen-status
 
 %changelog

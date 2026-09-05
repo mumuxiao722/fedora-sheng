@@ -38,8 +38,8 @@ DESTDIR=%{buildroot} meson install -C build
 %files
 %license LICENSE
 %doc README.md
-%{_bindir}/ssccli
-%{_libdir}/libssc.so.2*
+/usr/bin/ssccli
+/usr/lib64/libssc.so.2*
 
 %package devel
 Summary:        Development files for libssc
@@ -49,7 +49,7 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 Header files and pkg-config for developing applications that use libssc.
 
 %files devel
-%{_includedir}/libssc/
-%{_libdir}/pkgconfig/libssc.pc
+/usr/include/libssc/
+/usr/lib64/pkgconfig/libssc.pc
 
 %changelog

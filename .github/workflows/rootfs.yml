@@ -98,7 +98,7 @@ jobs:
           sudo apt-get install -y rpm gcc make gcc-aarch64-linux-gnu \
             libglib2.0-dev \
             ninja-build \
-            libqmi-glib-dev libmbim-glib-dev libprotobuf-c-dev protobuf-c-compiler \
+            libqmi-glib-dev libmbim-glib-dev libprotobuf-c-dev protobuf-c-compiler protobuf-compiler \
             libbsd-dev libgudev-1.0-dev libpolkit-gobject-1-dev
           # Install meson >= 1.4.0 via pip (Ubuntu apt has 1.3.2)
           pip3 install --break-system-packages meson
@@ -220,19 +220,19 @@ jobs:
           rpmbuild -ba iio-sensor-proxy.spec --nodeps || { echo "WARN: iio-sensor-proxy failed"; FAILED="$FAILED iio-sensor-proxy"; }
 
           echo "=== Building firmware-xiaomi-sheng ==="
-          rpmbuild -ba firmware-xiaomi-sheng.spec --nodeps || { echo "WARN: firmware-xiaomi-sheng failed"; FAILED="$FAILED firmware-xiaomi-sheng"; }
+          rpmbuild -ba firmware-xiaomi-sheng.spec --nodeps
 
           echo "=== Building sheng-devauth ==="
-          rpmbuild -ba sheng-devauth.spec --nodeps || { echo "WARN: sheng-devauth failed"; FAILED="$FAILED sheng-devauth"; }
+          rpmbuild -ba sheng-devauth.spec --nodeps
 
           echo "=== Building xiaomi-mipps-auth ==="
-          rpmbuild -ba xiaomi-mipps-auth.spec --nodeps || { echo "WARN: xiaomi-mipps-auth failed"; FAILED="$FAILED xiaomi-mipps-auth"; }
+          rpmbuild -ba xiaomi-mipps-auth.spec --nodeps
 
           echo "=== Building xiaomi-charger-mode ==="
-          rpmbuild -ba xiaomi-charger-mode.spec --nodeps || { echo "WARN: xiaomi-charger-mode failed"; FAILED="$FAILED xiaomi-charger-mode"; }
+          rpmbuild -ba xiaomi-charger-mode.spec --nodeps
 
           echo "=== Building xiaomi-sheng-keyboard-backlight ==="
-          rpmbuild -ba xiaomi-sheng-keyboard-backlight.spec --nodeps || { echo "WARN: xiaomi-sheng-keyboard-backlight failed"; FAILED="$FAILED xiaomi-sheng-keyboard-backlight"; }
+          rpmbuild -ba xiaomi-sheng-keyboard-backlight.spec --nodeps
 
           # xiaomi-pen-status: needs Qt6, skip for now
           # echo "=== Building xiaomi-pen-status ==="
@@ -243,16 +243,17 @@ jobs:
           # rpmbuild -ba xiaomi-sheng-fingerprint.spec --nodeps || { echo "WARN: xiaomi-sheng-fingerprint failed"; FAILED="$FAILED xiaomi-sheng-fingerprint"; }
 
           echo "=== Building sheng-sensors ==="
-          rpmbuild -ba sheng-sensors.spec --nodeps || { echo "WARN: sheng-sensors failed"; FAILED="$FAILED sheng-sensors"; }
+          rpmbuild -ba sheng-sensors.spec --nodeps
 
           echo "=== Building alsa-xiaomi-sheng ==="
-          rpmbuild -ba alsa-xiaomi-sheng.spec --nodeps || { echo "WARN: alsa-xiaomi-sheng failed"; FAILED="$FAILED alsa-xiaomi-sheng"; }
+          rpmbuild -ba alsa-xiaomi-sheng.spec --nodeps
 
           echo "✓ RPM build complete"
+          ls -la ~/rpmbuild/RPMS/
           if [ -n "$FAILED" ]; then
             echo "FAILED:$FAILED"
+            exit 1
           fi
-          ls -la ~/rpmbuild/RPMS/
 
       - name: "Upload RPM Artifacts"
         uses: actions/upload-artifact@v7
