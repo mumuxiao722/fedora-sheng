@@ -450,27 +450,27 @@ jobs:
           sudo podman run --rm \
             -v "/mnt/rootfs:/mnt/rootfs" \
             registry.fedoraproject.org/fedora:${FEDORA_VERSION} \
-            dnf \
-              --installroot=/mnt/rootfs \
-              --releasever="${FEDORA_VERSION}" \
-              --repo=fedora \
-              --repo=updates \
-              --setopt=install_weak_deps=False \
-              --setopt=tsflags=nodocs \
-              install -y \
-              @core \
-              systemd systemd-sysv \
-              sudo curl \
-              NetworkManager openssh-server \
-              wpa_supplicant dbus \
-              ca-certificates \
-              iw \
-              lm-sensors \
-              wireless-regdb \
-              glib2 \
-              libqmi \
-              libmbim \
-              polkit
+            bash -c \
+              "dnf install -y fedora-repos && \
+               dnf \
+                 --installroot=/mnt/rootfs \
+                 --releasever=${FEDORA_VERSION} \
+                 --setopt=install_weak_deps=False \
+                 --setopt=tsflags=nodocs \
+                 install -y \
+                 @core \
+                 systemd systemd-sysv \
+                 sudo curl \
+                 NetworkManager openssh-server \
+                 wpa_supplicant dbus \
+                 ca-certificates \
+                 iw \
+                 lm-sensors \
+                 wireless-regdb \
+                 glib2 \
+                 libqmi \
+                 libmbim \
+                 polkit"
           echo "✓ DNF installroot complete"
 
       - name: "Mount Virtual File Systems"
