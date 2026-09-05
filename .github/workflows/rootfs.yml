@@ -395,7 +395,7 @@ jobs:
         run: |
           gh release download "${{ inputs.kernel_branch }}" \
             --repo mumuxiao722/fedora-sheng \
-            --pattern "*.zip" \
+            --pattern "kernel-sheng.zip" \
             --dest rpm/ \
             --clobber
           cd rpm && unzip -o kernel-sheng.zip && cd ..
@@ -408,7 +408,7 @@ jobs:
         run: |
           gh release download "${{ inputs.kernel_branch }}" \
             --repo "${{ github.repository }}" \
-            --pattern "*.zip" \
+            --pattern "kernel-sheng.zip" \
             --dest rpm/ \
             --clobber
           cd rpm && unzip -o kernel-sheng.zip && cd ..
