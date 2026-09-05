@@ -24,11 +24,7 @@ Supports NT36532E touch controller with multitouch and stylus input.
 make %{?_smp_mflags}
 
 %install
-mkdir -p %{buildroot}/usr/libexec/xiaomi-sheng-thp
-install -m 755 xiaomi-sheng-thp %{buildroot}/usr/libexec/xiaomi-sheng-thp/
-
-mkdir -p %{buildroot}/usr/lib/systemd/system
-install -m 644 xiaomi-sheng-thp.service %{buildroot}/usr/lib/systemd/system/
+make install DESTDIR=%{buildroot}
 
 %post
 %systemd_post xiaomi-sheng-thp.service
@@ -37,6 +33,8 @@ install -m 644 xiaomi-sheng-thp.service %{buildroot}/usr/lib/systemd/system/
 %systemd_preun xiaomi-sheng-thp.service
 
 %files
+%license LICENSE
+%doc README.md
 /usr/libexec/xiaomi-sheng-thp/xiaomi-sheng-thp
 /usr/lib/systemd/system/xiaomi-sheng-thp.service
 

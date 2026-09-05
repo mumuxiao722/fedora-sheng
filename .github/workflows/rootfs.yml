@@ -42,6 +42,12 @@ on:
           - 'ru_RU.UTF-8'
         default: 'None (C.UTF-8)'
 
+      extra_packages:
+        description: 'Extra packages to install (space-separated)'
+        type: string
+        required: false
+        default: ''
+
       boot_mode:
         description: |
           Boot mode:
@@ -57,12 +63,6 @@ on:
 
       custom_partition:
         description: 'Custom partition (required when boot_mode=custom)'
-        type: string
-        required: false
-        default: ''
-
-      extra_packages:
-        description: 'Extra packages to install (space-separated)'
         type: string
         required: false
         default: ''
