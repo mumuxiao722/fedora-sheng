@@ -224,7 +224,7 @@ jobs:
           TOPDIR="${{ github.workspace }}/rpmbuild"
           mkdir -p "$TOPDIR"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
-          cp rpms/kernel-sheng.spec "$TOPDIR/SPECS/kernel-sheng.spec"
+          cp rpm/kernel-sheng.spec "$TOPDIR/SPECS/kernel-sheng.spec"
 
           cd "${{ github.workspace }}/kernel-staging"
           mkdir -p "kernel-sheng-${KREL}"
@@ -276,14 +276,14 @@ jobs:
         run: find rpmbuild/RPMS -name "*-debuginfo-*" -o -name "*-debugsource-*" | xargs rm -f
 
       - name: "Zip RPMs"
-        run: cd rpmbuild/RPMS && for rpm in aarch64/*.rpm noarch/*.rpm; do [ -f "$rpm" ] || continue; name=$(basename "$rpm" .rpm); zip "${{ github.workspace }}/rpms/${name}.zip" "$rpm"; done
+        run: cd rpmbuild/RPMS && for rpm in aarch64/*.rpm noarch/*.rpm; do [ -f "$rpm" ] || continue; name=$(basename "$rpm" .rpm); zip "${{ github.workspace }}/rpm/${name}.zip" "$rpm"; done
         shell: bash
 
       - name: "Upload libssc RPM"
         uses: actions/upload-artifact@v7
         with:
           name: libssc-rpms-fc${{ inputs.fedora_version }}
-          path: rpms/libssc-[0-9]*.zip
+          path: rpm/libssc-[0-9]*.zip
           retention-days: 3
           if-no-files-found: error
 
@@ -291,7 +291,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: fastrpc-rpms-fc${{ inputs.fedora_version }}
-          path: rpms/fastrpc-*.zip
+          path: rpm/fastrpc-*.zip
           retention-days: 3
           if-no-files-found: error
 
@@ -299,7 +299,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: xiaomi-sheng-thp-rpms-fc${{ inputs.fedora_version }}
-          path: rpms/xiaomi-sheng-thp-*.zip
+          path: rpm/xiaomi-sheng-thp-*.zip
           retention-days: 3
           if-no-files-found: error
 
@@ -307,7 +307,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: xiaomi-sheng-keyboard-helper-rpms-fc${{ inputs.fedora_version }}
-          path: rpms/xiaomi-sheng-keyboard-helper-*.zip
+          path: rpm/xiaomi-sheng-keyboard-helper-*.zip
           retention-days: 3
           if-no-files-found: error
 
@@ -315,7 +315,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: iio-sensor-proxy-rpms-fc${{ inputs.fedora_version }}
-          path: rpms/iio-sensor-proxy-*.zip
+          path: rpm/iio-sensor-proxy-*.zip
           retention-days: 3
           if-no-files-found: error
 
@@ -323,7 +323,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: firmware-xiaomi-sheng-rpms-fc${{ inputs.fedora_version }}
-          path: rpms/firmware-xiaomi-sheng-*.zip
+          path: rpm/firmware-xiaomi-sheng-*.zip
           retention-days: 3
           if-no-files-found: error
 
@@ -331,7 +331,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: sheng-devauth-rpms-fc${{ inputs.fedora_version }}
-          path: rpms/sheng-devauth-*.zip
+          path: rpm/sheng-devauth-*.zip
           retention-days: 3
           if-no-files-found: error
 
@@ -339,7 +339,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: xiaomi-mipps-auth-rpms-fc${{ inputs.fedora_version }}
-          path: rpms/xiaomi-mipps-auth-*.zip
+          path: rpm/xiaomi-mipps-auth-*.zip
           retention-days: 3
           if-no-files-found: error
 
@@ -347,7 +347,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: xiaomi-charger-mode-rpms-fc${{ inputs.fedora_version }}
-          path: rpms/xiaomi-charger-mode-*.zip
+          path: rpm/xiaomi-charger-mode-*.zip
           retention-days: 3
           if-no-files-found: error
 
@@ -355,7 +355,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: xiaomi-sheng-keyboard-backlight-rpms-fc${{ inputs.fedora_version }}
-          path: rpms/xiaomi-sheng-keyboard-backlight-*.zip
+          path: rpm/xiaomi-sheng-keyboard-backlight-*.zip
           retention-days: 3
           if-no-files-found: error
 
@@ -363,7 +363,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: sheng-sensors-rpms-fc${{ inputs.fedora_version }}
-          path: rpms/sheng-sensors-*.zip
+          path: rpm/sheng-sensors-*.zip
           retention-days: 3
           if-no-files-found: error
 
@@ -371,7 +371,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: alsa-xiaomi-sheng-rpms-fc${{ inputs.fedora_version }}
-          path: rpms/alsa-xiaomi-sheng-*.zip
+          path: rpm/alsa-xiaomi-sheng-*.zip
           retention-days: 3
           if-no-files-found: error
 
@@ -401,7 +401,7 @@ jobs:
       - name: "Download RPM Artifacts"
         uses: actions/download-artifact@v8
         with:
-          path: rpms/
+          path: rpm/
           merge-multiple: true
 
       - name: "Download Kernel Artifact (custom_build)"
@@ -409,7 +409,7 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: kernel-sheng
-          path: rpms/
+          path: rpm/
 
       - name: "Download Kernel RPM (prebuilt upstream)"
         if: ${{ inputs.kernel_source == 'prebuilt' && inputs.kernel_prebuilt == 'upstream' }}
@@ -417,7 +417,7 @@ jobs:
           gh release download "${{ inputs.kernel_branch }}" \
             --repo mumuxiao722/fedora-sheng \
             --pattern "*.rpm" \
-            --dest rpms/ \
+            --dest rpm/ \
             --clobber
           echo "✓ Kernel RPM downloaded from upstream (${{ inputs.kernel_branch }})"
         env:
@@ -429,7 +429,7 @@ jobs:
           gh release download "${{ inputs.kernel_branch }}" \
             --repo "${{ github.repository }}" \
             --pattern "*.rpm" \
-            --dest rpms/ \
+            --dest rpm/ \
             --clobber
           echo "✓ Kernel RPM downloaded from own release (${{ inputs.kernel_branch }})"
         env:
@@ -499,10 +499,10 @@ jobs:
 
       - name: "Install Kernel RPM in RootFS"
         run: |
-          KERNEL_RPM=$(ls rpms/kernel-sheng-*.rpm 2>/dev/null | head -1)
+          KERNEL_RPM=$(ls rpm/kernel-sheng-*.rpm 2>/dev/null | head -1)
           if [ -z "$KERNEL_RPM" ]; then
-            echo "ERROR: No kernel RPM found in rpms/"
-            ls -la rpms/
+            echo "ERROR: No kernel RPM found in rpm/"
+            ls -la rpm/
             exit 1
           fi
           sudo cp "$KERNEL_RPM" "$ROOTFS_MOUNT/tmp/"
@@ -512,8 +512,8 @@ jobs:
 
       - name: "Install Custom RPMs"
         run: |
-          cd rpms && for z in *.zip; do unzip -o "$z"; done && cd ..
-          find rpms/ -name "*.rpm" ! -name "*-devel-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
+          cd rpm && for z in *.zip; do unzip -o "$z"; done && cd ..
+          find rpm/ -name "*.rpm" ! -name "*-devel-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
           sudo chroot "$ROOTFS_MOUNT" rpm -Uvh /tmp/*.rpm
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
           echo "✓ Custom RPMs installed"
