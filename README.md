@@ -52,12 +52,6 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 | **Autologin** | Whether the created user should be logged in automatically | `true` / `false` | `true` |
 | **Username** | Username for the non-root user | string | `username` |
 | **Hostname** | System hostname | string | `xiaomi-sheng` |
-| **System language** | System locale | `None (C.UTF-8)` / `en_US.UTF-8` / `zh_CN.UTF-8` / `zh_TW.UTF-8` / `ja_JP.UTF-8` / `ko_KR.UTF-8` / `de_DE.UTF-8` / `fr_FR.UTF-8` / `es_ES.UTF-8` / `ru_RU.UTF-8` | `None (C.UTF-8)` |
-| **Boot mode** | Which partition Fedora boots from | `single (userdata)` / `dual (linux)` / `custom` | `dual (linux)` |
-| **Custom partition** | Partition name (required when boot_mode=custom) | any partition name | *(empty)* |
-| **Extra packages** | Extra packages to install (space-separated) | string | *(empty)* |
-| **Enable COPR** | Enable COPR repository (required for GNOME Mobile) | `true` / `false` | `false` |
-| **Quiet Boot** | Enable Plymouth splash screen and quiet boot messages | `true` / `false` | `true` |
 
 ### Desktop Environment
 
@@ -66,6 +60,17 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 | **Desktop** | Desktop environment to install | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
 | **Plasma Mobile** | Use Plasma Mobile shell instead of Plasma Desktop (only when Desktop=KDE Plasma) | `true` / `false` | `false` |
 | **GNOME Mobile** | Use GNOME Mobile instead of GNOME (only when Desktop=GNOME) | `true` / `false` | `false` |
+
+### General (continued)
+
+| Parameter | Description | Options | Default |
+|-----------|-------------|---------|---------|
+| **System language** | System locale | `None (C.UTF-8)` / `en_US.UTF-8` / `zh_CN.UTF-8` / `zh_TW.UTF-8` / `ja_JP.UTF-8` / `ko_KR.UTF-8` / `de_DE.UTF-8` / `fr_FR.UTF-8` / `es_ES.UTF-8` / `ru_RU.UTF-8` | `None (C.UTF-8)` |
+| **Boot mode** | Which partition Fedora boots from | `single (userdata)` / `dual (linux)` / `custom` | `dual (linux)` |
+| **Custom partition** | Partition name (required when boot_mode=custom) | any partition name | *(empty)* |
+| **Extra packages** | Extra packages to install (space-separated) | string | *(empty)* |
+| **Enable COPR** | Enable COPR repository (required for GNOME Mobile) | `true` / `false` | `false` |
+| **Quiet Boot** | Enable Plymouth splash screen and quiet boot messages | `true` / `false` | `true` |
 
 ### Kernel
 
