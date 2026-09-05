@@ -493,19 +493,6 @@ jobs:
           sudo cp /etc/resolv.conf "$ROOTFS_MOUNT/etc/resolv.conf"
           echo "✓ Virtual file systems mounted"
 
-      - name: "Install Kernel RPM in RootFS"
-        run: |
-          KERNEL_RPM=$(ls rpm/kernel-sheng-*.rpm 2>/dev/null | head -1)
-          if [ -z "$KERNEL_RPM" ]; then
-            echo "ERROR: No kernel RPM found in rpm/"
-            ls -la rpm/
-            exit 1
-          fi
-          sudo cp "$KERNEL_RPM" "$ROOTFS_MOUNT/tmp/"
-          sudo chroot "$ROOTFS_MOUNT" rpm -Uvh "/tmp/$(basename "$KERNEL_RPM")"
-          sudo rm -f "$ROOTFS_MOUNT/tmp/$(basename "$KERNEL_RPM")"
-          echo "✓ Kernel RPM installed"
-
       - name: "Install Custom RPMs"
         run: |
           find rpm/ -name "*.rpm" ! -name "*-devel-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
@@ -620,6 +607,27 @@ jobs:
           sudo rm -f "$ROOTFS_MOUNT/etc/resolv.conf"
           echo "✓ DNF cache cleaned"
 
+      - name: "Generate boot.img"
+        run: |
+          PARTITION="${{ steps.partition.outputs.label }}"
+          CMDLINE="root=PARTLABEL=$PARTITION"
+
+          cat "$ROOTFS_MOUNT/boot/Image.gz" \
+              "$ROOTFS_MOUNT/boot/sm8550-xiaomi-sheng.dtb" \
+            > Image.gz-dtb_sheng
+
+          chmod +x mkbootimg
+          ./mkbootimg \
+            --kernel Image.gz-dtb_sheng \
+            --cmdline "$CMDLINE" \
+            --base 0x00000000 \
+            --kernel_offset 0x00008000 \
+            --tags_offset 0x01e00000 \
+            --pagesize 4096 \
+            --id \
+            -o boot.img
+          echo "✓ boot.img generated (cmdline: $CMDLINE)"
+
       - name: "Unmount Virtual File Systems"
         if: always()
         run: |
@@ -637,34 +645,6 @@ jobs:
           fi
           tune2fs -U random rootfs.img
           echo "✓ Image unmounted, UUID set"
-
-      - name: "Generate boot.img"
-        run: |
-          PARTITION="${{ steps.partition.outputs.label }}"
-          CMDLINE="root=PARTLABEL=$PARTITION"
-
-          if [ -f "$ROOTFS_MOUNT/boot/Image.gz" ] && [ -f "$ROOTFS_MOUNT/boot/sm8550-xiaomi-sheng.dtb" ]; then
-            cat "$ROOTFS_MOUNT/boot/Image.gz" \
-                "$ROOTFS_MOUNT/boot/sm8550-xiaomi-sheng.dtb" \
-              > Image.gz-dtb_sheng
-            echo "✓ Kernel Image.gz-dtb created from rootfs"
-          else
-            echo "ERROR: Kernel files not found in rootfs/boot/"
-            ls -la "$ROOTFS_MOUNT/boot/"
-            exit 1
-          fi
-
-          chmod +x mkbootimg
-          ./mkbootimg \
-            --kernel Image.gz-dtb_sheng \
-            --cmdline "$CMDLINE" \
-            --base 0x00000000 \
-            --kernel_offset 0x00008000 \
-            --tags_offset 0x01e00000 \
-            --pagesize 4096 \
-            --id \
-            -o boot.img
-          echo "✓ boot.img generated (cmdline: $CMDLINE)"
 
       - name: "Zip & Upload RootFS Image"
         run: zip "rootfs-${{ inputs.fedora_version }}-${{ steps.partition.outputs.label }}.zip" rootfs.img
