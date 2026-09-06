@@ -781,7 +781,6 @@ jobs:
         run: |
           sudo chroot "$ROOTFS_MOUNT" systemctl enable NetworkManager
           sudo chroot "$ROOTFS_MOUNT" systemctl enable systemd-resolved
-          sudo chroot "$ROOTFS_MOUNT" systemctl enable sshd
           sudo chroot "$ROOTFS_MOUNT" systemctl enable systemd-timesyncd
           sudo chroot "$ROOTFS_MOUNT" systemctl disable firewalld
           sudo chroot "$ROOTFS_MOUNT" systemctl enable sheng-devauth
