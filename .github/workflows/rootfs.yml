@@ -819,6 +819,7 @@ jobs:
           if mountpoint -q "$ROOTFS_MOUNT" 2>/dev/null; then
             sudo umount "$ROOTFS_MOUNT"
           fi
+          e2fsck -f -y rootfs.img || true
           tune2fs -U ee8d3593-59b1-480e-a3b6-4fefb17ee7d8 rootfs.img
           echo "✓ Image unmounted, UUID set"
 
