@@ -28,7 +28,7 @@ on:
         default: 'GNOME'
 
       gnome_mobile:
-        description: 'Enable GNOME Mobile from @mobility/gnome-mobile COPR. NOTE: Packages may not be built for all Fedora versions. Check https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/ before enabling.'
+        description: 'Enable GNOME Mobile from @mobility/gnome-mobile COPR (requires Enable Third-Party). Check https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/ for build status.'
         type: boolean
         default: false
 
