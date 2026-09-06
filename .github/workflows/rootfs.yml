@@ -690,7 +690,7 @@ jobs:
         if: ${{ steps.quiet.outputs.enabled == 'true' }}
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-            plymouth plymouth-theme-spinner
+            plymouth plymouth-system-theme
           echo "✓ Plymouth installed"
 
       - name: "Install KDE Plymouth Theme"
