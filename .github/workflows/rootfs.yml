@@ -392,6 +392,22 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
+      - name: "Upload xiaomi-pen-status RPM"
+        uses: actions/upload-artifact@v7
+        with:
+          name: xiaomi-pen-status-rpm-${{ env.RPM_SUFFIX }}
+          path: rpmbuild/RPMS/aarch64/xiaomi-pen-status-*.rpm
+          retention-days: 3
+          if-no-files-found: warn
+
+      - name: "Upload xiaomi-sheng-fingerprint RPM"
+        uses: actions/upload-artifact@v7
+        with:
+          name: xiaomi-sheng-fingerprint-rpm-${{ env.RPM_SUFFIX }}
+          path: rpmbuild/RPMS/aarch64/xiaomi-sheng-fingerprint-*.rpm
+          retention-days: 3
+          if-no-files-found: warn
+
   # ==========================================================================
   # Build RootFS
   # ==========================================================================
@@ -570,6 +586,33 @@ jobs:
           echo "✓ Virtual file systems mounted"
 
       - name: "Install Custom RPMs"
+        if: ${{ inputs.desktop != 'server' }}
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
+            alsa-ucm \
+            libbsd \
+            libgudev \
+            protobuf-c \
+            qt6-qtbase \
+            qt6-qtsvg \
+            fprintd \
+            libfprint
+          sudo chroot "$ROOTFS_MOUNT" dnf mark dependency -y \
+            alsa-ucm \
+            libbsd \
+            libgudev \
+            protobuf-c \
+            qt6-qtbase \
+            qt6-qtsvg \
+            fprintd \
+            libfprint
+          find rpm/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
+          sudo chroot "$ROOTFS_MOUNT" rpm -Uvh --nosignature /tmp/*.rpm
+          sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
+          echo "✓ Custom RPMs installed"
+
+      - name: "Install Custom RPMs (server)"
+        if: ${{ inputs.desktop == 'server' }}
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             alsa-ucm \
@@ -581,7 +624,7 @@ jobs:
             libbsd \
             libgudev \
             protobuf-c
-          find rpm/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
+          find rpm/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" ! -name "*pen-status*" ! -name "*fingerprint*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
           sudo chroot "$ROOTFS_MOUNT" rpm -Uvh --nosignature /tmp/*.rpm
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
           echo "✓ Custom RPMs installed"

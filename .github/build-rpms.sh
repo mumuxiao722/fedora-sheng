@@ -152,5 +152,11 @@ rpmbuild --define "_topdir $RPM_TOPDIR" -ba sheng-sensors.spec
 echo "=== Building alsa-xiaomi-sheng ==="
 rpmbuild --define "_topdir $RPM_TOPDIR" -ba alsa-xiaomi-sheng.spec
 
+echo "=== Building xiaomi-pen-status ==="
+rpmbuild --define "_topdir $RPM_TOPDIR" -ba xiaomi-pen-status.spec
+
+echo "=== Building xiaomi-sheng-fingerprint ==="
+rpmbuild --define "_topdir $RPM_TOPDIR" -ba xiaomi-sheng-fingerprint.spec
+
 echo "✓ RPM build complete"
 ls -la /workspace/rpmbuild/RPMS/
