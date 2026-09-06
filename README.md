@@ -51,7 +51,7 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 | **Fedora Version** | Fedora version to install | `44` / `45` | `44` |
 | **Enable Third-Party** | Enable third-party repositories | `true` / `false` | `false` |
 | **Desktop** | Desktop environment to install | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
-| **GNOME Mobile** | Use GNOME Mobile instead of GNOME (only when Desktop=GNOME) | `true` / `false` | `false` |
+| **GNOME Mobile** | Use GNOME Mobile instead of GNOME (only when Desktop=GNOME, requires third-party repos) | `true` / `false` | `false` |
 | **Plasma Mobile** | Use Plasma Mobile shell instead of Plasma Desktop (only when Desktop=KDE Plasma) | `true` / `false` | `false` |
 | **Enable COPR** | Enable COPR repository (required for GNOME Mobile) | `true` / `false` | `false` |
 | **Quiet Boot** | Enable Plymouth splash screen and quiet boot messages | `true` / `false` | `true` |
