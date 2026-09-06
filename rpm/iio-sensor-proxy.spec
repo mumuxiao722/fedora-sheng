@@ -52,8 +52,8 @@ DESTDIR=%{buildroot} meson install -C build
 %files
 %license COPYING
 %doc README.md
-/usr/bin/monitor-sensor
-/usr/libexec/iio-sensor-proxy
+%attr(755, root, root) /usr/bin/monitor-sensor
+%attr(755, root, root) /usr/libexec/iio-sensor-proxy
 /usr/share/dbus-1/system.d/net.hadess.SensorProxy.conf
 /usr/share/polkit-1/actions/net.hadess.SensorProxy.policy
 /usr/lib/systemd/system/iio-sensor-proxy.service

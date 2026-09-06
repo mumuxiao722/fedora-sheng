@@ -52,7 +52,7 @@ rm -rf %{buildroot}/usr/lib/python3*
 %files
 %license LICENSE
 %doc README.md
-/usr/bin/ssccli
+%attr(755, root, root) /usr/bin/ssccli
 /usr/lib64/libssc.so.2
 /usr/lib64/libssc.so
 

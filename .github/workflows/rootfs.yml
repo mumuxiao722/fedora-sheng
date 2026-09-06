@@ -751,14 +751,6 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" systemctl enable adsprpcd-sensorspd
           echo "✓ Services enabled"
 
-      - name: "Fix Permissions"
-        run: |
-          sudo chmod 755 "$ROOTFS_MOUNT/usr/bin/adsprpcd" 2>/dev/null || true
-          sudo chmod 755 "$ROOTFS_MOUNT/usr/libexec/iio-sensor-proxy" 2>/dev/null || true
-          sudo chmod 755 "$ROOTFS_MOUNT/usr/bin/monitor-sensor" 2>/dev/null || true
-          sudo chmod 755 "$ROOTFS_MOUNT/usr/bin/ssccli" 2>/dev/null || true
-          echo "✓ Binary permissions fixed"
-
       - name: "Configure sudo"
         run: |
           echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "$ROOTFS_MOUNT/etc/sudoers.d/wheel"

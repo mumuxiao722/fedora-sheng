@@ -74,10 +74,10 @@ install -Dpm 644 %{SOURCE1} %{buildroot}/usr/lib/systemd/system/adsprpcd-sensors
 
 %files
 %doc README.md
-/usr/bin/adsprpcd
-/usr/bin/cdsprpcd
-/usr/bin/sdsprpcd
-/usr/bin/gdsprpcd
+%attr(755, root, root) /usr/bin/adsprpcd
+%attr(755, root, root) /usr/bin/cdsprpcd
+%attr(755, root, root) /usr/bin/sdsprpcd
+%attr(755, root, root) /usr/bin/gdsprpcd
 /usr/lib/libadsprpc.so.1.0.0
 /usr/lib/libadsprpc.so.1
 /usr/lib/libadsprpc.so
