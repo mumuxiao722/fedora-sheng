@@ -620,7 +620,7 @@ jobs:
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             gnome-shell gnome-session gnome-terminal \
-            gdm gnome-control-center systemd-pam dbus-daemon
+            gdm gnome-control-center systemd-pam
           echo "✓ GNOME installed"
 
       - name: "Install GNOME Mobile"
@@ -637,7 +637,7 @@ jobs:
           }
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             gnome-session gnome-terminal \
-            gdm gnome-control-center systemd-pam dbus-daemon
+            gdm gnome-control-center systemd-pam
           echo "✓ GNOME Mobile installed"
 
       - name: "Install KDE Plasma"
@@ -645,7 +645,7 @@ jobs:
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             plasma-desktop plasma-workspace plasma-nm \
-            sddm konsole dolphin kate pipewire-alsa systemd-pam dbus-daemon
+            sddm konsole dolphin kate pipewire-alsa systemd-pam
           echo "✓ KDE Plasma installed"
 
       - name: "Install KDE Plasma Mobile"
@@ -653,7 +653,7 @@ jobs:
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             plasma-mobile plasma-workspace plasma-nm \
-            sddm konsole dolphin kate pipewire-alsa systemd-pam dbus-daemon
+            sddm konsole dolphin kate pipewire-alsa systemd-pam
           echo "✓ KDE Plasma Mobile installed"
 
       - name: "Install Plymouth"
@@ -790,13 +790,6 @@ jobs:
           sudo rm -f "$ROOTFS_MOUNT/etc/resolv.conf"
           sudo ln -s ../run/NetworkManager/resolv.conf "$ROOTFS_MOUNT/etc/resolv.conf"
           echo "✓ DNF cache cleaned"
-
-      - name: "Install Debug WiFi"
-        run: |
-          sudo mkdir -p "$ROOTFS_MOUNT/etc/NetworkManager/system-connections"
-          sudo cp debug-wifi.nmconnection "$ROOTFS_MOUNT/etc/NetworkManager/system-connections/"
-          sudo chmod 600 "$ROOTFS_MOUNT/etc/NetworkManager/system-connections/debug-wifi.nmconnection"
-          echo "✓ Debug WiFi installed (mumuxiao722)"
 
       - name: "Generate boot.img"
         run: |
