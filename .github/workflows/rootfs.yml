@@ -150,7 +150,7 @@ jobs:
   # Build Kernel
   # ==========================================================================
   build-kernel:
-    name: "构筑自定义内核"
+    name: "Build Custom Kernel"
     runs-on: ubuntu-24.04-arm
     if: ${{ inputs.kernel_source == 'custom_build' }}
 
