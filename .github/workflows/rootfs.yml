@@ -494,6 +494,18 @@ jobs:
           esac
           echo "✓ DE name set"
 
+      - name: "Verify Arguments"
+        run: |
+          if [ "${{ inputs.boot_mode }}" = "custom" ] && [ "${{ inputs.kernel_source }}" != "custom_build" ]; then
+            echo "::error::Custom boot mode requires kernel_source=custom_build"
+            exit 1
+          fi
+          if [ "${{ inputs.boot_mode }}" = "custom" ] && [ -z "${{ inputs.custom_partition }}" ]; then
+            echo "::error::Custom boot mode requires custom_partition to be set"
+            exit 1
+          fi
+          echo "✓ Arguments verified"
+
       - name: "Create RootFS Image"
         run: |
           truncate -s "$IMAGE_SIZE" rootfs.img
@@ -575,6 +587,13 @@ jobs:
           echo "  Extra packages: $EXTRA_PKGS"
           sudo chroot "$ROOTFS_MOUNT" dnf install -y $EXTRA_PKGS
           echo "✓ Extra packages installed"
+
+      - name: "Use Upstream Regulatory Database"
+        run: |
+          if [ -f "$ROOTFS_MOUNT/etc/alternatives/wireless-regd" ]; then
+            sudo chroot "$ROOTFS_MOUNT" update-alternatives --set wireless-regd /etc/alternatives/wireless-regd-upstream 2>/dev/null || true
+          fi
+          echo "✓ Upstream regulatory database selected"
 
       - name: "Compute Effective quiet_boot"
         id: quiet
@@ -752,6 +771,14 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" systemctl enable adsprpcd-sensorspd
           echo "✓ Services enabled"
 
+      - name: "Fix Permissions"
+        run: |
+          sudo chmod 755 "$ROOTFS_MOUNT/usr/bin/adsprpcd" 2>/dev/null || true
+          sudo chmod 755 "$ROOTFS_MOUNT/usr/libexec/iio-sensor-proxy" 2>/dev/null || true
+          sudo chmod 755 "$ROOTFS_MOUNT/usr/bin/monitor-sensor" 2>/dev/null || true
+          sudo chmod 755 "$ROOTFS_MOUNT/usr/bin/ssccli" 2>/dev/null || true
+          echo "✓ Binary permissions fixed"
+
       - name: "Configure sudo"
         run: |
           echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "$ROOTFS_MOUNT/etc/sudoers.d/wheel"
@@ -820,7 +847,7 @@ jobs:
           if mountpoint -q "$ROOTFS_MOUNT" 2>/dev/null; then
             sudo umount "$ROOTFS_MOUNT"
           fi
-          tune2fs -U random rootfs.img
+          tune2fs -U ee8d3593-59b1-480e-a3b6-4fefb17ee7d8 rootfs.img
           echo "✓ Image unmounted, UUID set"
 
       - name: "Upload Boot Image"
@@ -837,4 +864,5 @@ jobs:
           name: rootfs-${{ inputs.fedora_version }}-${{ steps.de.outputs.name }}-${{ steps.partition.outputs.label }}
           path: rootfs.img
           retention-days: 14
+          compression-level: 1
           if-no-files-found: error
