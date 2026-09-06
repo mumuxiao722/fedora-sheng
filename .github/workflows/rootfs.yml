@@ -585,11 +585,6 @@ jobs:
             gdm gnome-control-center
           echo "✓ GNOME Mobile installed"
 
-      - name: "Add Normal Users to NetworkManager Group"
-        run: |
-          sudo chroot "$ROOTFS_MOUNT" usermod -aG networkmanager "${{ inputs.username }}"
-          echo "✓ User ${{ inputs.username }} added to networkmanager group (nmtui access)"
-
       - name: "Install KDE Plasma"
         if: ${{ inputs.desktop == 'KDE Plasma' && inputs.plasma_mobile == false }}
         run: |
