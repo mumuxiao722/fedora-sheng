@@ -51,7 +51,7 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 | **Fedora Version** | Fedora version to install | `43` / `44` / `45` / `rawhide` | `44` |
 | **Enable Third-Party** | Enable third-party repositories | `true` / `false` | `false` |
 | **Desktop** | Desktop environment to install | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
-| **GNOME Mobile** | Use GNOME Mobile from @mobility/gnome-mobile COPR. **NOTE: Packages may not be built for all Fedora versions.** See build status below. | `true` / `false` | `false` |
+| **GNOME Mobile** | Use GNOME Mobile from @mobility/gnome-mobile COPR. **NOTE: Packages may not be built for all Fedora versions.** Check [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) before enabling. | `true` / `false` | `false` |
 | **Plasma Mobile** | Use Plasma Mobile shell instead of Plasma Desktop (only when Desktop=KDE Plasma) | `true` / `false` | `false` |
 | **Quiet Boot** | Enable Plymouth splash screen and quiet boot messages | `true` / `false` | `true` |
 | **Autologin** | Whether the created user should be logged in automatically | `true` / `false` | `true` |
@@ -61,17 +61,6 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 | **Boot mode** | Which partition Fedora boots from | `single (userdata)` / `dual (linux)` / `custom` | `dual (linux)` |
 | **Custom partition** | Partition name (required when boot_mode=custom) | any partition name | *(empty)* |
 | **Extra packages** | Extra packages to install (space-separated) | string | *(empty)* |
-
-#### COPR Build Status (GNOME Mobile)
-
-> Data from [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/)
-
-| Package | Fedora 43 | Fedora 44 | Fedora 45 | Rawhide |
-|---------|-----------|-----------|-----------|---------|
-| mutter | ✓ | ✗ | ✓ | ✓ |
-| gnome-settings-daemon | ✓ | ✓ | ✓ | ✓ |
-| gnome-shell | ✓ | ✗ | ✗ | ✓ |
-| **Overall** | ✓ | ✗ | ✗ | ✓ |
 
 ### Kernel
 

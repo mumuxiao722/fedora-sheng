@@ -51,7 +51,7 @@
 | **Fedora Version** | 要安装的 Fedora 版本 | `43` / `44` / `45` / `rawhide` | `44` |
 | **Enable Third-Party** | 启用第三方仓库 | `true` / `false` | `false` |
 | **Desktop** | 要安装的桌面环境 | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
-| **GNOME Mobile** | 使用 @mobility/gnome-mobile COPR 的 GNOME Mobile。**注意：部分 Fedora 版本可能尚未完成构建。** 启用前请查看下方构建状态。 | `true` / `false` | `false` |
+| **GNOME Mobile** | 使用 @mobility/gnome-mobile COPR 的 GNOME Mobile。**注意：部分 Fedora 版本可能尚未完成构建。** 启用前请查看 [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/)。 | `true` / `false` | `false` |
 | **Plasma Mobile** | 使用 Plasma Mobile 界面而非 Plasma Desktop（仅 Desktop=KDE Plasma 时有效） | `true` / `false` | `false` |
 | **Quiet Boot** | 启用 Plymouth 启动画面和安静启动信息 | `true` / `false` | `true` |
 | **Autologin** | 创建的用户是否自动登录 | `true` / `false` | `true` |
@@ -61,17 +61,6 @@
 | **Boot mode** | Fedora 从哪个分区启动 | `single (userdata)` / `dual (linux)` / `custom` | `dual (linux)` |
 | **Custom partition** | 分区名称（boot_mode=custom 时必填） | 任意分区名称 | *（空）* |
 | **Extra packages** | 额外安装的软件包（空格分隔） | 字符串 | *（空）* |
-
-#### COPR 构建状态（GNOME Mobile）
-
-> 数据来源：[COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/)
-
-| 包名 | Fedora 43 | Fedora 44 | Fedora 45 | Rawhide |
-|------|-----------|-----------|-----------|---------|
-| mutter | ✓ | ✗ | ✓ | ✓ |
-| gnome-settings-daemon | ✓ | ✓ | ✓ | ✓ |
-| gnome-shell | ✓ | ✗ | ✗ | ✓ |
-| **总计** | ✓ | ✗ | ✗ | ✓ |
 | **Quiet Boot** | 启用 Plymouth 启动画面和安静启动信息 | `true` / `false` | `true` |
 
 ### 内核设置
