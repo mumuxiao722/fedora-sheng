@@ -570,7 +570,7 @@ jobs:
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf copr enable -y @mobility/gnome-mobile
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-            gnome-mobile \
+            gnome-shell mutter gnome-settings-daemon \
             gdm gnome-terminal gnome-control-center
           echo "✓ GNOME Mobile installed"
 
