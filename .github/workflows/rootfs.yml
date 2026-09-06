@@ -575,7 +575,8 @@ jobs:
               glib2 \
               libqmi \
               libmbim \
-              polkit
+              polkit \
+              pipewire pipewire-alsa pipewire-pulseaudio
           echo "✓ DNF installroot complete"
 
       - name: "Mount Virtual File Systems"
@@ -673,8 +674,8 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             plasma-desktop plasma-workspace plasma-nm \
             sddm konsole dolphin kate \
-            pipewire pipewire-alsa pipewire-pulseaudio wireplumber \
             systemd-pam
+          echo "✓ KDE Plasma installed"
 
       - name: "Install KDE Plasma Mobile"
         if: ${{ inputs.desktop == 'KDE Plasma' && inputs.plasma_mobile == true }}
@@ -682,7 +683,6 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             plasma-mobile plasma-workspace plasma-nm \
             sddm konsole dolphin kate \
-            pipewire pipewire-alsa pipewire-pulseaudio wireplumber \
             systemd-pam
           echo "✓ KDE Plasma Mobile installed"
 
