@@ -551,11 +551,11 @@ jobs:
             echo "enabled=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: "Enable COPR Repository"
+      - name: "Setup Package Manager"
         if: ${{ inputs.enable_copr == true }}
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y dnf-plugins-core
-          echo "✓ COPR plugins installed"
+          echo "✓ DNF plugins installed"
 
       - name: "Install GNOME"
         if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == false }}
