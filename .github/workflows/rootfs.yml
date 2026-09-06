@@ -12,7 +12,7 @@ on:
         default: '44'
 
       enable_copr:
-        description: 'Enable COPR repository'
+        description: 'Enable third-party repositories'
         type: boolean
         default: false
 
@@ -551,11 +551,11 @@ jobs:
             echo "enabled=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: "Setup Package Manager"
+      - name: "Enable Third-Party Repositories"
         if: ${{ inputs.enable_copr == true }}
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y dnf-plugins-core
-          echo "✓ DNF plugins installed"
+          echo "✓ Third-party repository support enabled"
 
       - name: "Install GNOME"
         if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == false }}
