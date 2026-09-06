@@ -7,8 +7,10 @@ on:
         description: 'Fedora Version'
         type: choice
         options:
+          - 43
           - 44
           - 45
+          - rawhide
         default: '44'
 
       enable_third_party:
@@ -26,7 +28,7 @@ on:
         default: 'GNOME'
 
       gnome_mobile:
-        description: 'Enable GNOME Mobile instead of GNOME (only when desktop=GNOME, requires third-party repos)'
+        description: 'Enable GNOME Mobile from @mobility/gnome-mobile COPR. NOTE: Packages may not be built for all Fedora versions. Check https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/ before enabling.'
         type: boolean
         default: false
 
@@ -566,23 +568,27 @@ jobs:
             gdm gnome-control-center
           echo "✓ GNOME installed"
 
-      - name: "Install GNOME Mobile"
-        if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == true && inputs.fedora_version != '44' }}
+      - name: "Enable GNOME Mobile"
+        if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == true }}
         run: |
+          echo "::warning::GNOME Mobile requires mutter & gnome-settings-daemon from @mobility/gnome-mobile COPR."
+          echo "::warning::Check build status: https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/"
           sudo chroot "$ROOTFS_MOUNT" dnf copr enable -y @mobility/gnome-mobile
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y mutter gnome-settings-daemon gnome-shell || {
+            echo "::error::GNOME Mobile packages failed to install."
+            echo "::error::Packages may not be built for Fedora ${{ inputs.fedora_version }}."
+            echo "::error::Check: https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/"
+            exit 1
+          }
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-            gnome-shell mutter gnome-settings-daemon \
-            gdm gnome-terminal gnome-control-center
+            gnome-session gnome-terminal \
+            gdm gnome-control-center
           echo "✓ GNOME Mobile installed"
 
-      - name: "Skip GNOME Mobile (Fedora 44)"
-        if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == true && inputs.fedora_version == '44' }}
+      - name: "Add Normal Users to NetworkManager Group"
         run: |
-          echo "::warning::GNOME Mobile requires Fedora 45+, falling back to standard GNOME"
-          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-            gnome-shell gnome-session gnome-terminal \
-            gdm gnome-control-center
-          echo "✓ GNOME installed (fallback)"
+          sudo chroot "$ROOTFS_MOUNT" usermod -aG networkmanager "${{ inputs.username }}"
+          echo "✓ User ${{ inputs.username }} added to networkmanager group (nmtui access)"
 
       - name: "Install KDE Plasma"
         if: ${{ inputs.desktop == 'KDE Plasma' && inputs.plasma_mobile == false }}

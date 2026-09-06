@@ -48,10 +48,10 @@
 
 | 参数 | 说明 | 选项 | 默认值 |
 |------|------|------|--------|
-| **Fedora Version** | 要安装的 Fedora 版本 | `44` / `45` | `44` |
+| **Fedora Version** | 要安装的 Fedora 版本 | `43` / `44` / `45` / `rawhide` | `44` |
 | **Enable Third-Party** | 启用第三方仓库 | `true` / `false` | `false` |
 | **Desktop** | 要安装的桌面环境 | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
-| **GNOME Mobile** | 使用 GNOME Mobile 而非 GNOME（仅 Desktop=GNOME 时有效，需要 Fedora 45+ 和第三方仓库） | `true` / `false` | `false` |
+| **GNOME Mobile** | 使用 @mobility/gnome-mobile COPR 的 GNOME Mobile。**注意：部分 Fedora 版本可能尚未完成构建。** 启用前请查看 [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/)。 | `true` / `false` | `false` |
 | **Plasma Mobile** | 使用 Plasma Mobile 界面而非 Plasma Desktop（仅 Desktop=KDE Plasma 时有效） | `true` / `false` | `false` |
 | **Autologin** | 创建的用户是否自动登录 | `true` / `false` | `true` |
 | **Username** | 非 root 用户的用户名 | 字符串 | `username` |
