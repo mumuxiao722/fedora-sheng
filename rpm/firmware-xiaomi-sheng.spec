@@ -23,11 +23,14 @@ Includes WiFi, Bluetooth, DSP, and other device-specific firmware.
 %autosetup -n sheng-firmware-%{version}
 
 %install
-mkdir -p %{buildroot}/usr/lib/firmware
-cp -r * %{buildroot}/usr/lib/firmware/
+mkdir -p %{buildroot}/lib/firmware
+cp -r * %{buildroot}/lib/firmware/
+mkdir -p %{buildroot}/lib/firmware/ath12k/WCN7850/hw2.0
+cp %{buildroot}/lib/firmware/ath12k/WCN7850/hw2.0/board-2.bin \
+   %{buildroot}/lib/firmware/ath12k/WCN7850/hw2.0/board.bin 2>/dev/null || true
 
 %files
-/usr/lib/firmware/*
+/lib/firmware/*
 
 %changelog
 

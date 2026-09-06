@@ -574,13 +574,6 @@ jobs:
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
           echo "✓ Custom RPMs installed"
 
-      - name: "Fix WiFi Firmware"
-        run: |
-          sudo mkdir -p "$ROOTFS_MOUNT/lib/firmware/ath12k/WCN7850/hw2.0"
-          sudo cp "$ROOTFS_MOUNT/lib/firmware/ath12k/WCN7850/hw2.0/board-2.bin" \
-            "$ROOTFS_MOUNT/lib/firmware/ath12k/WCN7850/hw2.0/board.bin" || true
-          echo "✓ WiFi firmware fixed (board-2.bin → board.bin)"
-
       - name: "Versionlock Custom Packages"
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y python3-dnf-plugin-versionlock
