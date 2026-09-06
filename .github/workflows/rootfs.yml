@@ -686,7 +686,7 @@ jobs:
             plasma-desktop plasma-workspace plasma-nm \
             sddm konsole dolphin kate \
             systemd-pam \
-            xdg-desktop-portal-kde
+            xdg-desktop-portal-kde kio-admin
           echo "✓ KDE Plasma installed"
 
       - name: "Install KDE Plasma Mobile"
@@ -696,7 +696,7 @@ jobs:
             plasma-mobile plasma-workspace plasma-nm \
             sddm konsole dolphin kate \
             systemd-pam \
-            xdg-desktop-portal-kde
+            xdg-desktop-portal-kde kio-admin
           echo "✓ KDE Plasma Mobile installed"
 
       - name: "Install Plymouth"
