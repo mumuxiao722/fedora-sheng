@@ -599,8 +599,10 @@ jobs:
             qt6-qtbase \
             qt6-qtsvg \
             fprintd \
+            fprintd-pam \
             libfprint \
-            xdg-desktop-portal
+            xdg-desktop-portal \
+            gvfs
           sudo chroot "$ROOTFS_MOUNT" dnf mark dependency -y \
             alsa-ucm \
             libbsd \
@@ -609,8 +611,10 @@ jobs:
             qt6-qtbase \
             qt6-qtsvg \
             fprintd \
+            fprintd-pam \
             libfprint \
-            xdg-desktop-portal
+            xdg-desktop-portal \
+            gvfs
           find rpm/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
           sudo chroot "$ROOTFS_MOUNT" rpm -Uvh --nosignature /tmp/*.rpm
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
@@ -651,7 +655,8 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             gnome-shell gnome-session gnome-terminal \
             gdm gnome-control-center systemd-pam \
-            xdg-desktop-portal-gnome
+            xdg-desktop-portal-gnome xdg-desktop-portal-gtk \
+            nautilus
           echo "✓ GNOME installed"
 
       - name: "Install GNOME Mobile"
@@ -672,7 +677,8 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             gnome-session gnome-terminal \
             gdm gnome-control-center systemd-pam \
-            xdg-desktop-portal-gnome
+            xdg-desktop-portal-gnome xdg-desktop-portal-gtk \
+            nautilus
           echo "✓ GNOME Mobile installed"
 
       - name: "Install KDE Plasma"
