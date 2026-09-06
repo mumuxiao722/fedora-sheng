@@ -555,8 +555,8 @@ jobs:
         if: ${{ inputs.enable_copr == true }}
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y dnf-plugins-core
-          sudo chroot "$ROOTFS_MOUNT" dnf copr enable -y mobility/gnome-mobile
-          echo "✓ COPR repository enabled (mobility/gnome-mobile)"
+          sudo chroot "$ROOTFS_MOUNT" dnf copr enable -y @mobility/gnome-mobile
+          echo "✓ COPR repository enabled (@mobility/gnome-mobile)"
 
       - name: "Install GNOME"
         if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == false }}
