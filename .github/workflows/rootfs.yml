@@ -624,7 +624,7 @@ jobs:
             libbsd \
             libgudev \
             protobuf-c
-          find rpm/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" ! -name "*pen-status*" ! -name "*fingerprint*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
+          find rpm/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" ! -name "*fingerprint*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
           sudo chroot "$ROOTFS_MOUNT" rpm -Uvh --nosignature /tmp/*.rpm
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
           echo "✓ Custom RPMs installed"
