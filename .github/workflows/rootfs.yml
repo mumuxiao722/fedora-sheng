@@ -588,13 +588,6 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" dnf install -y $EXTRA_PKGS
           echo "✓ Extra packages installed"
 
-      - name: "Use Upstream Regulatory Database"
-        run: |
-          if [ -f "$ROOTFS_MOUNT/etc/alternatives/wireless-regd" ]; then
-            sudo chroot "$ROOTFS_MOUNT" update-alternatives --set wireless-regd /etc/alternatives/wireless-regd-upstream 2>/dev/null || true
-          fi
-          echo "✓ Upstream regulatory database selected"
-
       - name: "Compute Effective quiet_boot"
         id: quiet
         run: |
