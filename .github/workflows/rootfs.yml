@@ -567,15 +567,22 @@ jobs:
           echo "✓ GNOME installed"
 
       - name: "Install GNOME Mobile"
-        if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == true }}
+        if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == true && inputs.fedora_version != '44' }}
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf copr enable -y @mobility/gnome-mobile
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-            --disablerepo='*' --enablerepo='copr:copr.fedorainfracloud.org:group_mobility:gnome-mobile' \
-            gnome-shell mutter gnome-settings-daemon
-          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
+            gnome-shell mutter gnome-settings-daemon \
             gdm gnome-terminal gnome-control-center
           echo "✓ GNOME Mobile installed"
+
+      - name: "Skip GNOME Mobile (Fedora 44)"
+        if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == true && inputs.fedora_version == '44' }}
+        run: |
+          echo "::warning::GNOME Mobile requires Fedora 45+, falling back to standard GNOME"
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
+            gnome-shell gnome-session gnome-terminal \
+            gdm gnome-control-center
+          echo "✓ GNOME installed (fallback)"
 
       - name: "Install KDE Plasma"
         if: ${{ inputs.desktop == 'KDE Plasma' && inputs.plasma_mobile == false }}
