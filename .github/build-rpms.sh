@@ -153,9 +153,11 @@ echo "=== Building alsa-xiaomi-sheng ==="
 rpmbuild --define "_topdir $RPM_TOPDIR" -ba alsa-xiaomi-sheng.spec
 
 echo "=== Building xiaomi-pen-status ==="
+dnf install -y qmake6 qt6-qtbase-devel qt6-qtsvg-devel qt6-qtnetworkauth-devel qt6-qtbase-private-devel
 rpmbuild --define "_topdir $RPM_TOPDIR" -ba xiaomi-pen-status.spec
 
 echo "=== Building xiaomi-sheng-fingerprint ==="
+dnf install -y meson ninja-build glib2-devel libgusb-devel libfprint-devel patchelf
 rpmbuild --define "_topdir $RPM_TOPDIR" -ba xiaomi-sheng-fingerprint.spec
 
 echo "✓ RPM build complete"
