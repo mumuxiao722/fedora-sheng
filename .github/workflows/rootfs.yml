@@ -273,20 +273,16 @@ jobs:
       - name: "Checkout Repo"
         uses: actions/checkout@v7
 
-      - name: "Map Fedora Version to RPM Suffix"
-        id: rpm
-        run: |
-          VER="${{ inputs.fedora_version }}"
-          if [ "$VER" = "rawhide" ]; then
-            echo "suffix=fc46" >> $GITHUB_OUTPUT
-          else
-            echo "suffix=fc${VER}" >> $GITHUB_OUTPUT
-          fi
-          echo "✓ RPM suffix set"
-
       - name: "Build RPMs in Fedora Container"
         run: |
           FEDORA_VERSION=${{ inputs.fedora_version }}
+          if [ "$FEDORA_VERSION" = "rawhide" ]; then
+            RPM_SUFFIX="fc46"
+          else
+            RPM_SUFFIX="fc${FEDORA_VERSION}"
+          fi
+          echo "RPM_SUFFIX=${RPM_SUFFIX}" >> $GITHUB_ENV
+
           podman pull registry.fedoraproject.org/fedora:${FEDORA_VERSION}
 
           podman run --rm \
@@ -303,7 +299,7 @@ jobs:
       - name: "Upload libssc RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: libssc-rpm-${{ steps.rpm.outputs.suffix }}
+          name: libssc-rpm-${{ env.RPM_SUFFIX }}
           path: rpmbuild/RPMS/aarch64/libssc-[0-9]*.rpm
           retention-days: 3
           if-no-files-found: error
@@ -311,7 +307,7 @@ jobs:
       - name: "Upload fastrpc RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: fastrpc-rpm-${{ steps.rpm.outputs.suffix }}
+          name: fastrpc-rpm-${{ env.RPM_SUFFIX }}
           path: rpmbuild/RPMS/aarch64/fastrpc-*.rpm
           retention-days: 3
           if-no-files-found: error
@@ -319,7 +315,7 @@ jobs:
       - name: "Upload xiaomi-sheng-thp RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: xiaomi-sheng-thp-rpm-${{ steps.rpm.outputs.suffix }}
+          name: xiaomi-sheng-thp-rpm-${{ env.RPM_SUFFIX }}
           path: rpmbuild/RPMS/aarch64/xiaomi-sheng-thp-*.rpm
           retention-days: 3
           if-no-files-found: error
@@ -327,7 +323,7 @@ jobs:
       - name: "Upload xiaomi-sheng-keyboard-helper RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: xiaomi-sheng-keyboard-helper-rpm-${{ steps.rpm.outputs.suffix }}
+          name: xiaomi-sheng-keyboard-helper-rpm-${{ env.RPM_SUFFIX }}
           path: rpmbuild/RPMS/aarch64/xiaomi-sheng-keyboard-helper-*.rpm
           retention-days: 3
           if-no-files-found: error
@@ -335,7 +331,7 @@ jobs:
       - name: "Upload iio-sensor-proxy RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: iio-sensor-proxy-rpm-${{ steps.rpm.outputs.suffix }}
+          name: iio-sensor-proxy-rpm-${{ env.RPM_SUFFIX }}
           path: rpmbuild/RPMS/aarch64/iio-sensor-proxy-*.rpm
           retention-days: 3
           if-no-files-found: error
@@ -343,7 +339,7 @@ jobs:
       - name: "Upload firmware-xiaomi-sheng RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: firmware-xiaomi-sheng-rpm-${{ steps.rpm.outputs.suffix }}
+          name: firmware-xiaomi-sheng-rpm-${{ env.RPM_SUFFIX }}
           path: rpmbuild/RPMS/noarch/firmware-xiaomi-sheng-*.rpm
           retention-days: 3
           if-no-files-found: error
@@ -351,7 +347,7 @@ jobs:
       - name: "Upload sheng-devauth RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: sheng-devauth-rpm-${{ steps.rpm.outputs.suffix }}
+          name: sheng-devauth-rpm-${{ env.RPM_SUFFIX }}
           path: rpmbuild/RPMS/aarch64/sheng-devauth-*.rpm
           retention-days: 3
           if-no-files-found: error
@@ -359,7 +355,7 @@ jobs:
       - name: "Upload xiaomi-mipps-auth RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: xiaomi-mipps-auth-rpm-${{ steps.rpm.outputs.suffix }}
+          name: xiaomi-mipps-auth-rpm-${{ env.RPM_SUFFIX }}
           path: rpmbuild/RPMS/noarch/xiaomi-mipps-auth-*.rpm
           retention-days: 3
           if-no-files-found: error
@@ -367,7 +363,7 @@ jobs:
       - name: "Upload xiaomi-charger-mode RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: xiaomi-charger-mode-rpm-${{ steps.rpm.outputs.suffix }}
+          name: xiaomi-charger-mode-rpm-${{ env.RPM_SUFFIX }}
           path: rpmbuild/RPMS/noarch/xiaomi-charger-mode-*.rpm
           retention-days: 3
           if-no-files-found: error
@@ -375,7 +371,7 @@ jobs:
       - name: "Upload xiaomi-sheng-keyboard-backlight RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: xiaomi-sheng-keyboard-backlight-rpm-${{ steps.rpm.outputs.suffix }}
+          name: xiaomi-sheng-keyboard-backlight-rpm-${{ env.RPM_SUFFIX }}
           path: rpmbuild/RPMS/noarch/xiaomi-sheng-keyboard-backlight-*.rpm
           retention-days: 3
           if-no-files-found: error
@@ -383,7 +379,7 @@ jobs:
       - name: "Upload sheng-sensors RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: sheng-sensors-rpm-${{ steps.rpm.outputs.suffix }}
+          name: sheng-sensors-rpm-${{ env.RPM_SUFFIX }}
           path: rpmbuild/RPMS/noarch/sheng-sensors-*.rpm
           retention-days: 3
           if-no-files-found: error
@@ -391,7 +387,7 @@ jobs:
       - name: "Upload alsa-xiaomi-sheng RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: alsa-xiaomi-sheng-rpm-${{ steps.rpm.outputs.suffix }}
+          name: alsa-xiaomi-sheng-rpm-${{ env.RPM_SUFFIX }}
           path: rpmbuild/RPMS/noarch/alsa-xiaomi-sheng-*.rpm
           retention-days: 3
           if-no-files-found: error
