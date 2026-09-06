@@ -586,7 +586,6 @@ jobs:
           echo "✓ Virtual file systems mounted"
 
       - name: "Install Custom RPMs"
-        if: ${{ inputs.desktop != 'server' }}
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             alsa-ucm \
@@ -607,24 +606,6 @@ jobs:
             fprintd \
             libfprint
           find rpm/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
-          sudo chroot "$ROOTFS_MOUNT" rpm -Uvh --nosignature /tmp/*.rpm
-          sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
-          echo "✓ Custom RPMs installed"
-
-      - name: "Install Custom RPMs (server)"
-        if: ${{ inputs.desktop == 'server' }}
-        run: |
-          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-            alsa-ucm \
-            libbsd \
-            libgudev \
-            protobuf-c
-          sudo chroot "$ROOTFS_MOUNT" dnf mark dependency -y \
-            alsa-ucm \
-            libbsd \
-            libgudev \
-            protobuf-c
-          find rpm/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" ! -name "*fingerprint*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
           sudo chroot "$ROOTFS_MOUNT" rpm -Uvh --nosignature /tmp/*.rpm
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
           echo "✓ Custom RPMs installed"
