@@ -784,14 +784,6 @@ jobs:
           tune2fs -U random rootfs.img
           echo "✓ Image unmounted, UUID set"
 
-      - name: "Upload RootFS Image"
-        uses: actions/upload-artifact@v7
-        with:
-          name: rootfs-${{ inputs.fedora_version }}-${{ steps.partition.outputs.label }}
-          path: rootfs.img
-          retention-days: 14
-          if-no-files-found: error
-
       - name: "Upload Boot Image"
         uses: actions/upload-artifact@v7
         with:
@@ -799,3 +791,11 @@ jobs:
           path: boot.img
           retention-days: 14
           if-no-files-found: warn
+
+      - name: "Upload RootFS Image"
+        uses: actions/upload-artifact@v7
+        with:
+          name: rootfs-${{ inputs.fedora_version }}-${{ steps.partition.outputs.label }}
+          path: rootfs.img
+          retention-days: 14
+          if-no-files-found: error
