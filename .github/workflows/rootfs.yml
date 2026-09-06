@@ -463,6 +463,30 @@ jobs:
           esac
           echo "✓ Partition label set"
 
+      - name: "Parse DE Name"
+        id: de
+        run: |
+          case "${{ inputs.desktop }}" in
+            'GNOME')
+              if [ "${{ inputs.gnome_mobile }}" = "true" ]; then
+                echo "name=gnome-mobile" >> $GITHUB_OUTPUT
+              else
+                echo "name=gnome" >> $GITHUB_OUTPUT
+              fi
+              ;;
+            'KDE Plasma')
+              if [ "${{ inputs.plasma_mobile }}" = "true" ]; then
+                echo "name=kde-mobile" >> $GITHUB_OUTPUT
+              else
+                echo "name=kde" >> $GITHUB_OUTPUT
+              fi
+              ;;
+            'server')
+              echo "name=server" >> $GITHUB_OUTPUT
+              ;;
+          esac
+          echo "✓ DE name set"
+
       - name: "Create RootFS Image"
         run: |
           truncate -s "$IMAGE_SIZE" rootfs.img
@@ -795,7 +819,7 @@ jobs:
       - name: "Upload Boot Image"
         uses: actions/upload-artifact@v7
         with:
-          name: boot-${{ inputs.fedora_version }}-${{ steps.partition.outputs.label }}${{ steps.quiet.outputs.enabled == 'true' && '-plymouth' || '' }}
+          name: boot-${{ inputs.fedora_version }}-${{ steps.de.outputs.name }}-${{ steps.partition.outputs.label }}${{ steps.quiet.outputs.enabled == 'true' && '-plymouth' || '' }}
           path: boot.img
           retention-days: 14
           if-no-files-found: warn
@@ -803,7 +827,7 @@ jobs:
       - name: "Upload RootFS Image"
         uses: actions/upload-artifact@v7
         with:
-          name: rootfs-${{ inputs.fedora_version }}-${{ steps.partition.outputs.label }}
+          name: rootfs-${{ inputs.fedora_version }}-${{ steps.de.outputs.name }}-${{ steps.partition.outputs.label }}
           path: rootfs.img
           retention-days: 14
           if-no-files-found: error
