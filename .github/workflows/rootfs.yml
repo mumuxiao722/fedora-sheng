@@ -574,6 +574,13 @@ jobs:
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
           echo "✓ Custom RPMs installed"
 
+      - name: "Fix WiFi Firmware"
+        run: |
+          sudo mkdir -p "$ROOTFS_MOUNT/lib/firmware/ath12k/WCN7850/hw2.0"
+          sudo cp "$ROOTFS_MOUNT/lib/firmware/ath12k/WCN7850/hw2.0/board-2.bin" \
+            "$ROOTFS_MOUNT/lib/firmware/ath12k/WCN7850/hw2.0/board.bin" || true
+          echo "✓ WiFi firmware fixed (board-2.bin → board.bin)"
+
       - name: "Versionlock Custom Packages"
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y python3-dnf-plugin-versionlock
@@ -744,20 +751,7 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" systemctl enable systemd-resolved
           sudo chroot "$ROOTFS_MOUNT" systemctl enable sshd
           sudo chroot "$ROOTFS_MOUNT" systemctl enable systemd-timesyncd
-          sudo chroot "$ROOTFS_MOUNT" systemctl enable qrtr-ns || {
-            sudo mkdir -p "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service.d"
-            echo "[Unit]" | sudo tee "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
-            echo "Description=Qualcomm IPC Router Service (QRTR)" | sudo tee -a "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
-            echo "After=network.target" | sudo tee -a "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
-            echo "" | sudo tee -a "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
-            echo "[Service]" | sudo tee -a "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
-            echo "ExecStart=/usr/bin/qrtr-ns -f" | sudo tee -a "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
-            echo "Restart=always" | sudo tee -a "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
-            echo "" | sudo tee -a "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
-            echo "[Install]" | sudo tee -a "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
-            echo "WantedBy=multi-user.target" | sudo tee -a "$ROOTFS_MOUNT/etc/systemd/system/qrtr-ns.service" > /dev/null
-            sudo chroot "$ROOTFS_MOUNT" systemctl enable qrtr-ns
-          }
+          sudo chroot "$ROOTFS_MOUNT" systemctl disable firewalld
           sudo chroot "$ROOTFS_MOUNT" systemctl enable sheng-devauth
           sudo chroot "$ROOTFS_MOUNT" systemctl enable xiaomi-sheng-thp
           sudo chroot "$ROOTFS_MOUNT" systemctl enable xiaomi-charger-mode
