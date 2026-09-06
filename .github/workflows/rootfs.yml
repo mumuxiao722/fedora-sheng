@@ -692,16 +692,16 @@ jobs:
       - name: "Install Plymouth"
         if: ${{ steps.quiet.outputs.enabled == 'true' }}
         run: |
-          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-            plymouth plymouth-system-theme
-          echo "✓ Plymouth installed"
-
-      - name: "Install KDE Plymouth Theme"
-        if: ${{ inputs.desktop == 'KDE Plasma' && steps.quiet.outputs.enabled == 'true' }}
-        run: |
-          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-            plymouth-kcm plymouth-theme-breeze
-          echo "✓ KDE Plymouth theme installed"
+          if [[ "${{ inputs.desktop }}" == "KDE Plasma" ]]; then
+            sudo chroot "$ROOTFS_MOUNT" dnf install -y \
+              plymouth plymouth-system-theme \
+              plymouth-kcm plymouth-theme-breeze
+            echo "✓ Plymouth installed with KDE Breeze theme"
+          else
+            sudo chroot "$ROOTFS_MOUNT" dnf install -y \
+              plymouth plymouth-system-theme
+            echo "✓ Plymouth installed"
+          fi
 
       - name: "Configure Display Manager"
         run: |
