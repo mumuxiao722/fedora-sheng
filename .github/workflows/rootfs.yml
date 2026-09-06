@@ -620,7 +620,7 @@ jobs:
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             gnome-shell gnome-session gnome-terminal \
-            gdm gnome-control-center systemd-pam
+            gdm gnome-control-center systemd-pam dbus-daemon
           echo "✓ GNOME installed"
 
       - name: "Install GNOME Mobile"
@@ -637,7 +637,7 @@ jobs:
           }
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             gnome-session gnome-terminal \
-            gdm gnome-control-center systemd-pam
+            gdm gnome-control-center systemd-pam dbus-daemon
           echo "✓ GNOME Mobile installed"
 
       - name: "Install KDE Plasma"
@@ -645,7 +645,7 @@ jobs:
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             plasma-desktop plasma-workspace plasma-nm \
-            sddm konsole dolphin kate pipewire-alsa systemd-pam
+            sddm konsole dolphin kate pipewire-alsa systemd-pam dbus-daemon
           echo "✓ KDE Plasma installed"
 
       - name: "Install KDE Plasma Mobile"
@@ -653,7 +653,7 @@ jobs:
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             plasma-mobile plasma-workspace plasma-nm \
-            sddm konsole dolphin kate pipewire-alsa systemd-pam
+            sddm konsole dolphin kate pipewire-alsa systemd-pam dbus-daemon
           echo "✓ KDE Plasma Mobile installed"
 
       - name: "Install Plymouth"
