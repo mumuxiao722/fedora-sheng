@@ -181,7 +181,7 @@ This project benefits from the following outstanding work and community support:
 - **alghiffaryfa19** – for the Qualcomm sensor configuration files (sheng-sensors-file)
 - **slhssb** – for the keyboard backlight driver (xiaomi-sheng-keyboard-backlight)
 - **GhfunNiHe** – for the automatic partition resize (growfs) implementation, taken from [debian-sheng](https://github.com/ianchb/debian-sheng)
-- **code002-02** – for the WiFi firmware warning reference
+- **code002-2** – for the WiFi firmware warning reference
 
 ---
 

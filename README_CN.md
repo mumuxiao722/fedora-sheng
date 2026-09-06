@@ -182,7 +182,7 @@ fastboot reboot
 - **alghiffaryfa19** – Qualcomm 传感器配置文件（sheng-sensors-file）
 - **slhssb** – 键盘背光驱动（xiaomi-sheng-keyboard-backlight）
 - **GhfunNiHe** – 自动分区扩容（growfs）实现，取自 [debian-sheng](https://github.com/ianchb/debian-sheng)
-- **code002-02** – WiFi 固件警告参考
+- **code002-2** – WiFi 固件警告参考
 
 ---
 
