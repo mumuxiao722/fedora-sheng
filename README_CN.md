@@ -64,11 +64,14 @@
 
 #### COPR 构建状态（GNOME Mobile）
 
-| 包名 | 构建状态 | 详情 |
-|------|---------|------|
-| mutter | [![mutter](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/package/mutter/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/package/mutter/) | [Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) |
-| gnome-settings-daemon | [![gsd](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/package/gnome-settings-daemon/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/package/gnome-settings-daemon/) | [Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) |
-| gnome-shell | [![gs](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/package/gnome-shell/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/package/gnome-shell/) | [Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) |
+> 数据来源：[COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/)
+
+| 包名 | Fedora 43 | Fedora 44 | Fedora 45 | Rawhide |
+|------|-----------|-----------|-----------|---------|
+| mutter | ✓ | ✗ | ✓ | ✓ |
+| gnome-settings-daemon | ✓ | ✓ | ✓ | ✓ |
+| gnome-shell | ✓ | ✗ | ✗ | ✓ |
+| **总计** | ✓ | ✗ | ✗ | ✓ |
 | **Quiet Boot** | 启用 Plymouth 启动画面和安静启动信息 | `true` / `false` | `true` |
 
 ### 内核设置

@@ -64,11 +64,14 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 
 #### COPR Build Status (GNOME Mobile)
 
-| Package | Build Status | Details |
-|---------|-------------|---------|
-| mutter | [![mutter](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/package/mutter/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/package/mutter/) | [Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) |
-| gnome-settings-daemon | [![gsd](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/package/gnome-settings-daemon/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/package/gnome-settings-daemon/) | [Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) |
-| gnome-shell | [![gs](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/package/gnome-shell/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/package/gnome-shell/) | [Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) |
+> Data from [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/)
+
+| Package | Fedora 43 | Fedora 44 | Fedora 45 | Rawhide |
+|---------|-----------|-----------|-----------|---------|
+| mutter | ✓ | ✗ | ✓ | ✓ |
+| gnome-settings-daemon | ✓ | ✓ | ✓ | ✓ |
+| gnome-shell | ✓ | ✗ | ✗ | ✓ |
+| **Overall** | ✓ | ✗ | ✗ | ✓ |
 
 ### Kernel
 
