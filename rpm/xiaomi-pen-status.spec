@@ -37,11 +37,14 @@ make %{?_smp_mflags}
 
 %install
 mkdir -p %{buildroot}/usr/bin
+mkdir -p %{buildroot}/usr/share/applications
 install -m 755 xiaomi-pen-status %{buildroot}/usr/bin/
+install -m 644 xiaomi-pen-status.desktop %{buildroot}/usr/share/applications/
 
 %files
 %license LICENSE
 /usr/bin/xiaomi-pen-status
+/usr/share/applications/xiaomi-pen-status.desktop
 
 %changelog
 
