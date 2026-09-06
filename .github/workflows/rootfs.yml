@@ -601,8 +601,7 @@ jobs:
             fprintd \
             fprintd-pam \
             libfprint \
-            xdg-desktop-portal \
-            gvfs
+            xdg-desktop-portal
           sudo chroot "$ROOTFS_MOUNT" dnf mark dependency -y \
             alsa-ucm \
             libbsd \
@@ -613,8 +612,7 @@ jobs:
             fprintd \
             fprintd-pam \
             libfprint \
-            xdg-desktop-portal \
-            gvfs
+            xdg-desktop-portal
           find rpm/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
           sudo chroot "$ROOTFS_MOUNT" rpm -Uvh --nosignature /tmp/*.rpm
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
@@ -656,7 +654,7 @@ jobs:
             gnome-shell gnome-session gnome-terminal \
             gdm gnome-control-center systemd-pam \
             xdg-desktop-portal-gnome xdg-desktop-portal-gtk \
-            nautilus
+            nautilus gvfs
           echo "✓ GNOME installed"
 
       - name: "Install GNOME Mobile"
@@ -678,7 +676,7 @@ jobs:
             gnome-session gnome-terminal \
             gdm gnome-control-center systemd-pam \
             xdg-desktop-portal-gnome xdg-desktop-portal-gtk \
-            nautilus
+            nautilus gvfs
           echo "✓ GNOME Mobile installed"
 
       - name: "Install KDE Plasma"
