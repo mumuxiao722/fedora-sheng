@@ -657,8 +657,11 @@ jobs:
           echo "::warning::GNOME Mobile requires mutter & gnome-settings-daemon from @mobility/gnome-mobile COPR."
           echo "::warning::Check build status: https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/"
           sudo chroot "$ROOTFS_MOUNT" dnf copr enable -y @mobility/gnome-mobile
-          sudo chroot "$ROOTFS_MOUNT" dnf install -y mutter gnome-settings-daemon gnome-shell || {
-            echo "::error::GNOME Mobile packages failed to install."
+          COPR_REPO="copr:copr.fedorainfracloud.org:group_mobility:gnome-mobile"
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
+            --disablerepo='*' --enablerepo="$COPR_REPO" \
+            mutter gnome-settings-daemon gnome-shell || {
+            echo "::error::GNOME Mobile packages failed to install from COPR."
             echo "::error::Packages may not be built for Fedora ${{ inputs.fedora_version }}."
             echo "::error::Check: https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/"
             exit 1
