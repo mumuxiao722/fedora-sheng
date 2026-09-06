@@ -1,3 +1,6 @@
+# Copyright (C) 2026 mumuxiao722 <zy349931@163.com>
+# Licensed under the GPL-3.0-or-later. See LICENSE for details.
+
 %undefine __debug_package
 %undefine _debugsource_packages
 Name:           xiaomi-pen-status
@@ -5,7 +8,7 @@ Version:        0.2.3
 Release:        1%{?dist}
 Summary:        Stylus status display for Xiaomi Pad 6S Pro
 
-License:        Proprietary
+License:        GPLv2
 URL:            https://github.com/ianchb/xiaomi-pen-status
 Source0:        %{name}-%{version}.tar.gz
 
@@ -13,7 +16,6 @@ Source0:        %{name}-%{version}.tar.gz
 
 BuildRequires:  gcc-c++
 BuildRequires:  make
-BuildRequires:  qmake6
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtsvg-devel
 BuildRequires:  qt6-qtnetworkauth-devel

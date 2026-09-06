@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright (C) 2026 mumuxiao722 <zy349931@163.com>
+# Licensed under the GPL-3.0-or-later. See LICENSE for details.
 set -e
 
 FEDORA_VERSION="${1:-44}"
@@ -153,11 +155,11 @@ echo "=== Building alsa-xiaomi-sheng ==="
 rpmbuild --define "_topdir $RPM_TOPDIR" -ba alsa-xiaomi-sheng.spec
 
 echo "=== Building xiaomi-pen-status ==="
-dnf install -y qmake6 qt6-qtbase-devel qt6-qtsvg-devel qt6-qtnetworkauth-devel qt6-qtbase-private-devel
+  dnf install -y qt6-qtbase-devel qt6-qtsvg-devel qt6-qtnetworkauth-devel qt6-qtbase-private-devel
 rpmbuild --define "_topdir $RPM_TOPDIR" -ba xiaomi-pen-status.spec
 
 echo "=== Building xiaomi-sheng-fingerprint ==="
-dnf install -y meson ninja-build glib2-devel libgusb-devel libfprint-devel patchelf
+  dnf install -y meson ninja-build glib2-devel libgusb-devel patchelf binutils curl tar xz
 rpmbuild --define "_topdir $RPM_TOPDIR" -ba xiaomi-sheng-fingerprint.spec
 
 echo "✓ RPM build complete"

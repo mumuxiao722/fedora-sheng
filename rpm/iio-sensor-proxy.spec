@@ -1,3 +1,6 @@
+# Copyright (C) 2026 mumuxiao722 <zy349931@163.com>
+# Licensed under the GPL-3.0-or-later. See LICENSE for details.
+
 %undefine __debug_package
 %undefine _debugsource_packages
 %define _debug_package %{nil}
@@ -7,7 +10,7 @@ Version:        3.9
 Release:        6%{?dist}
 Summary:        IIO sensors to D-Bus proxy (SSC patched)
 
-License:        GPLv2+
+License:        GPLv3+
 URL:            https://gitlab.freedesktop.org/hadess/iio-sensor-proxy
 Source0:        %{name}-%{version}.tar.gz
 

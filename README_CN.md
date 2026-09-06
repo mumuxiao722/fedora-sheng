@@ -179,7 +179,10 @@ fastboot reboot
 
 - **map220v** – TWRP、主线内核移植以及使 Linux 能够在小米平板 6S Pro (sheng) 上运行的众多设备特定适配
 - **ianchb** – 维护 [debian-sheng](https://github.com/ianchb/debian-sheng) 项目、用户态驱动以及各种设备特定软件包，本项目基于此衍生
+- **alghiffaryfa19** – Qualcomm 传感器配置文件（sheng-sensors-file）
 - **slhssb** – 键盘背光驱动（xiaomi-sheng-keyboard-backlight）
+- **GhfunNiHe** – 自动分区扩容（growfs）实现，取自 [debian-sheng](https://github.com/ianchb/debian-sheng)
+- **code002-02** – WiFi 固件警告参考
 
 ---
 

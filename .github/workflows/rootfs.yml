@@ -1,3 +1,6 @@
+# Copyright (C) 2026 mumuxiao722 <zy349931@163.com>
+# Licensed under the GPL-3.0-or-later. See LICENSE for details.
+
 name: Build Fedora RootFS
 
 on:
@@ -745,9 +748,9 @@ jobs:
           if [ "$LANG_CHOICE" = 'None (C.UTF-8)' ]; then
             echo "✓ System locale stays C.UTF-8"
           else
-            sudo chroot "$ROOTFS_MOUNT" dnf install -y glibc-langpack-en
-            sudo chroot "$ROOTFS_MOUNT" localectl set-locale LANG="$LANG_CHOICE"
-            echo "LANG=$LANG_CHOICE" | sudo tee "$ROOTFS_MOUNT/etc/locale.conf"
+            LANG_PACK=$(echo "$LANG_CHOICE" | sed 's/\.UTF-8//' | cut -d'_' -f1 | tr '[:upper:]' '[:lower:]')
+            sudo chroot "$ROOTFS_MOUNT" dnf install -y "glibc-langpack-${LANG_PACK}"
+            echo "LANG=$LANG_CHOICE" | sudo tee "$ROOTFS_MOUNT/etc/locale.conf" > /dev/null
             echo "✓ Locale set to $LANG_CHOICE"
           fi
 

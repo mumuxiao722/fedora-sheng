@@ -1,3 +1,6 @@
+# Copyright (C) 2026 mumuxiao722 <zy349931@163.com>
+# Licensed under the GPL-3.0-or-later. See LICENSE for details.
+
 %undefine __debug_package
 %undefine _debugsource_packages
 %define _debug_package %{nil}
@@ -7,7 +10,7 @@ Version:        0.3.9
 Release:        1%{?dist}
 Summary:        Touch processing for Xiaomi Pad 6S Pro
 
-License:        Proprietary
+License:        Apache-2.0
 URL:            https://github.com/ianchb/xiaomi-sheng-thp
 Source0:        %{name}-%{version}.tar.gz
 

@@ -1,3 +1,6 @@
+# Copyright (C) 2026 mumuxiao722 <zy349931@163.com>
+# Licensed under the GPL-3.0-or-later. See LICENSE for details.
+
 %undefine __debug_package
 %undefine _debugsource_packages
 Name:           alsa-xiaomi-sheng
@@ -5,7 +8,7 @@ Version:        1.0
 Release:        1%{?dist}
 Summary:        ALSA Use Case Configuration for Xiaomi Pad 6S Pro
 
-License:        LGPL-2.1-or-later
+License:        BSD-3-Clause
 URL:            https://github.com/ianchb/debian-sheng
 Source0:        %{name}-%{version}.tar.gz
 

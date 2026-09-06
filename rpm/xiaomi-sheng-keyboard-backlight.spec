@@ -1,3 +1,6 @@
+# Copyright (C) 2026 mumuxiao722 <zy349931@163.com>
+# Licensed under the GPL-3.0-or-later. See LICENSE for details.
+
 %undefine __debug_package
 %undefine _debugsource_packages
 Name:           xiaomi-sheng-keyboard-backlight

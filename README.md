@@ -178,7 +178,10 @@ This project benefits from the following outstanding work and community support:
 
 - **map220v** – for TWRP, the mainline kernel port and many device-specific adaptations that make Linux run on the Xiaomi Pad 6S Pro (sheng)
 - **ianchb** – for maintaining the [debian-sheng](https://github.com/ianchb/debian-sheng) project, userspace drivers and various device-specific packages, from which this project is derived
+- **alghiffaryfa19** – for the Qualcomm sensor configuration files (sheng-sensors-file)
 - **slhssb** – for the keyboard backlight driver (xiaomi-sheng-keyboard-backlight)
+- **GhfunNiHe** – for the automatic partition resize (growfs) implementation, taken from [debian-sheng](https://github.com/ianchb/debian-sheng)
+- **code002-02** – for the WiFi firmware warning reference
 
 ---
 

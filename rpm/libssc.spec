@@ -1,3 +1,6 @@
+# Copyright (C) 2026 mumuxiao722 <zy349931@163.com>
+# Licensed under the GPL-3.0-or-later. See LICENSE for details.
+
 %undefine __debug_package
 %undefine _debugsource_packages
 %define _debug_package %{nil}
@@ -7,7 +10,7 @@ Version:        0.3.0
 Release:        1%{?dist}
 Summary:        Library to expose Qualcomm Sensor Core sensors
 
-License:        LGPL-2.1-or-later
+License:        GPLv3
 URL:            https://codeberg.org/DylanVanAssche/libssc
 Source0:        %{name}-%{version}.tar.gz
 
