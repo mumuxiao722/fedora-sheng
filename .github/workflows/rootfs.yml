@@ -555,8 +555,7 @@ jobs:
         if: ${{ inputs.enable_copr == true }}
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y dnf-plugins-core
-          sudo chroot "$ROOTFS_MOUNT" dnf copr enable -y @mobility/gnome-mobile
-          echo "✓ COPR repository enabled (@mobility/gnome-mobile)"
+          echo "✓ COPR plugins installed"
 
       - name: "Install GNOME"
         if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == false }}
@@ -569,6 +568,7 @@ jobs:
       - name: "Install GNOME Mobile"
         if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == true }}
         run: |
+          sudo chroot "$ROOTFS_MOUNT" dnf copr enable -y @mobility/gnome-mobile
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             gnome-mobile \
             gdm gnome-terminal gnome-control-center
