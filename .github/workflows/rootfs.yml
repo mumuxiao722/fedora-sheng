@@ -601,7 +601,7 @@ jobs:
         if: ${{ inputs.desktop == 'KDE Plasma' && steps.quiet.outputs.enabled == 'true' }}
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-            kde-config-plymouth plymouth-theme-breeze
+            plymouth-kcm plymouth-theme-breeze
           echo "✓ KDE Plymouth theme installed"
 
       - name: "Configure Display Manager"
