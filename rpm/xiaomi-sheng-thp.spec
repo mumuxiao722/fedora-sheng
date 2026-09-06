@@ -27,7 +27,7 @@ Supports NT36532E touch controller with multitouch and stylus input.
 %autosetup -n xiaomi-sheng-thp-%{version}
 
 %build
-make %{?_smp_mflags}
+make %{?_smp_mflags} CXXFLAGS="-std=c++20 -O2"
 
 %install
 make install DESTDIR=%{buildroot}
