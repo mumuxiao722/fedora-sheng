@@ -23,6 +23,7 @@ BuildRequires:  qt6-qtbase-private-devel
 Requires:       qt6-qtbase
 Requires:       qt6-qtsvg
 Requires:       xiaomi-sheng-thp
+Requires:       xdg-desktop-portal
 
 %description
 Shows stylus connection and battery status, and automatically attempts

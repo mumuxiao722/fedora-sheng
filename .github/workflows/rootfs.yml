@@ -599,7 +599,8 @@ jobs:
             qt6-qtbase \
             qt6-qtsvg \
             fprintd \
-            libfprint
+            libfprint \
+            xdg-desktop-portal
           sudo chroot "$ROOTFS_MOUNT" dnf mark dependency -y \
             alsa-ucm \
             libbsd \
@@ -608,7 +609,8 @@ jobs:
             qt6-qtbase \
             qt6-qtsvg \
             fprintd \
-            libfprint
+            libfprint \
+            xdg-desktop-portal
           find rpm/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
           sudo chroot "$ROOTFS_MOUNT" rpm -Uvh --nosignature /tmp/*.rpm
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
