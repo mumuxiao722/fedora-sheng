@@ -38,6 +38,11 @@ git clone --depth 1 --branch v0.1.4 https://github.com/ianchb/xiaomi-sheng-finge
 git clone --depth 1 https://github.com/slhssb/xiaomi-sheng-keyboard-backlight.git
 git clone --depth 1 https://github.com/alghiffaryfa19/sheng-sensors-file.git
 
+git clone --depth 1 --sparse https://github.com/ianchb/debian-sheng.git debian-sheng
+cd debian-sheng
+git sparse-checkout set alsa-xiaomi-sheng
+cd /tmp
+
 git clone --depth 1 --branch v1.0.2 https://github.com/qualcomm/fastrpc.git
 
 git clone https://codeberg.org/DylanVanAssche/libssc.git libssc
@@ -81,6 +86,7 @@ cd /tmp/sheng-sensors-file
 tar -czf /workspace/rpmbuild/SOURCES/sheng-sensors-20240917.tar.gz .
 cd /tmp
 
+cp -r /tmp/debian-sheng/alsa-xiaomi-sheng /workspace/alsa-xiaomi-sheng
 cd /workspace/alsa-xiaomi-sheng
 tar -czf /workspace/rpmbuild/SOURCES/alsa-xiaomi-sheng-1.0.tar.gz .
 cd /tmp
