@@ -611,7 +611,7 @@ jobs:
             gdm gnome-control-center
           echo "✓ GNOME installed"
 
-      - name: "Enable GNOME Mobile"
+      - name: "Install GNOME Mobile"
         if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == true }}
         run: |
           echo "::warning::GNOME Mobile requires mutter & gnome-settings-daemon from @mobility/gnome-mobile COPR."
@@ -661,7 +661,7 @@ jobs:
       - name: "Configure Display Manager"
         run: |
           if [[ "${{ inputs.desktop }}" == "GNOME" ]]; then
-            sudo chroot "$ROOTFS_MOUNT" systemctl enable gdm
+            echo "⚠ gdm NOT enabled (testing). Enable manually after boot."
           elif [[ "${{ inputs.desktop }}" == "KDE Plasma" ]]; then
             sudo chroot "$ROOTFS_MOUNT" systemctl enable sddm
           fi
