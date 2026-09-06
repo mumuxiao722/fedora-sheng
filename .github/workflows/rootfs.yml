@@ -26,7 +26,7 @@ on:
         default: 'GNOME'
 
       gnome_mobile:
-        description: 'Enable GNOME Mobile instead of GNOME (only when desktop=GNOME)'
+        description: 'Enable GNOME Mobile instead of GNOME (only when desktop=GNOME, requires third-party repos)'
         type: boolean
         default: false
 
