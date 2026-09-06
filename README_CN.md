@@ -49,7 +49,7 @@
 | 参数 | 说明 | 选项 | 默认值 |
 |------|------|------|--------|
 | **Fedora Version** | 要安装的 Fedora 版本 | `44` / `45` | `44` |
-| **Enable COPR** | 启用第三方仓库 | `true` / `false` | `false` |
+| **Enable Third-Party** | 启用第三方仓库 | `true` / `false` | `false` |
 | **Desktop** | 要安装的桌面环境 | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
 | **GNOME Mobile** | 使用 GNOME Mobile 而非 GNOME（仅 Desktop=GNOME 时有效） | `true` / `false` | `false` |
 | **Plasma Mobile** | 使用 Plasma Mobile 界面而非 Plasma Desktop（仅 Desktop=KDE Plasma 时有效） | `true` / `false` | `false` |

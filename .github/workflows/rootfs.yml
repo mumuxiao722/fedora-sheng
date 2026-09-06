@@ -11,7 +11,7 @@ on:
           - 45
         default: '44'
 
-      enable_copr:
+      enable_third_party:
         description: 'Enable third-party repositories'
         type: boolean
         default: false
@@ -552,7 +552,7 @@ jobs:
           fi
 
       - name: "Enable Third-Party Repositories"
-        if: ${{ inputs.enable_copr == true }}
+        if: ${{ inputs.enable_third_party == true }}
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y dnf-plugins-core
           echo "✓ Third-party repository support enabled"
