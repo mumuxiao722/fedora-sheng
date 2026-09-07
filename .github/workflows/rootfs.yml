@@ -46,7 +46,7 @@ on:
         default: true
 
       plymouth_theme:
-        description: 'Plymouth theme (default = charge for GNOME, breeze for KDE)'
+        description: 'Plymouth theme (default = system for GNOME, breeze for KDE)'
         type: choice
         options:
           - 'default'
@@ -722,7 +722,7 @@ jobs:
             if [[ "${{ inputs.desktop }}" == "KDE Plasma" ]]; then
               THEME_PKG="plymouth-theme-breeze"
             else
-              THEME_PKG="plymouth-theme-charge"
+              THEME_PKG="plymouth-system-theme"
             fi
           else
             THEME_PKG="${{ inputs.plymouth_theme }}"
