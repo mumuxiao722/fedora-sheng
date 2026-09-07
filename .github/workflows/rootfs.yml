@@ -455,7 +455,7 @@ jobs:
             --pattern "kernel-sheng.zip" \
             --dir rpms/ \
             --clobber
-          cd rpm && unzip -o kernel-sheng.zip && cd ..
+          cd rpms && unzip -o kernel-sheng.zip && cd ..
           echo "✓ Kernel RPM downloaded from upstream (${{ inputs.kernel_branch }})"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -468,7 +468,7 @@ jobs:
             --pattern "kernel-sheng.zip" \
             --dir rpms/ \
             --clobber
-          cd rpm && unzip -o kernel-sheng.zip && cd ..
+          cd rpms && unzip -o kernel-sheng.zip && cd ..
           echo "✓ Kernel RPM downloaded from own release (${{ inputs.kernel_branch }})"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -650,7 +650,7 @@ jobs:
         if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == false }}
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-            pipewire-pulseaudio pipewire-alsa pipewire-jack \
+            pipewire-pulseaudio pipewire-alsa pipewire-jack-audio-connection-kit \
             gnome-shell gnome-session gnome-terminal \
             gdm gnome-control-center systemd-pam \
             xdg-desktop-portal-gnome xdg-desktop-portal-gtk \
@@ -670,7 +670,7 @@ jobs:
             exit 1
           }
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-            pipewire-pulseaudio pipewire-alsa pipewire-jack \
+            pipewire-pulseaudio pipewire-alsa pipewire-jack-audio-connection-kit \
             gnome-session gnome-terminal \
             gdm gnome-control-center systemd-pam \
             xdg-desktop-portal-gnome xdg-desktop-portal-gtk \
@@ -681,7 +681,7 @@ jobs:
         if: ${{ inputs.desktop == 'KDE Plasma' && inputs.plasma_mobile == false }}
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-            pipewire-pulseaudio pipewire-alsa pipewire-jack \
+            pipewire-pulseaudio pipewire-alsa pipewire-jack-audio-connection-kit \
             plasma-desktop plasma-workspace plasma-nm \
             sddm konsole dolphin kate \
             systemd-pam \
@@ -692,7 +692,7 @@ jobs:
         if: ${{ inputs.desktop == 'KDE Plasma' && inputs.plasma_mobile == true }}
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-            pipewire-pulseaudio pipewire-alsa pipewire-jack \
+            pipewire-pulseaudio pipewire-alsa pipewire-jack-audio-connection-kit \
             plasma-mobile plasma-workspace plasma-nm \
             sddm konsole dolphin kate \
             systemd-pam \
