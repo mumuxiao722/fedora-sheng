@@ -51,7 +51,7 @@
 | **Fedora Version** | 要安装的 Fedora 版本 | `43` / `44` / `45` / `rawhide` | `44` |
 | **Enable Third-Party** | 启用第三方仓库 | `true` / `false` | `false` |
 | **Desktop** | 要安装的桌面环境 | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
-| **GNOME Mobile** | 使用 @mobility/gnome-mobile COPR 的 GNOME Mobile（需要启用 Enable Third-Party）。启用前请查看 [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/)。**⚠ 截至 2026 年 9 月 7 日，仅 rawhide (fc46) 构建可用。请查看 [COPR 状态](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) 获取更新。** | `true` / `false` | `false` |
+| **GNOME Mobile** | 使用 @mobility/gnome-mobile COPR 的 GNOME Mobile（需要启用 Enable Third-Party）。启用前请查看 [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/)。 | `true` / `false` | `false` |
 | **Plasma Mobile** | 使用 Plasma Mobile 界面而非 Plasma Desktop（仅 Desktop=KDE Plasma 时有效） | `true` / `false` | `false` |
 | **Quiet Boot** | 启用 Plymouth 启动画面和安静启动信息 | `true` / `false` | `true` |
 | **Autologin** | 创建的用户是否自动登录 | `true` / `false` | `true` |
@@ -170,6 +170,22 @@ fastboot reboot
 ```
 
 重启后，设备应从 slot B 启动并进入 Fedora。
+
+---
+
+## 已知问题
+
+### GNOME Mobile
+
+1. **GNOME Mobile 仅在 rawhide 上可用**（截至 2026 年 9 月）。@mobility/gnome-mobile COPR 仅构建了 mutter、gnome-settings-daemon 和 gnome-shell 的 rawhide 版本。Fedora 43/44/45 无法安装。
+2. **随机崩溃回到 GDM** – GNOME Mobile 可能会随机崩溃并返回 GDM 登录界面。这是上游问题，在 Debian 上也可复现。
+3. **GDM 密码输入框不可见** – GDM 登录界面的密码输入框可能显示为空白，但实际可以输入。这也是上游问题，在 Debian 上同样存在。
+
+### KDE Plasma Mobile
+
+1. **Plasma Mobile 在 Fedora 44、45 和 rawhide 上崩溃** – `plasmashell` 在面板创建时因 `ShellUtil::qt_static_metacall` 段错误而崩溃。仅 **Fedora 43** 确认可用。
+2. **部分移动 UI 仍可访问** – 即使桌面崩溃，部分移动 shell 组件仍可正常工作：首次启动引导、锁屏密码输入、以及电源菜单（关机/重启/注销）。
+3. 如果您知道如何解决此问题，欢迎通过 Issues 或 PR 贡献。
 
 ---
 

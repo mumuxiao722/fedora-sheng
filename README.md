@@ -51,7 +51,7 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 | **Fedora Version** | Fedora version to install | `43` / `44` / `45` / `rawhide` | `44` |
 | **Enable Third-Party** | Enable third-party repositories | `true` / `false` | `false` |
 | **Desktop** | Desktop environment to install | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
-| **GNOME Mobile** | Use GNOME Mobile from @mobility/gnome-mobile COPR (requires Enable Third-Party). Check [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) for build status. **⚠ As of September 7, 2026, only rawhide (fc46) builds are available. See [COPR status](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) for updates.** | `true` / `false` | `false` |
+| **GNOME Mobile** | Use GNOME Mobile from @mobility/gnome-mobile COPR (requires Enable Third-Party). Check [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) for build status. | `true` / `false` | `false` |
 | **Plasma Mobile** | Use Plasma Mobile shell instead of Plasma Desktop (only when Desktop=KDE Plasma) | `true` / `false` | `false` |
 | **Quiet Boot** | Enable Plymouth splash screen and quiet boot messages | `true` / `false` | `true` |
 | **Autologin** | Whether the created user should be logged in automatically | `true` / `false` | `true` |
@@ -169,6 +169,22 @@ fastboot reboot
 ```
 
 After rebooting, the device should start from slot B and boot into Fedora.
+
+---
+
+## Known Issues
+
+### GNOME Mobile
+
+1. **GNOME Mobile only works on rawhide** (as of September 2026). The @mobility/gnome-mobile COPR only builds mutter, gnome-settings-daemon, and gnome-shell for rawhide. Fedora 43/44/45 will fail to install.
+2. **Random crashes back to GDM** – GNOME Mobile may randomly crash and drop back to the GDM login screen. This is an upstream issue, also reproducible on Debian.
+3. **GDM password input invisible** – The password input field on GDM may appear blank, but typing still works. This is also an upstream issue present on Debian.
+
+### KDE Plasma Mobile
+
+1. **Plasma Mobile crashes on Fedora 44, 45, and rawhide** – `plasmashell` crashes with a segfault in `ShellUtil::qt_static_metacall` during panel creation. Only **Fedora 43** is confirmed working.
+2. **Partial mobile UI is accessible** – Even when the desktop crashes, some mobile shell components still function: the first-boot setup wizard, lock screen password input, and the power menu (shutdown/restart/logout).
+3. If you know how to fix this, contributions via Issues or PRs are welcome.
 
 ---
 

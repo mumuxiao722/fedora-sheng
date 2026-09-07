@@ -668,6 +668,7 @@ jobs:
             gnome-shell gnome-session gnome-terminal \
             gdm gnome-control-center systemd-pam \
             xdg-desktop-portal-gnome xdg-desktop-portal-gtk \
+            xorg-x11-server-Xwayland \
             nautilus gvfs
           echo "✓ GNOME installed"
 
@@ -688,6 +689,7 @@ jobs:
             gnome-session gnome-terminal \
             gdm gnome-control-center systemd-pam \
             xdg-desktop-portal-gnome xdg-desktop-portal-gtk \
+            xorg-x11-server-Xwayland \
             nautilus gvfs
           echo "✓ GNOME Mobile installed"
 
@@ -696,7 +698,7 @@ jobs:
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             pipewire-pulseaudio pipewire-alsa pipewire-jack-audio-connection-kit \
-            plasma-desktop plasma-workspace plasma-nm \
+            plasma-desktop \
             sddm konsole dolphin kate \
             systemd-pam \
             xdg-desktop-portal-kde kio-admin
@@ -707,7 +709,7 @@ jobs:
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             pipewire-pulseaudio pipewire-alsa pipewire-jack-audio-connection-kit \
-            plasma-mobile plasma-workspace plasma-nm \
+            plasma-mobile \
             sddm konsole dolphin kate \
             systemd-pam \
             xdg-desktop-portal-kde kio-admin
@@ -751,15 +753,20 @@ jobs:
               sudo tee "$ROOTFS_MOUNT/etc/gdm/custom.conf" > /dev/null
             echo "✓ GDM autologin configured"
           elif [[ "${{ inputs.desktop }}" == "KDE Plasma" ]]; then
-            sudo mkdir -p "$ROOTFS_MOUNT/etc/sddm.conf.d"
             if [[ "${{ inputs.plasma_mobile }}" == "true" ]]; then
               SESSION="plasma-mobile"
             else
               SESSION="plasma"
             fi
-            printf '[Autologin]\nUser=%s\nSession=%s\n' "$USERNAME" "$SESSION" | \
-              sudo tee "$ROOTFS_MOUNT/etc/sddm.conf.d/autologin.conf" > /dev/null
-            echo "✓ SDDM autologin configured (session: $SESSION)"
+            sudo sed -i "/^\[General\]/a DefaultSession=${SESSION}.desktop" "$ROOTFS_MOUNT/etc/sddm.conf"
+            if [[ "${{ inputs.autologin }}" == "true" ]]; then
+              sudo mkdir -p "$ROOTFS_MOUNT/etc/sddm.conf.d"
+              printf '[Autologin]\nUser=%s\nSession=%s\n' "$USERNAME" "$SESSION" | \
+                sudo tee "$ROOTFS_MOUNT/etc/sddm.conf.d/autologin.conf" > /dev/null
+              echo "✓ SDDM configured (session: $SESSION, autologin: $USERNAME)"
+            else
+              echo "✓ SDDM configured (default session: $SESSION, autologin disabled)"
+            fi
           fi
 
       - name: "Set Graphical Target"
