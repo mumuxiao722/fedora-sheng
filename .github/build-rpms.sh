@@ -111,7 +111,7 @@ cp /workspace/patches/sheng-devauth.service.d-qtee.conf /workspace/rpmbuild/SOUR
 echo "✓ Source tarballs created"
 
 # Build RPMs
-cd /workspace/rpm
+cd /workspace/rpms
 export RPM_TOPDIR=/workspace/rpmbuild
 
 # Build libssc FIRST - thp/keyboard-helper/iio-sensor-proxy need its headers
