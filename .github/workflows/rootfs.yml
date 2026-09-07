@@ -45,6 +45,20 @@ on:
         type: boolean
         default: true
 
+      plymouth_theme:
+        description: 'Plymouth theme (default = charge for GNOME, breeze for KDE)'
+        type: choice
+        options:
+          - 'default'
+          - 'plymouth-system-theme'
+          - 'plymouth-theme-charge'
+          - 'plymouth-theme-breeze'
+          - 'plymouth-theme-spinner'
+          - 'plymouth-theme-spinfinity'
+          - 'plymouth-theme-solar'
+          - 'plymouth-theme-fade-in'
+        default: 'default'
+
       autologin:
         description: 'Autologin'
         type: boolean
@@ -702,15 +716,21 @@ jobs:
       - name: "Install Plymouth"
         if: ${{ steps.quiet.outputs.enabled == 'true' }}
         run: |
-          if [[ "${{ inputs.desktop }}" == "KDE Plasma" ]]; then
-            sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-              plymouth plymouth-theme-breeze plymouth-kcm
-            echo "✓ Plymouth installed with KDE Breeze theme"
+          if [[ "${{ inputs.plymouth_theme }}" == "default" ]]; then
+            if [[ "${{ inputs.desktop }}" == "KDE Plasma" ]]; then
+              THEME_PKG="plymouth-theme-breeze"
+            else
+              THEME_PKG="plymouth-theme-charge"
+            fi
           else
-            sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-              plymouth plymouth-theme-charge
-            echo "✓ Plymouth installed with Charge theme"
+            THEME_PKG="${{ inputs.plymouth_theme }}"
           fi
+          INSTALL_PKGS="plymouth ${THEME_PKG}"
+          if [[ "${{ inputs.desktop }}" == "KDE Plasma" ]]; then
+            INSTALL_PKGS="$INSTALL_PKGS plymouth-kcm"
+          fi
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y $INSTALL_PKGS
+          echo "✓ Plymouth installed with ${THEME_PKG}"
 
       - name: "Configure Display Manager"
         run: |
