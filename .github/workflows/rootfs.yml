@@ -704,13 +704,12 @@ jobs:
         run: |
           if [[ "${{ inputs.desktop }}" == "KDE Plasma" ]]; then
             sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-              plymouth plymouth-system-theme \
-              plymouth-kcm plymouth-theme-breeze
+              plymouth plymouth-theme-breeze plymouth-kcm
             echo "✓ Plymouth installed with KDE Breeze theme"
           else
             sudo chroot "$ROOTFS_MOUNT" dnf install -y \
-              plymouth plymouth-system-theme
-            echo "✓ Plymouth installed"
+              plymouth plymouth-theme-charge
+            echo "✓ Plymouth installed with Charge theme"
           fi
 
       - name: "Configure Display Manager"

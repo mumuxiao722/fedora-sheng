@@ -39,13 +39,20 @@ make %{?_smp_mflags}
 %install
 mkdir -p %{buildroot}/usr/bin
 mkdir -p %{buildroot}/usr/share/applications
+mkdir -p %{buildroot}/etc/xdg/autostart
+mkdir -p %{buildroot}/usr/share/icons/hicolor/scalable/apps
 install -m 755 xiaomi-pen-status %{buildroot}/usr/bin/
 install -m 644 xiaomi-pen-status.desktop %{buildroot}/usr/share/applications/
+sed 's/^Exec=.*/Exec=xiaomi-pen-status/' xiaomi-pen-status.desktop > %{buildroot}/etc/xdg/autostart/xiaomi-pen-status.desktop
+chmod 644 %{buildroot}/etc/xdg/autostart/xiaomi-pen-status.desktop
+install -m 644 xiaomi-pen-status.svg %{buildroot}/usr/share/icons/hicolor/scalable/apps/
 
 %files
 %license LICENSE
 /usr/bin/xiaomi-pen-status
 /usr/share/applications/xiaomi-pen-status.desktop
+/etc/xdg/autostart/xiaomi-pen-status.desktop
+/usr/share/icons/hicolor/scalable/apps/xiaomi-pen-status.svg
 
 %changelog
 
