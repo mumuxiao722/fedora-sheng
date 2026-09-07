@@ -241,7 +241,7 @@ jobs:
           TOPDIR="${{ github.workspace }}/rpmbuild"
           mkdir -p "$TOPDIR"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
-          cp rpm/kernel-sheng.spec "$TOPDIR/SPECS/kernel-sheng.spec"
+          cp rpms/kernel-sheng.spec "$TOPDIR/SPECS/kernel-sheng.spec"
 
           cd "${{ github.workspace }}/kernel-staging"
           mkdir -p "kernel-sheng-${KREL}"
@@ -437,7 +437,7 @@ jobs:
       - name: "Download RPM Artifacts"
         uses: actions/download-artifact@v8
         with:
-          path: rpm/
+          path: rpms/
           merge-multiple: true
 
       - name: "Download Kernel Artifact (custom_build)"
@@ -445,7 +445,7 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: kernel-sheng
-          path: rpm/
+          path: rpms/
 
       - name: "Download Kernel RPM (prebuilt upstream)"
         if: ${{ inputs.kernel_source == 'prebuilt' && inputs.kernel_prebuilt == 'upstream' }}
@@ -453,7 +453,7 @@ jobs:
           gh release download "${{ inputs.kernel_branch }}" \
             --repo mumuxiao722/fedora-sheng \
             --pattern "kernel-sheng.zip" \
-            --dir rpm/ \
+            --dir rpms/ \
             --clobber
           cd rpm && unzip -o kernel-sheng.zip && cd ..
           echo "✓ Kernel RPM downloaded from upstream (${{ inputs.kernel_branch }})"
@@ -466,7 +466,7 @@ jobs:
           gh release download "${{ inputs.kernel_branch }}" \
             --repo "${{ github.repository }}" \
             --pattern "kernel-sheng.zip" \
-            --dir rpm/ \
+            --dir rpms/ \
             --clobber
           cd rpm && unzip -o kernel-sheng.zip && cd ..
           echo "✓ Kernel RPM downloaded from own release (${{ inputs.kernel_branch }})"
@@ -612,7 +612,7 @@ jobs:
             fprintd-pam \
             libfprint \
             xdg-desktop-portal
-          find rpm/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
+          find rpms/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
           sudo chroot "$ROOTFS_MOUNT" rpm -Uvh --nosignature /tmp/*.rpm
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
           echo "✓ Custom RPMs installed"
