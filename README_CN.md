@@ -51,7 +51,7 @@
 | **Fedora Version** | 要安装的 Fedora 版本 | `43` / `44` / `45` / `rawhide` | `44` |
 | **Enable Third-Party** | 启用第三方仓库 | `true` / `false` | `false` |
 | **Desktop** | 要安装的桌面环境 | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
-| **GNOME Mobile** | 使用 @mobility/gnome-mobile COPR 的 GNOME Mobile（需要启用 Enable Third-Party）。启用前请查看 [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/)。 | `true` / `false` | `false` |
+| **GNOME Mobile** | 使用 @mobility/gnome-mobile COPR 的 GNOME Mobile（需要启用 Enable Third-Party）。启用前请查看 [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/)。**⚠ 截至 2026 年 9 月 7 日，仅 rawhide (fc46) 构建可用。请查看 [COPR 状态](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) 获取更新。** | `true` / `false` | `false` |
 | **Plasma Mobile** | 使用 Plasma Mobile 界面而非 Plasma Desktop（仅 Desktop=KDE Plasma 时有效） | `true` / `false` | `false` |
 | **Quiet Boot** | 启用 Plymouth 启动画面和安静启动信息 | `true` / `false` | `true` |
 | **Autologin** | 创建的用户是否自动登录 | `true` / `false` | `true` |
