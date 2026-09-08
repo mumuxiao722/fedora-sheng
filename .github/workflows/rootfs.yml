@@ -818,7 +818,7 @@ jobs:
 
       - name: "Configure sudo"
         run: |
-          echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "$ROOTFS_MOUNT/etc/sudoers.d/wheel"
+          echo "%wheel ALL=(ALL:ALL) ALL" | sudo tee "$ROOTFS_MOUNT/etc/sudoers.d/wheel"
           sudo chmod 440 "$ROOTFS_MOUNT/etc/sudoers.d/wheel"
           echo "✓ sudo configured for wheel group"
 
