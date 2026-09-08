@@ -604,7 +604,17 @@ jobs:
 
       - name: "Install Custom RPMs"
         run: |
+          echo "=== Debug: Current directory ==="
+          pwd
+          echo "=== Debug: ls workspace ==="
+          ls -la
+          echo "=== Debug: ls rpms/ ==="
+          ls -la rpms/ || echo "rpms/ not found"
+          echo "=== Debug: find rpms/ ==="
+          find rpms/ -name "*.rpm" 2>/dev/null || echo "No RPMs found in rpms/"
           find rpms/ -name "*.rpm" ! -name "*-devel-*" ! -name "*-debuginfo-*" -exec sudo cp {} "$ROOTFS_MOUNT/tmp/" \;
+          echo "=== Debug: ls ROOTFS_MOUNT/tmp ==="
+          ls -la "$ROOTFS_MOUNT/tmp/"*.rpm 2>/dev/null || echo "No RPMs copied to tmp"
           sudo chroot "$ROOTFS_MOUNT" dnf install -y /tmp/*.rpm
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
           echo "✓ Custom RPMs installed"
