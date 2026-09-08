@@ -51,8 +51,16 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 | **Fedora Version** | Fedora version to install | `43` / `44` / `45` / `rawhide` | `44` |
 | **Enable Third-Party** | Enable third-party repositories | `true` / `false` | `false` |
 | **Desktop** | Desktop environment to install | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
-| **GNOME Mobile** | Use GNOME Mobile from @mobility/gnome-mobile COPR (requires Enable Third-Party). Check [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) for build status. | `true` / `false` | `false` |
-| **Plasma Mobile** | Use Plasma Mobile shell instead of Plasma Desktop (only when Desktop=KDE Plasma) | `true` / `false` | `false` |
+| **GNOME Mobile** | Use GNOME Mobile from @mobility/gnome-mobile COPR (requires Enable Third-Party). 🚫 fc43: mixed build (gsd=51~beta/mutter+shell=49^mobile), may cause runtime issues. fc44/45: may fall back to standard GNOME if COPR packages missing — **we are NOT responsible**. Only rawhide fully supported. Check [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) before building. | `true` / `false` | `false` |
+
+> **🚫 CRITICAL WARNING**
+> 
+> - **Fedora 43**: gnome-settings-daemon 49 is **expired** from COPR. Selecting GNOME Mobile on fc43 will result in a **mixed build** where gsd=51~beta but mutter+shell=49^mobile. This version mismatch **may cause runtime issues or instability**. Use at your own risk.
+> - **Fedora 44 / 45**: As of September 2026, COPR may **not have packages** for these versions. If packages are missing, the build will **fall back to the original Fedora GNOME** (not GNOME Mobile). **This project is NOT responsible** for fc44/45 builds that end up with standard GNOME instead of GNOME Mobile.
+> - **If unsure**, check the [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) to verify packages are available before building.
+> 
+> **Only rawhide is fully supported for GNOME Mobile.**
+| **Plasma Mobile** | Use Plasma Mobile shell instead of Plasma Desktop (only when Desktop=KDE Plasma). Only Fedora 43 confirmed working. Crashes on fc44/45/rawhide — **we are NOT responsible**. | `true` / `false` | `false` |
 | **Quiet Boot** | Enable Plymouth splash screen and quiet boot messages | `true` / `false` | `true` |
 | **Autologin** | Whether the created user should be logged in automatically | `true` / `false` | `true` |
 | **Username** | Username for the non-root user | string | `username` |
@@ -176,13 +184,15 @@ After rebooting, the device should start from slot B and boot into Fedora.
 
 ### GNOME Mobile
 
-1. **GNOME Mobile only works on rawhide** (as of September 2026). The @mobility/gnome-mobile COPR only builds mutter, gnome-settings-daemon, and gnome-shell for rawhide. Fedora 43/44/45 will fail to install.
-2. **Random crashes back to GDM** – GNOME Mobile may randomly crash and drop back to the GDM login screen. This is an upstream issue, also reproducible on Debian.
-3. **GDM password input invisible** – The password input field on GDM may appear blank, but typing still works. This is also an upstream issue present on Debian.
+1. **🚫 Fedora 43: gsd-mobile 49 is EXPIRED.** Selecting GNOME Mobile on fc43 will result in a mixed build (gsd=51~beta / mutter+shell=49^mobile). The version mismatch may cause runtime issues or instability. Use at your own risk.
+2. **🚫 Fedora 44/45: COPR packages may NOT be available.** If packages are missing, the build falls back to standard Fedora GNOME (not GNOME Mobile). This project is NOT responsible for fc44/45 builds that end up with standard GNOME. Check [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) before building.
+3. **Only rawhide is fully supported** for GNOME Mobile as of September 2026.
+4. **Random crashes back to GDM** – GNOME Mobile may randomly crash and drop back to the GDM login screen. This is an upstream issue, also reproducible on Debian.
+5. **GDM password input invisible** – The password input field on GDM may appear blank, but typing still works. This is also an upstream issue present on Debian.
 
 ### KDE Plasma Mobile
 
-1. **Plasma Mobile crashes on Fedora 44, 45, and rawhide** – `plasmashell` crashes with a segfault in `ShellUtil::qt_static_metacall` during panel creation. Only **Fedora 43** is confirmed working.
+1. **Plasma Mobile crashes on Fedora 44, 45, and rawhide** – Desktop crashes during startup. Only **Fedora 43** is confirmed working.
 2. **Partial mobile UI is accessible** – Even when the desktop crashes, some mobile shell components still function: the first-boot setup wizard, lock screen password input, and the power menu (shutdown/restart/logout).
 3. If you know how to fix this, contributions via Issues or PRs are welcome.
 
