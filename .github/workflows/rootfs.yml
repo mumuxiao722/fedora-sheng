@@ -36,28 +36,9 @@ on:
         default: false
 
       plasma_mobile:
-        description: 'Enable Plasma Mobile instead of Plasma Desktop (only when desktop=KDE Plasma)'
+        description: 'Enable Plasma Mobile instead of Plasma Desktop (only when desktop=KDE Plasma). WARNING: Only Fedora 43 is confirmed working. Plasma Mobile crashes on fc44/45/rawhide.'
         type: boolean
         default: false
-
-      quiet_boot:
-        description: 'Enable Plymouth splash and quiet boot'
-        type: boolean
-        default: true
-
-      plymouth_theme:
-        description: 'Plymouth theme (default = system for GNOME, breeze for KDE)'
-        type: choice
-        options:
-          - 'default'
-          - 'plymouth-system-theme'
-          - 'plymouth-theme-charge'
-          - 'plymouth-theme-breeze'
-          - 'plymouth-theme-spinner'
-          - 'plymouth-theme-spinfinity'
-          - 'plymouth-theme-solar'
-          - 'plymouth-theme-fade-in'
-        default: 'default'
 
       autologin:
         description: 'Autologin'
@@ -114,6 +95,25 @@ on:
         type: string
         required: false
         default: ''
+
+      quiet_boot:
+        description: 'Enable Plymouth splash and quiet boot'
+        type: boolean
+        default: true
+
+      plymouth_theme:
+        description: 'Plymouth theme (requires quiet_boot=true). Default = spinner for GNOME, breeze for KDE'
+        type: choice
+        options:
+          - 'default'
+          - 'none'
+          - 'plymouth-theme-charge'
+          - 'plymouth-theme-breeze'
+          - 'plymouth-theme-spinner'
+          - 'plymouth-theme-spinfinity'
+          - 'plymouth-theme-solar'
+          - 'plymouth-theme-fade-in'
+        default: 'default'
 
       kernel_source:
         description: |
@@ -701,17 +701,22 @@ jobs:
             if [[ "${{ inputs.desktop }}" == "KDE Plasma" ]]; then
               THEME_PKG="plymouth-theme-breeze"
             else
-              THEME_PKG="plymouth-system-theme"
+              THEME_PKG="plymouth-theme-spinner"
             fi
+          elif [[ "${{ inputs.plymouth_theme }}" == "none" ]]; then
+            THEME_PKG=""
           else
             THEME_PKG="${{ inputs.plymouth_theme }}"
           fi
-          INSTALL_PKGS="plymouth ${THEME_PKG}"
+          INSTALL_PKGS="plymouth"
+          if [[ -n "$THEME_PKG" ]]; then
+            INSTALL_PKGS="$INSTALL_PKGS $THEME_PKG"
+          fi
           if [[ "${{ inputs.desktop }}" == "KDE Plasma" ]]; then
             INSTALL_PKGS="$INSTALL_PKGS plymouth-kcm"
           fi
           sudo chroot "$ROOTFS_MOUNT" dnf install -y $INSTALL_PKGS
-          echo "✓ Plymouth installed with ${THEME_PKG}"
+          echo "✓ Plymouth installed with ${THEME_PKG:-no theme}"
 
       - name: "Configure Display Manager"
         run: |
