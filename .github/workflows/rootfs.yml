@@ -589,7 +589,8 @@ jobs:
               glib2 \
               libqmi \
               libmbim \
-              polkit
+              polkit \
+              cracklib-dicts
           echo "✓ DNF installroot complete"
 
       - name: "Mount Virtual File Systems"
