@@ -766,6 +766,7 @@ jobs:
           if ! grep -q "127.0.1.1.*${{ inputs.hostname }}" "$ROOTFS_MOUNT/etc/hosts"; then
             echo "127.0.1.1 ${{ inputs.hostname }}" | sudo tee -a "$ROOTFS_MOUNT/etc/hosts"
           fi
+          echo "CHASSIS=tablet" | sudo tee "$ROOTFS_MOUNT/etc/machine-info"
           echo "✓ Hostname set to ${{ inputs.hostname }}"
 
       - name: "Configure Locale"
