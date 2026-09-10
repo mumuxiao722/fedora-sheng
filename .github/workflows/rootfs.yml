@@ -505,7 +505,7 @@ jobs:
             libdrm-dev libgbm-dev libgles-dev libsdl2-dev \
             libinput-dev libudev-dev libxkbcommon-dev libseat-dev \
             libglib2.0-dev libgtk-3-dev fontconfig \
-            rpm rpm2cpio rpm-build bsdtar libarchive-tools
+            rpm rpm2cpio libarchive-tools
 
       - name: "Add Rust toolchain"
         run: |
