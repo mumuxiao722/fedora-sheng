@@ -129,7 +129,47 @@ else:
     n = s.count("linux-x64")
     m = s.count("linux/x64")
     s = s.replace("linux-x64", "linux-arm64").replace("linux/x64", "linux/arm64")
-    mark(pc, s + marker, f"patched denial-pc ({n} linux-x64, {m} linux/x64 -> arm64)")
+
+    checks = [
+        (
+            "prebuilt_engine_sha256() {\n"
+            "    require_file \"$PREBUILT_ENGINE_SHA256\"\n"
+            "    cut -d' ' -f1 < \"$PREBUILT_ENGINE_SHA256\"\n"
+            "}\n",
+            "prebuilt_engine_sha256() {\n"
+            "    [[ -s \"$PREBUILT_ENGINE_SHA256\" ]] || return 0\n"
+            "    cut -d' ' -f1 < \"$PREBUILT_ENGINE_SHA256\"\n"
+            "}\n",
+            "prebuilt_engine_sha256 lenient on empty baseline",
+        ),
+        (
+            "    [[ \"$(file_sha256 \"$PREBUILT_ENGINE\")\" == \"$(prebuilt_engine_sha256)\" ]] \\\n"
+            "        || die \"locally built Flutter engine does not match $PREBUILT_ENGINE_SHA256; rebuild or investigate it (see $PREBUILT_ENGINE_DIR/BUILD_INFO.md)\"\n",
+            "    local expected_prebuilt\n"
+            "    expected_prebuilt=\"$(prebuilt_engine_sha256)\"\n"
+            "    [[ -z \"$expected_prebuilt\" ]] && return 0\n"
+            "    [[ \"$(file_sha256 \"$PREBUILT_ENGINE\")\" == \"$expected_prebuilt\" ]] \\\n"
+            "        || die \"locally built Flutter engine does not match $PREBUILT_ENGINE_SHA256; rebuild or investigate it (see $PREBUILT_ENGINE_DIR/BUILD_INFO.md)\"\n",
+            "verify_prebuilt_engine lenient on empty baseline",
+        ),
+        (
+            "        label=\"pinned build\"\n"
+            "    fi\n"
+            "    [[ \"$expected\" =~ ^[0-9a-f]{64}$ ]] \\\n"
+            "        || die \"invalid expected SHA-256 for $label\"\n",
+            "        label=\"pinned build\"\n"
+            "    fi\n"
+            "    [[ -z \"$expected\" ]] && return 0\n"
+            "    [[ \"$expected\" =~ ^[0-9a-f]{64}$ ]] \\\n"
+            "        || die \"invalid expected SHA-256 for $label\"\n",
+            "require_pinned_engine lenient on empty baseline",
+        ),
+    ]
+    for old, new, note in checks:
+        if old not in s:
+            sys.exit(f"patch: denial-pc anchor not found: {note}")
+        s = s.replace(old, new, 1)
+    mark(pc, s + marker, f"patched denial-pc (arch paths, {len(checks)} lenient engine checks)")
 
 # ---------- tools/package-denial-rpm ----------
 rpm = repo / "tools" / "package-denial-rpm"
