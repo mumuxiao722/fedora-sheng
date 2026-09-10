@@ -52,14 +52,6 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 | **Enable Third-Party** | Enable third-party repositories | `true` / `false` | `false` |
 | **Desktop** | Desktop environment to install | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
 | **GNOME Mobile** | Use GNOME Mobile from @mobility/gnome-mobile COPR (requires Enable Third-Party). 🚫 fc43: mixed build (gsd=51~beta/mutter+shell=49^mobile), may cause runtime issues. fc44/45: may fall back to standard GNOME if COPR packages missing — **we are NOT responsible**. Only rawhide fully supported. Check [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) before building. | `true` / `false` | `false` |
-
-> **🚫 CRITICAL WARNING**
-> 
-> - **Fedora 43**: gnome-settings-daemon 49 is **expired** from COPR. Selecting GNOME Mobile on fc43 will result in a **mixed build** where gsd=51~beta but mutter+shell=49^mobile. This version mismatch **may cause runtime issues or instability**. Use at your own risk.
-> - **Fedora 44 / 45**: As of September 2026, COPR may **not have packages** for these versions. If packages are missing, the build will **fall back to the original Fedora GNOME** (not GNOME Mobile). **This project is NOT responsible** for fc44/45 builds that end up with standard GNOME instead of GNOME Mobile.
-> - **If unsure**, check the [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) to verify packages are available before building.
-> 
-> **Only rawhide is fully supported for GNOME Mobile.**
 | **Plasma Mobile** | Use Plasma Mobile shell instead of Plasma Desktop (only when Desktop=KDE Plasma). Only Fedora 43 confirmed working. Crashes on fc44/45/rawhide — **we are NOT responsible**. | `true` / `false` | `false` |
 | **Quiet Boot** | Enable Plymouth splash screen and quiet boot messages | `true` / `false` | `true` |
 | **Autologin** | Whether the created user should be logged in automatically | `true` / `false` | `true` |
@@ -69,6 +61,14 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 | **Boot mode** | Which partition Fedora boots from | `single (userdata)` / `dual (linux)` / `custom` | `dual (linux)` |
 | **Custom partition** | Partition name (required when boot_mode=custom) | any partition name | *(empty)* |
 | **Extra packages** | Extra packages to install (space-separated) | string | *(empty)* |
+
+> **🚫 CRITICAL WARNING**
+> 
+> - **Fedora 43**: gnome-settings-daemon 49 is **expired** from COPR. Selecting GNOME Mobile on fc43 will result in a **mixed build** where gsd=51~beta but mutter+shell=49^mobile. This version mismatch **may cause runtime issues or instability**. Use at your own risk.
+> - **Fedora 44 / 45**: As of September 2026, COPR may **not have packages** for these versions. If packages are missing, the build will **fall back to the original Fedora GNOME** (not GNOME Mobile). **This project is NOT responsible** for fc44/45 builds that end up with standard GNOME instead of GNOME Mobile.
+> - **If unsure**, check the [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) to verify packages are available before building.
+> 
+> **Only rawhide is fully supported for GNOME Mobile.**
 
 ### Kernel
 
@@ -208,6 +208,7 @@ This project benefits from the following outstanding work and community support:
 - **slhssb** – for the keyboard backlight driver (xiaomi-sheng-keyboard-backlight)
 - **GhfunNiHe** – for the automatic partition resize (growfs) implementation, taken from [debian-sheng](https://github.com/ianchb/debian-sheng)
 - **code002-2** – for the WiFi firmware warning reference
+- **DotRedstone** – for the [nixos-sheng](https://github.com/DotRedstone/nixos-sheng) project, whose `fake-tablet-mode` service and `docs/hall-sensor-rotation.md` debugging notes form the basis of the [`sheng-tablet-mode`](https://github.com/mumuxiao722/sheng-tablet-mode) package for GNOME auto-rotation
 
 ---
 

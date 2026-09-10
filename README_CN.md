@@ -52,14 +52,6 @@
 | **Enable Third-Party** | 启用第三方仓库 | `true` / `false` | `false` |
 | **Desktop** | 要安装的桌面环境 | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
 | **GNOME Mobile** | 使用 @mobility/gnome-mobile COPR 的 GNOME Mobile（需要启用 Enable Third-Party）。🚫 fc43：混合构建（gsd=51~beta/mutter+shell=49^mobile），可能导致运行时问题。fc44/45：COPR 缺包时可能回退原版 GNOME——**本项目不负责**。仅 rawhide 完全支持。构建前请查看 [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/)。 | `true` / `false` | `false` |
-
-> **🚫 严重警告**
-> 
-> - **Fedora 43**：gsd-mobile 49 已从 COPR **过期**。在 fc43 上选择 GNOME Mobile 将导致**混合构建**：gsd 版本为 51~beta，但 mutter+shell 版本为 49^mobile。这种版本不匹配**可能导致运行时问题或不稳定**。使用风险自负。
-> - **Fedora 44 / 45**：截至 2026 年 9 月，COPR 可能**没有这些版本的包**。如果缺少包，构建将**回退到原版 Fedora GNOME**（非 GNOME Mobile）。**本项目不负责** fc44/45 构建后发现不是 GNOME Mobile 的情况。
-> - **如果不确定**，请先查看 [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) 确认包是否可用。
-> 
-> **目前只有 rawhide 完全支持 GNOME Mobile。**
 | **Plasma Mobile** | 使用 Plasma Mobile 界面而非 Plasma Desktop（仅 Desktop=KDE Plasma 时有效）。仅 Fedora 43 确认可用，fc44/45/rawhide 上崩溃——**本项目不负责**。 | `true` / `false` | `false` |
 | **Quiet Boot** | 启用 Plymouth 启动画面和安静启动信息 | `true` / `false` | `true` |
 | **Autologin** | 创建的用户是否自动登录 | `true` / `false` | `true` |
@@ -69,7 +61,14 @@
 | **Boot mode** | Fedora 从哪个分区启动 | `single (userdata)` / `dual (linux)` / `custom` | `dual (linux)` |
 | **Custom partition** | 分区名称（boot_mode=custom 时必填） | 任意分区名称 | *（空）* |
 | **Extra packages** | 额外安装的软件包（空格分隔） | 字符串 | *（空）* |
-| **Quiet Boot** | 启用 Plymouth 启动画面和安静启动信息 | `true` / `false` | `true` |
+
+> **🚫 严重警告**
+> 
+> - **Fedora 43**：gsd-mobile 49 已从 COPR **过期**。在 fc43 上选择 GNOME Mobile 将导致**混合构建**：gsd 版本为 51~beta，但 mutter+shell 版本为 49^mobile。这种版本不匹配**可能导致运行时问题或不稳定**。使用风险自负。
+> - **Fedora 44 / 45**：截至 2026 年 9 月，COPR 可能**没有这些版本的包**。如果缺少包，构建将**回退到原版 Fedora GNOME**（非 GNOME Mobile）。**本项目不负责** fc44/45 构建后发现不是 GNOME Mobile 的情况。
+> - **如果不确定**，请先查看 [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) 确认包是否可用。
+> 
+> **目前只有 rawhide 完全支持 GNOME Mobile。**
 
 ### 内核设置
 
@@ -209,6 +208,7 @@ fastboot reboot
 - **slhssb** – 键盘背光驱动（xiaomi-sheng-keyboard-backlight）
 - **GhfunNiHe** – 自动分区扩容（growfs）实现，取自 [debian-sheng](https://github.com/ianchb/debian-sheng)
 - **code002-2** – WiFi 固件警告参考
+- **DotRedstone** – 提供 [nixos-sheng](https://github.com/DotRedstone/nixos-sheng) 项目，其 `fake-tablet-mode` 服务与 `docs/hall-sensor-rotation.md` 调试记录，是 [`sheng-tablet-mode`](https://github.com/mumuxiao722/sheng-tablet-mode) 软件包实现 GNOME 自动旋转的基础
 
 ---
 

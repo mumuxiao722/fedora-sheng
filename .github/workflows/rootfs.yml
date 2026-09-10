@@ -454,6 +454,18 @@ jobs:
           path: rpms/
           merge-multiple: true
 
+      - name: "Download sheng-tablet-mode RPM (GNOME Auto-Rotation & Lid Detection)"
+        if: ${{ inputs.desktop == 'GNOME' }}
+        run: |
+          gh release download \
+            --repo mumuxiao722/sheng-tablet-mode \
+            --pattern 'sheng-tablet-mode-*.noarch.rpm' \
+            --dir rpms/ \
+            --clobber
+          echo "✓ sheng-tablet-mode RPM downloaded from sheng-tablet-mode Release"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: "Download Kernel Artifact (custom_build)"
         if: ${{ inputs.kernel_source == 'custom_build' }}
         uses: actions/download-artifact@v8
@@ -605,6 +617,8 @@ jobs:
 
       - name: "Install Custom RPMs"
         run: |
+          # sheng-tablet-mode is downloaded only for GNOME builds, so it is
+          # installed here automatically only when desktop=GNOME.
           cp rpms/*.rpm "$ROOTFS_MOUNT/tmp/"
           sudo chroot "$ROOTFS_MOUNT" bash -c "dnf install -y /tmp/*.rpm"
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
@@ -816,6 +830,11 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" systemctl enable xiaomi-charger-mode
           sudo chroot "$ROOTFS_MOUNT" systemctl enable adsprpcd-sensorspd
           echo "✓ Services enabled"
+
+      - name: "Enable sheng-tablet-mode (GNOME auto-rotation)"
+        if: ${{ inputs.desktop == 'GNOME' }}
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" systemctl enable fake-tablet-mode.service
 
       - name: "Configure sudo"
         run: |
