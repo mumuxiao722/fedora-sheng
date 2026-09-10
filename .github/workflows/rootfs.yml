@@ -475,6 +475,9 @@ jobs:
       DENIAL_FLUTTER_ENGINE_CACHE_ROOT: ${{ github.workspace }}/.denial-cache/engine
 
     steps:
+      - name: "Checkout Repo"
+        uses: actions/checkout@v7
+
       - name: "Checkout Denial (${{ inputs.denial_dev && 'dev' || 'main' }})"
         uses: actions/checkout@v7
         with:
