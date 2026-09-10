@@ -132,6 +132,7 @@
 | [fastrpc](https://github.com/qualcomm/fastrpc) | Qualcomm FastRPC（DSP 通信） |
 | [libssc](https://codeberg.org/DylanVanAssche/libssc) | Qualcomm Sensor Core 用户空间库 |
 | [iio-sensor-proxy](https://github.com/hadess/iio-sensor-proxy) | IIO 传感器代理守护进程 |
+| [sheng-tablet-mode](https://github.com/mumuxiao722/sheng-tablet-mode) | 虚拟平板模式开关，启用 GNOME 自动旋转 |
 | [sheng-sensors](#) | 设备特定传感器配置和 udev 规则 |
 | [alsa-xiaomi-sheng](#) | ALSA UCM2 音频配置 |
 

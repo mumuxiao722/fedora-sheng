@@ -132,6 +132,7 @@ If you want to use a custom kernel instead of the prebuilt one:
 | [fastrpc](https://github.com/qualcomm/fastrpc) | Qualcomm FastRPC for DSP communication |
 | [libssc](https://codeberg.org/DylanVanAssche/libssc) | Qualcomm Sensor Core userspace library |
 | [iio-sensor-proxy](https://github.com/hadess/iio-sensor-proxy) | IIO sensor proxy daemon |
+| [sheng-tablet-mode](https://github.com/mumuxiao722/sheng-tablet-mode) | Virtual tablet-mode switch enabling GNOME auto-rotation |
 | [sheng-sensors](#) | Device-specific sensor configuration and udev rules |
 | [alsa-xiaomi-sheng](#) | ALSA UCM2 audio configuration |
 
