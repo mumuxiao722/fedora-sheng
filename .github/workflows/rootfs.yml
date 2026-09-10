@@ -201,7 +201,8 @@ jobs:
           echo "✓ Build tools installed"
 
       - name: "Restore ccache"
-        uses: actions/cache@v4
+        id: kernel-cache-restore
+        uses: actions/cache/restore@v5
         with:
           path: ${{ github.workspace }}/.ccache
           key: ccache-${{ runner.os }}-${{ runner.arch }}-${{ github.sha }}
@@ -285,6 +286,13 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
+      - name: "Save ccache"
+        if: ${{ always() && steps.kernel-cache-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v5
+        with:
+          path: ${{ github.workspace }}/.ccache
+          key: ${{ steps.kernel-cache-restore.outputs.cache-primary-key }}
+
   # ==========================================================================
   # Build Custom RPMs (in Fedora container)
   # ==========================================================================
@@ -297,13 +305,13 @@ jobs:
         uses: actions/checkout@v7
 
       - name: "Restore RPM ccache"
-        uses: actions/cache@v4
+        id: rpm-cache-restore
+        uses: actions/cache/restore@v5
         with:
           path: ${{ github.workspace }}/.ccache-rpm
           key: rpm-ccache-${{ inputs.fedora_version }}
           restore-keys: |
             rpm-ccache-
-          save-always: true
 
       - name: "Build RPMs in Fedora Container"
         run: |
@@ -446,6 +454,13 @@ jobs:
           retention-days: 3
           if-no-files-found: warn
 
+      - name: "Save RPM ccache"
+        if: ${{ always() && steps.rpm-cache-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v5
+        with:
+          path: ${{ github.workspace }}/.ccache-rpm
+          key: ${{ steps.rpm-cache-restore.outputs.cache-primary-key }}
+
   # ==========================================================================
   # Build Denial (source build, ARM64; see docs/BUILDING.md)
   # ==========================================================================
@@ -470,13 +485,13 @@ jobs:
           fetch-tags: true
 
       - name: "Restore Denial cache"
-        uses: actions/cache@v4
+        id: denial-cache-restore
+        uses: actions/cache/restore@v5
         with:
           path: ${{ github.workspace }}/.denial-cache
           key: "denial-build-${{ inputs.denial_dev && 'dev' || 'main' }}"
           restore-keys: |
             denial-build-
-          save-always: true
 
       - name: "Install Build Tools"
         run: |
@@ -524,6 +539,13 @@ jobs:
           path: ${{ github.workspace }}/.denial-cache/pc-build/packages/*.rpm
           retention-days: 3
           if-no-files-found: error
+
+      - name: "Save Denial cache"
+        if: ${{ always() && steps.denial-cache-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v5
+        with:
+          path: ${{ github.workspace }}/.denial-cache
+          key: ${{ steps.denial-cache-restore.outputs.cache-primary-key }}
 
   # ==========================================================================
   # Build RootFS
