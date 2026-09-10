@@ -21,7 +21,7 @@ assert src.count(anchor) == 1, 'gclient config anchor not unique'
 src = src.replace(
     anchor,
     '  # ARM64: drop the openjdk CIPD dep (no linux-arm64 package upstream).\n'
-    '  python3 "$ROOT/.github/denial-arm64/strip-jdk.py" "$CHECKOUT/DEPS"\n'
+    '  python3 "$ROOT/../.github/denial-arm64/strip-jdk.py" "$CHECKOUT/DEPS"\n'
     + anchor,
     1,
 )
