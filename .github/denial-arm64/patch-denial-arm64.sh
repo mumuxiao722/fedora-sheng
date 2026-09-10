@@ -55,6 +55,23 @@ else:
     line_end = s.index("\n", m2.start()) + 1
     s = s[:line_end] + restore + s[line_end:]
 
+    def add_native_arg(host):
+        out = []
+        pat = re.compile(r"^([ \t]*)\./flutter/tools/gn \\$", re.M)
+        pos = 0
+        for m in pat.finditer(host):
+            out.append(host[pos:m.start()])
+            indent = m.group(1)
+            out.append(indent + "./flutter/tools/gn \\\n")
+            out.append(indent + "--linux \\\n")
+            out.append(indent + "--linux-cpu=arm64 \\\n")
+            pos = m.end() + 1
+        out.append(host[pos:])
+        return "".join(out)
+
+    s = add_native_arg(s)
+    assert s.count("./flutter/tools/gn \\") == 5
+
     n = s.count("linux-x64")
     s = s.replace("linux-x64", "linux-arm64")
 
