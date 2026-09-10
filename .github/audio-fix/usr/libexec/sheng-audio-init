@@ -1,5 +1,5 @@
 #!/bin/bash
-# SM8550 (Xiaomi Pad 6S Pro) audio bring-up: register sound card after boot.
+# sheng (Xiaomi Pad 6S Pro) audio bring-up: register sound card after boot.
 set -e
 sleep 3
 
@@ -20,7 +20,7 @@ modprobe -r snd-soc-sc8280xp 2>/dev/null || true
 modprobe snd-soc-sc8280xp
 
 if [ -d /proc/asound/card0 ]; then
-	logger -t sm8550-audio 'sound card registered OK'
+	logger -t sheng-audio 'sound card registered OK'
 else
-	logger -t sm8550-audio 'sound card FAILED to register'
+	logger -t sheng-audio 'sound card FAILED to register'
 fi

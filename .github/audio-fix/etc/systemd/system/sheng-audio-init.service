@@ -1,12 +1,12 @@
 [Unit]
-Description=SM8550 audio card bring-up (load ALSA codec modules, register card)
+Description=sheng audio card bring-up (load ALSA codec modules, register card)
 After=systemd-udevd.service
 Requires=systemd-udevd.service
 After=multi-user.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/libexec/sm8550-audio-init.sh
+ExecStart=/usr/libexec/sheng-audio-init
 RemainAfterExit=yes
 
 [Install]

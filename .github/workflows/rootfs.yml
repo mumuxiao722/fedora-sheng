@@ -979,7 +979,7 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" systemctl enable xiaomi-sheng-thp
           sudo chroot "$ROOTFS_MOUNT" systemctl enable xiaomi-charger-mode
           sudo chroot "$ROOTFS_MOUNT" systemctl enable adsprpcd-sensorspd
-          sudo chroot "$ROOTFS_MOUNT" systemctl enable sm8550-audio-init.service
+          sudo chroot "$ROOTFS_MOUNT" systemctl enable sheng-audio-init.service
           echo "✓ Services enabled"
 
       - name: "Enable sheng-tablet-mode (GNOME auto-rotation)"
