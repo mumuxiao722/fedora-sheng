@@ -51,7 +51,7 @@ else:
     m2 = re.search(r"^([ \t]*)gclient runhooks\s*$", s, re.M)
     if not m2:
         sys.exit("patch: gclient runhooks anchor not found in " + str(engine))
-    restore = m2.group(1) + 'git -C "$CHECKOUT" checkout -- DEPS\n'
+    restore = m2.group(1) + 'git -C "$CHECKOUT" show HEAD:DEPS > "$CHECKOUT/DEPS"\n'
     line_end = s.index("\n", m2.start()) + 1
     s = s[:line_end] + restore + s[line_end:]
 
