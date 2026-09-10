@@ -1,0 +1,13 @@
+[Unit]
+Description=SM8550 audio card bring-up (load ALSA codec modules, register card)
+After=systemd-udevd.service
+Requires=systemd-udevd.service
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/sm8550-audio-init.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
