@@ -299,6 +299,15 @@ jobs:
       - name: "Checkout Repo"
         uses: actions/checkout@v7
 
+      - name: "Restore RPM ccache"
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.ccache-rpm
+          key: rpm-ccache-${{ inputs.fedora_version }}
+          restore-keys: |
+            rpm-ccache-
+          save-always: true
+
       - name: "Build RPMs in Fedora Container"
         run: |
           FEDORA_VERSION=${{ inputs.fedora_version }}
@@ -313,9 +322,14 @@ jobs:
 
           podman run --rm \
             -v "${{ github.workspace }}:/workspace" \
+            -v "${{ github.workspace }}/.ccache-rpm:/ccache" \
             -w /workspace \
             -e FIRMWARE_REPO="${{ inputs.firmware_repo }}" \
             -e FIRMWARE_BRANCH="${{ inputs.firmware_branch }}" \
+            -e CCACHE_DIR=/ccache \
+            -e CCACHE_MAXSIZE=2G \
+            -e CCACHE_COMPILERCHECK=content \
+            -e CCACHE_NOHASHDIR=true \
             registry.fedoraproject.org/fedora:${FEDORA_VERSION} \
             bash /workspace/.github/build-rpms.sh "${FEDORA_VERSION}"
 
@@ -454,6 +468,8 @@ jobs:
           repository: denialwm/denial
           ref: ${{ inputs.denial_branch }}
           path: denial
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: "Restore Denial cache"
         uses: actions/cache@v4
