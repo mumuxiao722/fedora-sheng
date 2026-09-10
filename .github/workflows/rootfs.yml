@@ -468,6 +468,7 @@ jobs:
       DENIAL_PC_DEPENDENCY_ROOT: ${{ github.workspace }}/.denial-cache/deps
       DENIAL_PC_BUILD_ROOT: ${{ github.workspace }}/.denial-cache/pc-build
       DENIAL_FLUTTER_ENGINE_CACHE_ROOT: ${{ github.workspace }}/.denial-cache/engine
+      DENIAL_FLUTTER_ENGINE_JOBS: 2
 
     steps:
       - name: "Checkout Repo"
@@ -511,7 +512,7 @@ jobs:
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
       - name: "Patch Denial tooling for ARM64"
-        run: bash .github/denial-arm64/patch-denial-flutter-engine.sh denial
+        run: bash .github/denial-arm64/patch-denial-arm64.sh denial
 
       - name: "Denial doctor (host prerequisite check)"
         run: ./tools/denial-pc doctor || true
