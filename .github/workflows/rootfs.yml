@@ -31,13 +31,10 @@ on:
           - 'server'
         default: 'GNOME'
 
-      denial_branch:
-        description: 'Denial branch to build from (dev may get newer features)'
-        type: choice
-        options:
-          - 'main'
-          - 'dev'
-        default: 'main'
+      denial_dev:
+        description: 'Use the Denial dev branch (dev may get newer features)'
+        type: boolean
+        default: false
 
       gnome_mobile:
         description: 'Enable GNOME Mobile from @mobility/gnome-mobile COPR (requires Enable Third-Party). Check https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/ for build status.'
@@ -452,7 +449,7 @@ jobs:
   # Build Denial (source build, ARM64; see docs/BUILDING.md)
   # ==========================================================================
   build-denial:
-    name: "Build Denial (${{ inputs.denial_branch }}, ARM64)"
+    name: "Build Denial (${{ inputs.denial_dev ? 'dev' : 'main' }}, ARM64)"
     runs-on: ubuntu-24.04-arm
     if: ${{ inputs.desktop == 'Denial' }}
 
@@ -462,11 +459,11 @@ jobs:
       DENIAL_FLUTTER_ENGINE_CACHE_ROOT: ${{ github.workspace }}/.denial-cache/engine
 
     steps:
-      - name: "Checkout Denial (${{ inputs.denial_branch }})"
+      - name: "Checkout Denial (${{ inputs.denial_dev ? 'dev' : 'main' }})"
         uses: actions/checkout@v7
         with:
           repository: denialwm/denial
-          ref: ${{ inputs.denial_branch }}
+          ref: "${{ inputs.denial_dev ? 'dev' : 'main' }}"
           path: denial
           fetch-depth: 0
           fetch-tags: true
@@ -475,7 +472,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.denial-cache
-          key: denial-build-${{ inputs.denial_branch }}
+          key: "denial-build-${{ inputs.denial_dev ? 'dev' : 'main' }}"
           restore-keys: |
             denial-build-
           save-always: true

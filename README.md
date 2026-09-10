@@ -201,7 +201,7 @@ After rebooting, the device should start from slot B and boot into Fedora.
 ### Denial
 
 1. **ARM64 support is experimental** – Upstream builds from source with `tools/denial-pc` + `tools/denial-flutter-engine`, per [docs/BUILDING.md](https://github.com/denialwm/denial/blob/main/docs/BUILDING.md). ARM64 tooling is documented but the x86_64-only code paths are still being landed by the developer.
-2. **Branch switch** – Pick `main` or `dev` via the **Denial Branch** input (`main` default; `dev` may get newer features).
+2. **Branch switch** – Toggle **Denial Dev** to build the `dev` branch instead of `main` (dev may get newer features).
 3. **No terminal/settings by default** – Denial ships no terminal or editor. Add one via `extra_packages` (e.g. `foot` or `kitty`).
 4. **Version tracking** – No ARM64 tag exists yet, so we build from a branch. Follow upstream yourself and open a PR when ARM64 lands properly.
 

@@ -201,7 +201,7 @@ fastboot reboot
 ### Denial
 
 1. **ARM64 支持为实验性** – 上游按 [docs/BUILDING.md](https://github.com/denialwm/denial/blob/main/docs/BUILDING.md) 用 `tools/denial-pc` + `tools/denial-flutter-engine` 从源码构建。ARM64 工具链尚在文档阶段，x86_64-only 代码路径仍未落地，由开发者持续推进中。
-2. **分支开关** – 通过 **Denial Branch** 输入选择 `main` 或 `dev`（默认 `main`；`dev` 可能获得更新特性）。
+2. **分支开关** – 打开 **Denial Dev** 改用 `dev` 分支（默认 `main`；dev 可能获得更新特性）。
 3. **默认无终端** – Denial 不自带终端/编辑器。请通过 `extra_packages` 自行添加（如 `foot` 或 `kitty`）。
 4. **版本追踪** – 因为还没有官方 ARM64 tag，我们从分支构建。上游更新请自行跟进，待 ARM64 正式落地后欢迎提 PR。
 
