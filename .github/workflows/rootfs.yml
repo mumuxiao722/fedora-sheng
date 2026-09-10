@@ -22,13 +22,22 @@ on:
         default: false
 
       desktop:
-        description: 'Desktop Environment (server = no DE)'
+        description: 'Desktop Environment (server = no DE). Denial is built from source for ARM64 (first run slow, cached afterwards)'
         type: choice
         options:
           - 'GNOME'
           - 'KDE Plasma'
+          - 'Denial'
           - 'server'
         default: 'GNOME'
+
+      denial_branch:
+        description: 'Denial branch to build from (dev may get newer features)'
+        type: choice
+        options:
+          - 'main'
+          - 'dev'
+        default: 'main'
 
       gnome_mobile:
         description: 'Enable GNOME Mobile from @mobility/gnome-mobile COPR (requires Enable Third-Party). Check https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/ for build status.'
@@ -72,7 +81,7 @@ on:
         default: 'None (C.UTF-8)'
 
       extra_packages:
-        description: 'Extra packages to install (space-separated)'
+        description: 'Extra packages to install (space-separated). NOTE: Denial ships no terminal/editor by default - add one yourself, e.g. "foot kitty"'
         type: string
         required: false
         default: ''
@@ -426,13 +435,90 @@ jobs:
           if-no-files-found: warn
 
   # ==========================================================================
+  # Build Denial (source build, ARM64; see docs/BUILDING.md)
+  # ==========================================================================
+  build-denial:
+    name: "Build Denial (${{ inputs.denial_branch }}, ARM64)"
+    runs-on: ubuntu-24.04-arm
+    if: ${{ inputs.desktop == 'Denial' }}
+
+    env:
+      DENIAL_PC_DEPENDENCY_ROOT: ${{ github.workspace }}/.denial-cache/deps
+      DENIAL_PC_BUILD_ROOT: ${{ github.workspace }}/.denial-cache/pc-build
+      DENIAL_FLUTTER_ENGINE_CACHE_ROOT: ${{ github.workspace }}/.denial-cache/engine
+
+    steps:
+      - name: "Checkout Denial (${{ inputs.denial_branch }})"
+        uses: actions/checkout@v7
+        with:
+          repository: denialwm/denial
+          ref: ${{ inputs.denial_branch }}
+          path: denial
+
+      - name: "Restore Denial cache"
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.denial-cache
+          key: denial-build-${{ inputs.denial_branch }}
+          restore-keys: |
+            denial-build-
+          save-always: true
+
+      - name: "Install Build Tools"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            git curl tar xz-utils zip unzip \
+            build-essential cmake ninja-build pkg-config \
+            clang llvm libclang-dev \
+            rustup \
+            libglvnd-dev libegl1-mesa-dev mesa-common-dev \
+            libdrm-dev libgbm-dev libgles-dev libsdl2-dev \
+            libinput-dev libudev-dev libxkbcommon-dev libseat-dev \
+            libglib2.0-dev libgtk-3-dev fontconfig \
+            rpm rpm2cpio rpm-build bsdtar libarchive-tools
+
+      - name: "Add Rust toolchain"
+        run: |
+          rustup default stable
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: "Denial doctor (host prerequisite check)"
+        run: ./tools/denial-pc doctor || true
+        working-directory: denial
+
+      - name: "Bootstrap Denial tooling"
+        run: ./tools/denial-pc bootstrap
+        working-directory: denial
+
+      - name: "Build Flutter engine (cacheable)"
+        run: ./tools/denial-flutter-engine build
+        working-directory: denial
+
+      - name: "Build Denial"
+        run: ./tools/denial-pc build
+        working-directory: denial
+
+      - name: "Package RPMs"
+        run: ./tools/denial-pc fedora-package
+        working-directory: denial
+
+      - name: "Upload Denial RPMs"
+        uses: actions/upload-artifact@v7
+        with:
+          name: denial-rpms
+          path: ${{ github.workspace }}/.denial-cache/pc-build/packages/*.rpm
+          retention-days: 3
+          if-no-files-found: error
+
+  # ==========================================================================
   # Build RootFS
   # ==========================================================================
   build-rootfs:
     name: "Build Fedora RootFS"
     runs-on: ubuntu-24.04-arm
-    needs: [build-rpms, build-kernel]
-    if: ${{ !cancelled() && needs.build-rpms.result == 'success' && (needs.build-kernel.result == 'success' || needs.build-kernel.result == 'skipped') }}
+    needs: [build-rpms, build-kernel, build-denial]
+    if: ${{ !cancelled() && needs.build-rpms.result == 'success' && (needs.build-kernel.result == 'success' || needs.build-kernel.result == 'skipped') && (needs.build-denial.result == 'success' || needs.build-denial.result == 'skipped') }}
 
     env:
       ROOTFS_MOUNT: /mnt/rootfs
@@ -533,6 +619,9 @@ jobs:
                 echo "name=kde" >> $GITHUB_OUTPUT
               fi
               ;;
+            'Denial')
+              echo "name=denial" >> $GITHUB_OUTPUT
+              ;;
             'server')
               echo "name=server" >> $GITHUB_OUTPUT
               ;;
@@ -617,8 +706,8 @@ jobs:
 
       - name: "Install Custom RPMs"
         run: |
-          # sheng-tablet-mode is downloaded only for GNOME builds, so it is
-          # installed here automatically only when desktop=GNOME.
+          # xiaomi-sheng + table-mode (GNOME, from sheng-tablet-mode Release) + denial
+          # (built by build-denial when desktop=Denial), all merged into rpms/.
           cp rpms/*.rpm "$ROOTFS_MOUNT/tmp/"
           sudo chroot "$ROOTFS_MOUNT" bash -c "dnf install -y /tmp/*.rpm"
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm
@@ -709,6 +798,14 @@ jobs:
             xdg-desktop-portal-kde kio-admin
           echo "✓ KDE Plasma Mobile installed"
 
+      - name: "Install Denial Runtime"
+        if: ${{ inputs.desktop == 'Denial' }}
+        run: |
+          sudo chroot "$ROOTFS_MOUNT" dnf install -y \
+            pipewire-pulseaudio pipewire-alsa \
+            greetd upower
+          echo "✓ Denial runtime installed"
+
       - name: "Install Plymouth"
         if: ${{ steps.quiet.outputs.enabled == 'true' }}
         run: |
@@ -739,6 +836,8 @@ jobs:
             sudo chroot "$ROOTFS_MOUNT" systemctl enable gdm
           elif [[ "${{ inputs.desktop }}" == "KDE Plasma" ]]; then
             sudo chroot "$ROOTFS_MOUNT" systemctl enable sddm
+          elif [[ "${{ inputs.desktop }}" == "Denial" ]]; then
+            sudo chroot "$ROOTFS_MOUNT" systemctl enable greetd
           fi
           echo "✓ Display manager configured"
 
@@ -766,6 +865,11 @@ jobs:
             else
               echo "✓ SDDM configured (default session: $SESSION, autologin disabled)"
             fi
+          elif [[ "${{ inputs.desktop }}" == "Denial" ]]; then
+            sudo mkdir -p "$ROOTFS_MOUNT/etc/greetd"
+            printf '[terminal]\nvt = 1\n\n[initial_session]\nuser = %s\ncommand = "denial-session"\n' "$USERNAME" | \
+              sudo tee "$ROOTFS_MOUNT/etc/greetd/config.toml" > /dev/null
+            echo "✓ greetd configured (autologin: $USERNAME -> denial-session)"
           fi
 
       - name: "Set Graphical Target"

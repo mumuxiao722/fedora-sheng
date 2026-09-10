@@ -50,7 +50,7 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 |-----------|-------------|---------|---------|
 | **Fedora Version** | Fedora version to install | `43` / `44` / `45` / `rawhide` | `44` |
 | **Enable Third-Party** | Enable third-party repositories | `true` / `false` | `false` |
-| **Desktop** | Desktop environment to install | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
+| **Desktop** | Desktop environment to install | `GNOME` / `KDE Plasma` / `Denial` / `server` | `GNOME` |
 | **GNOME Mobile** | Use GNOME Mobile from @mobility/gnome-mobile COPR (requires Enable Third-Party). 🚫 fc43: mixed build (gsd=51~beta/mutter+shell=49^mobile), may cause runtime issues. fc44/45: may fall back to standard GNOME if COPR packages missing — **we are NOT responsible**. Only rawhide fully supported. Check [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) before building. | `true` / `false` | `false` |
 | **Plasma Mobile** | Use Plasma Mobile shell instead of Plasma Desktop (only when Desktop=KDE Plasma). Only Fedora 43 confirmed working. Crashes on fc44/45/rawhide — **we are NOT responsible**. | `true` / `false` | `false` |
 | **Quiet Boot** | Enable Plymouth splash screen and quiet boot messages | `true` / `false` | `true` |
@@ -133,6 +133,7 @@ If you want to use a custom kernel instead of the prebuilt one:
 | [libssc](https://codeberg.org/DylanVanAssche/libssc) | Qualcomm Sensor Core userspace library |
 | [iio-sensor-proxy](https://github.com/hadess/iio-sensor-proxy) | IIO sensor proxy daemon |
 | [sheng-tablet-mode](https://github.com/mumuxiao722/sheng-tablet-mode) | Virtual tablet-mode switch enabling GNOME auto-rotation |
+| [Denial](https://github.com/denialwm/denial) | Flutter-native Wayland compositor (built from source for ARM64; no official ARM64 binaries) |
 | [sheng-sensors](#) | Device-specific sensor configuration and udev rules |
 | [alsa-xiaomi-sheng](#) | ALSA UCM2 audio configuration |
 
@@ -196,6 +197,13 @@ After rebooting, the device should start from slot B and boot into Fedora.
 1. **Plasma Mobile crashes on Fedora 44, 45, and rawhide** – Desktop crashes during startup. Only **Fedora 43** is confirmed working.
 2. **Partial mobile UI is accessible** – Even when the desktop crashes, some mobile shell components still function: the first-boot setup wizard, lock screen password input, and the power menu (shutdown/restart/logout).
 3. If you know how to fix this, contributions via Issues or PRs are welcome.
+
+### Denial
+
+1. **ARM64 support is experimental** – Upstream builds from source with `tools/denial-pc` + `tools/denial-flutter-engine`, per [docs/BUILDING.md](https://github.com/denialwm/denial/blob/main/docs/BUILDING.md). ARM64 tooling is documented but the x86_64-only code paths are still being landed by the developer.
+2. **Branch switch** – Pick `main` or `dev` via the **Denial Branch** input (`main` default; `dev` may get newer features).
+3. **No terminal/settings by default** – Denial ships no terminal or editor. Add one via `extra_packages` (e.g. `foot` or `kitty`).
+4. **Version tracking** – No ARM64 tag exists yet, so we build from a branch. Follow upstream yourself and open a PR when ARM64 lands properly.
 
 ---
 

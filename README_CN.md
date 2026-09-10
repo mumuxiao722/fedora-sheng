@@ -50,7 +50,7 @@
 |------|------|------|--------|
 | **Fedora Version** | 要安装的 Fedora 版本 | `43` / `44` / `45` / `rawhide` | `44` |
 | **Enable Third-Party** | 启用第三方仓库 | `true` / `false` | `false` |
-| **Desktop** | 要安装的桌面环境 | `GNOME` / `KDE Plasma` / `server` | `GNOME` |
+| **Desktop** | 要安装的桌面环境 | `GNOME` / `KDE Plasma` / `Denial` / `server` | `GNOME` |
 | **GNOME Mobile** | 使用 @mobility/gnome-mobile COPR 的 GNOME Mobile（需要启用 Enable Third-Party）。🚫 fc43：混合构建（gsd=51~beta/mutter+shell=49^mobile），可能导致运行时问题。fc44/45：COPR 缺包时可能回退原版 GNOME——**本项目不负责**。仅 rawhide 完全支持。构建前请查看 [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/)。 | `true` / `false` | `false` |
 | **Plasma Mobile** | 使用 Plasma Mobile 界面而非 Plasma Desktop（仅 Desktop=KDE Plasma 时有效）。仅 Fedora 43 确认可用，fc44/45/rawhide 上崩溃——**本项目不负责**。 | `true` / `false` | `false` |
 | **Quiet Boot** | 启用 Plymouth 启动画面和安静启动信息 | `true` / `false` | `true` |
@@ -133,6 +133,7 @@
 | [libssc](https://codeberg.org/DylanVanAssche/libssc) | Qualcomm Sensor Core 用户空间库 |
 | [iio-sensor-proxy](https://github.com/hadess/iio-sensor-proxy) | IIO 传感器代理守护进程 |
 | [sheng-tablet-mode](https://github.com/mumuxiao722/sheng-tablet-mode) | 虚拟平板模式开关，启用 GNOME 自动旋转 |
+| [Denial](https://github.com/denialwm/denial) | Flutter-native Wayland 合成器（ARM64 从源码自建；官方暂无 ARM64 二进制） |
 | [sheng-sensors](#) | 设备特定传感器配置和 udev 规则 |
 | [alsa-xiaomi-sheng](#) | ALSA UCM2 音频配置 |
 
@@ -196,6 +197,13 @@ fastboot reboot
 1. **Plasma Mobile 在 Fedora 44、45 和 rawhide 上崩溃** – 桌面启动时崩溃。仅 **Fedora 43** 确认可用。
 2. **部分移动 UI 仍可访问** – 即使桌面崩溃，部分移动 shell 组件仍可正常工作：首次启动引导、锁屏密码输入、以及电源菜单（关机/重启/注销）。
 3. 如果您知道如何解决此问题，欢迎通过 Issues 或 PR 贡献。
+
+### Denial
+
+1. **ARM64 支持为实验性** – 上游按 [docs/BUILDING.md](https://github.com/denialwm/denial/blob/main/docs/BUILDING.md) 用 `tools/denial-pc` + `tools/denial-flutter-engine` 从源码构建。ARM64 工具链尚在文档阶段，x86_64-only 代码路径仍未落地，由开发者持续推进中。
+2. **分支开关** – 通过 **Denial Branch** 输入选择 `main` 或 `dev`（默认 `main`；`dev` 可能获得更新特性）。
+3. **默认无终端** – Denial 不自带终端/编辑器。请通过 `extra_packages` 自行添加（如 `foot` 或 `kitty`）。
+4. **版本追踪** – 因为还没有官方 ARM64 tag，我们从分支构建。上游更新请自行跟进，待 ARM64 正式落地后欢迎提 PR。
 
 ---
 
