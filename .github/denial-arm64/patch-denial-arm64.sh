@@ -27,14 +27,26 @@ if patched(engine):
 else:
     s = engine.read_text()
 
-    m = re.search(r"^(\s*)gclient sync --no-history --nohooks\s*$", s, re.M)
+    m = re.search(
+        r"^([ \t]*)gclient sync --no-history --nohooks\s*$",
+        s,
+        re.M,
+    )
     if not m:
         sys.exit("patch: gclient sync anchor not found in " + str(engine))
-    hook = (
-        m.group(1)
-        + 'python3 "$ROOT/../.github/denial-arm64/patch-deps.py" "$CHECKOUT/DEPS"\n'
-    )
-    s = s[: m.start()] + hook + s[m.start():]
+    chain_start = m.start()
+    while True:
+        nl = s.rfind("\n", 0, chain_start - 1)
+        if nl < 0:
+            break
+        if s[nl + 1:chain_start].rstrip("\n").endswith("\\"):
+            chain_start = nl + 1
+        else:
+            break
+    indent = s[chain_start : s.find("\n", chain_start)]
+    indent = indent[: len(indent) - len(indent.lstrip())]
+    hook = indent + 'python3 "$ROOT/../.github/denial-arm64/patch-deps.py" "$CHECKOUT/DEPS"\n'
+    s = s[:chain_start] + hook + s[chain_start:]
 
     n = s.count("linux-x64")
     s = s.replace("linux-x64", "linux-arm64")
