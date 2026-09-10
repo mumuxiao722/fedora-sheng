@@ -307,6 +307,7 @@ jobs:
 
       - name: "Build RPMs in Fedora Container"
         run: |
+          mkdir -p "${{ github.workspace }}/.ccache-rpm"
           FEDORA_VERSION=${{ inputs.fedora_version }}
           if [ "$FEDORA_VERSION" = "rawhide" ]; then
             RPM_SUFFIX="fc46"
