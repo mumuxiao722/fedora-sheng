@@ -512,6 +512,9 @@ jobs:
           rustup default stable
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
+      - name: "Patch Denial tooling for ARM64"
+        run: bash .github/denial-arm64/patch-denial-flutter-engine.sh denial
+
       - name: "Denial doctor (host prerequisite check)"
         run: ./tools/denial-pc doctor || true
         working-directory: denial
