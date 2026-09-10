@@ -385,6 +385,14 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
+      - name: "Upload sheng-audio-fix RPM"
+        uses: actions/upload-artifact@v7
+        with:
+          name: sheng-audio-fix-rpm-${{ env.RPM_SUFFIX }}
+          path: rpmbuild/RPMS/noarch/sheng-audio-fix-*.rpm
+          retention-days: 3
+          if-no-files-found: error
+
       - name: "Upload sheng-devauth RPM"
         uses: actions/upload-artifact@v7
         with:
@@ -971,18 +979,8 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" systemctl enable xiaomi-sheng-thp
           sudo chroot "$ROOTFS_MOUNT" systemctl enable xiaomi-charger-mode
           sudo chroot "$ROOTFS_MOUNT" systemctl enable adsprpcd-sensorspd
-          echo "✓ Services enabled"
-
-      - name: "Install SM8550 audio fix (sound card bring-up)"
-        run: |
-          sudo install -D -m 0755 .github/audio-fix/usr/local/sbin/sm8550-audio-init.sh \
-            "$ROOTFS_MOUNT/usr/local/sbin/sm8550-audio-init.sh"
-          sudo install -D -m 0644 .github/audio-fix/etc/modules-load.d/sm8550-audio.conf \
-            "$ROOTFS_MOUNT/etc/modules-load.d/sm8550-audio.conf"
-          sudo install -D -m 0644 .github/audio-fix/etc/systemd/system/sm8550-audio-init.service \
-            "$ROOTFS_MOUNT/etc/systemd/system/sm8550-audio-init.service"
           sudo chroot "$ROOTFS_MOUNT" systemctl enable sm8550-audio-init.service
-          echo "✓ SM8550 audio fix installed"
+          echo "✓ Services enabled"
 
       - name: "Enable sheng-tablet-mode (GNOME auto-rotation)"
         if: ${{ inputs.desktop == 'GNOME' }}

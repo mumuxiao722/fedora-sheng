@@ -6,7 +6,7 @@ After=multi-user.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/sbin/sm8550-audio-init.sh
+ExecStart=/usr/libexec/sm8550-audio-init.sh
 RemainAfterExit=yes
 
 [Install]

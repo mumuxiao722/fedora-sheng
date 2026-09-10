@@ -110,6 +110,13 @@ tar -czf /workspace/rpmbuild/SOURCES/libssc-0.3.0.tar.gz libssc-0.3.0/
 mv iio-sensor-proxy iio-sensor-proxy-3.9
 tar -czf /workspace/rpmbuild/SOURCES/iio-sensor-proxy-3.9.tar.gz iio-sensor-proxy-3.9/
 
+# sheng-audio-fix (SM8550 sound card bring-up)
+mkdir -p /tmp/sheng-audio-fix-1.0
+cp -r /workspace/.github/audio-fix/etc /workspace/.github/audio-fix/usr \
+    /tmp/sheng-audio-fix-1.0/
+tar -czf /workspace/rpmbuild/SOURCES/sheng-audio-fix-1.0.tar.gz \
+    -C /tmp sheng-audio-fix-1.0
+
 # Copy special source files (Source1, Patch0, etc.)
 cp /workspace/patches/adsprpcd-sensorspd.service /workspace/rpmbuild/SOURCES/
 cp /workspace/patches/wait_for_qmi_service.patch /workspace/rpmbuild/SOURCES/
@@ -143,6 +150,9 @@ rpmbuild --define "_topdir $RPM_TOPDIR" -ba iio-sensor-proxy.spec
 
 echo "=== Building firmware-xiaomi-sheng ==="
 rpmbuild --define "_topdir $RPM_TOPDIR" -ba firmware-xiaomi-sheng.spec
+
+echo "=== Building sheng-audio-fix ==="
+rpmbuild --define "_topdir $RPM_TOPDIR" -ba sheng-audio-fix.spec
 
 echo "=== Building sheng-devauth ==="
 rpmbuild --define "_topdir $RPM_TOPDIR" -ba sheng-devauth.spec
