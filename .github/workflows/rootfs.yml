@@ -859,13 +859,13 @@ jobs:
             xdg-desktop-portal-kde kio-admin
           echo "✓ KDE Plasma Mobile installed"
 
-      - name: "Install Denial Runtime"
+      - name: "Install Denial"
         if: ${{ inputs.desktop == 'Denial' }}
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             pipewire-pulseaudio pipewire-alsa pipewire-jack-audio-connection-kit \
             greetd upower
-          echo "✓ Denial runtime installed"
+          echo "✓ Denial installed"
 
       - name: "Install Plymouth"
         if: ${{ steps.quiet.outputs.enabled == 'true' }}
