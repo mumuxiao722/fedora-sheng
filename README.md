@@ -53,6 +53,7 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 | **Desktop** | Desktop environment to install | `GNOME` / `KDE Plasma` / `Denial` / `server` | `GNOME` |
 | **GNOME Mobile** | Use GNOME Mobile from @mobility/gnome-mobile COPR (requires Enable Third-Party). 🚫 fc43: mixed build (gsd=51~beta/mutter+shell=49^mobile), may cause runtime issues. fc44/45: may fall back to standard GNOME if COPR packages missing — **we are NOT responsible**. Only rawhide fully supported. Check [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) before building. | `true` / `false` | `false` |
 | **Plasma Mobile** | Use Plasma Mobile shell instead of Plasma Desktop (only when Desktop=KDE Plasma). Only Fedora 43 confirmed working. Crashes on fc44/45/rawhide — **we are NOT responsible**. | `true` / `false` | `false` |
+| **Denial: Mobile mode** | Denial: launch in Mobile mode (Android-like tablet UI) instead of Desktop mode (no on-screen keyboard) (only when Desktop=Denial). | `true` / `false` | `true` |
 | **Quiet Boot** | Enable Plymouth splash screen and quiet boot messages | `true` / `false` | `true` |
 | **Autologin** | Whether the created user should be logged in automatically | `true` / `false` | `true` |
 | **Username** | Username for the non-root user | string | `username` |
@@ -197,14 +198,6 @@ After rebooting, the device should start from slot B and boot into Fedora.
 1. **Plasma Mobile crashes on Fedora 44, 45, and rawhide** – Desktop crashes during startup. Only **Fedora 43** is confirmed working.
 2. **Partial mobile UI is accessible** – Even when the desktop crashes, some mobile shell components still function: the first-boot setup wizard, lock screen password input, and the power menu (shutdown/restart/logout).
 3. If you know how to fix this, contributions via Issues or PRs are welcome.
-
-### Denial
-
-1. **ARM64** – Built from source with `tools/denial-pc` + `tools/denial-flutter-engine`, per [docs/BUILDING.md](https://github.com/denialwm/denial/blob/main/docs/BUILDING.md). Upstream publishes no ARM64 binaries yet, so we self-build to get Denial on ARM64.
-2. **Pinned to tag v0.3.1** – The Denial source is pinned to the confirmed upstream release tag for deterministic builds. Bump the pin in `.github/workflows/rootfs.yml` (`ref: v0.3.1`, `denial-build-v0.3.1` cache key) once a newer usable tag is published.
-3. **No terminal by default** – Denial ships no terminal; `@core` provides `vi` as the only editor. Add your preferred terminal via `extra_packages` (e.g. `foot` or `kitty`).
-4. **First build takes 3+ hours** – With an empty Denial cache the workflow builds the whole Flutter engine and Denial from source for ARM64; expect 3+ hours on the first Denial run. The cached engine artifacts (`.denial-cache`) make later runs fast.
-5. **Version tracking** – No ARM64 tag exists yet, so we build from a branch. Follow upstream yourself and open a PR when ARM64 lands properly.
 
 ---
 

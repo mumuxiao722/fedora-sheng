@@ -42,7 +42,7 @@ on:
         default: false
 
       denial_mobile:
-        description: 'Denial: launch in Mobile mode (auto shows on-screen keyboard). Turn OFF for Desktop mode (no OSK).'
+        description: 'Denial: launch in Mobile mode (Android-like tablet UI) instead of Desktop mode (no on-screen keyboard) (only when desktop=Denial).'
         type: boolean
         default: true
 

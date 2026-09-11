@@ -53,6 +53,7 @@
 | **Desktop** | 要安装的桌面环境 | `GNOME` / `KDE Plasma` / `Denial` / `server` | `GNOME` |
 | **GNOME Mobile** | 使用 @mobility/gnome-mobile COPR 的 GNOME Mobile（需要启用 Enable Third-Party）。🚫 fc43：混合构建（gsd=51~beta/mutter+shell=49^mobile），可能导致运行时问题。fc44/45：COPR 缺包时可能回退原版 GNOME——**本项目不负责**。仅 rawhide 完全支持。构建前请查看 [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/)。 | `true` / `false` | `false` |
 | **Plasma Mobile** | 使用 Plasma Mobile 界面而非 Plasma Desktop（仅 Desktop=KDE Plasma 时有效）。仅 Fedora 43 确认可用，fc44/45/rawhide 上崩溃——**本项目不负责**。 | `true` / `false` | `false` |
+| **Denial: Mobile mode** | Denial：使用 Mobile 模式（类似 Android 平板的 UI）而非 Desktop 模式（无屏幕键盘）（仅 Desktop=Denial 时有效）。 | `true` / `false` | `true` |
 | **Quiet Boot** | 启用 Plymouth 启动画面和安静启动信息 | `true` / `false` | `true` |
 | **Autologin** | 创建的用户是否自动登录 | `true` / `false` | `true` |
 | **Username** | 非 root 用户的用户名 | 字符串 | `username` |
@@ -197,14 +198,6 @@ fastboot reboot
 1. **Plasma Mobile 在 Fedora 44、45 和 rawhide 上崩溃** – 桌面启动时崩溃。仅 **Fedora 43** 确认可用。
 2. **部分移动 UI 仍可访问** – 即使桌面崩溃，部分移动 shell 组件仍可正常工作：首次启动引导、锁屏密码输入、以及电源菜单（关机/重启/注销）。
 3. 如果您知道如何解决此问题，欢迎通过 Issues 或 PR 贡献。
-
-### Denial
-
-1. **ARM64** – 按 [docs/BUILDING.md](https://github.com/denialwm/denial/blob/main/docs/BUILDING.md) 用 `tools/denial-pc` + `tools/denial-flutter-engine` 从源码构建。官方不发布 ARM64 二进制，因此我们自行构建以在 ARM64 上使用 Denial。
-2. **固定 tag v0.3.1** – Denial 源码固定为已确认的上游发布 tag，保证构建确定性。上游发布更新的可用 tag 后，再更新 `.github/workflows/rootfs.yml` 中的固定引用（`ref: v0.3.1`、缓存 key `denial-build-v0.3.1`）。
-3. **默认无终端** – Denial 不自带终端；`@core` 仅提供 `vi` 作为编辑器。请通过 `extra_packages` 安装你喜欢的终端（如 `foot` 或 `kitty`）。
-4. **首次构建需 3 小时以上** – 无缓存时，工作流会为 ARM64 从源码构建整个 Flutter engine 与 Denial，首次 Denial 构建预计需 3 小时以上；缓存的 engine 产物（`.denial-cache`）可加速后续构建。
-5. **版本追踪** – 因为还没有官方 ARM64 tag，我们从分支构建。上游更新请自行跟进，待 ARM64 正式落地后欢迎提 PR。
 
 ---
 
