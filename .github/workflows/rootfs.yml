@@ -299,18 +299,8 @@ jobs:
       - name: "Checkout Repo"
         uses: actions/checkout@v7
 
-      - name: "Restore RPM ccache"
-        id: rpm-cache-restore
-        uses: actions/cache/restore@v5
-        with:
-          path: ${{ github.workspace }}/.ccache-rpm
-          key: rpm-ccache-${{ inputs.fedora_version }}
-          restore-keys: |
-            rpm-ccache-
-
       - name: "Build RPMs in Fedora Container"
         run: |
-          mkdir -p "${{ github.workspace }}/.ccache-rpm"
           FEDORA_VERSION=${{ inputs.fedora_version }}
           if [ "$FEDORA_VERSION" = "rawhide" ]; then
             RPM_SUFFIX="fc46"
@@ -323,14 +313,9 @@ jobs:
 
           podman run --rm \
             -v "${{ github.workspace }}:/workspace" \
-            -v "${{ github.workspace }}/.ccache-rpm:/ccache" \
             -w /workspace \
             -e FIRMWARE_REPO="${{ inputs.firmware_repo }}" \
             -e FIRMWARE_BRANCH="${{ inputs.firmware_branch }}" \
-            -e CCACHE_DIR=/ccache \
-            -e CCACHE_MAXSIZE=2G \
-            -e CCACHE_COMPILERCHECK=content \
-            -e CCACHE_NOHASHDIR=true \
             registry.fedoraproject.org/fedora:${FEDORA_VERSION} \
             bash /workspace/.github/build-rpms.sh "${FEDORA_VERSION}"
 
@@ -457,13 +442,6 @@ jobs:
           retention-days: 3
           if-no-files-found: warn
 
-      - name: "Save RPM ccache"
-        if: ${{ always() && steps.rpm-cache-restore.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v5
-        with:
-          path: ${{ github.workspace }}/.ccache-rpm
-          key: ${{ steps.rpm-cache-restore.outputs.cache-primary-key }}
-
   # ==========================================================================
   # Build Denial (source build, ARM64; see docs/BUILDING.md)
   # ==========================================================================
@@ -491,14 +469,18 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: "Restore Denial cache"
+      - name: "Restore Denial engine cache"
         id: denial-cache-restore
         uses: actions/cache/restore@v5
         with:
-          path: ${{ github.workspace }}/.denial-cache
-          key: denial-build-v0.3.1
-          restore-keys: |
-            denial-build-
+          # Keep this small (validated engine artifacts + state). The full
+          # .denial-cache (synchronized Flutter/Skia checkout + 3-mode build
+          # trees) blows past GitHub's per-cache limit and never saves, which
+          # silently caused a full ~2.5h engine rebuild on every run.
+          path: |
+            ${{ github.workspace }}/.denial-cache/engine/artifacts
+            ${{ github.workspace }}/.denial-cache/engine/state
+          key: denial-engine-cache-v0.3.1
 
       - name: "Install Build Tools"
         run: |
@@ -530,6 +512,19 @@ jobs:
         run: ./tools/denial-pc bootstrap
         working-directory: denial
 
+      - name: "Inspect Denial engine cache"
+        run: |
+          if [[ -d .denial-cache/engine/artifacts ]]; then
+            echo "engine artifacts cache restored:"
+            du -sh .denial-cache/engine/artifacts
+            find .denial-cache/engine/artifacts -maxdepth 2 -type f | head -20
+          else
+            echo "engine artifacts cache MISSED (full ~2.5h rebuild expected)"
+          fi
+          if [[ -f .denial-cache/engine/state/source-lock.sha256 ]]; then
+            echo "engine state cache restored"
+          fi
+
       - name: "Build Flutter engine (cacheable)"
         run: ./tools/denial-flutter-engine build
         working-directory: denial
@@ -550,11 +545,13 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
-      - name: "Save Denial cache"
+      - name: "Save Denial engine cache"
         if: ${{ always() && steps.denial-cache-restore.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v5
         with:
-          path: ${{ github.workspace }}/.denial-cache
+          path: |
+            ${{ github.workspace }}/.denial-cache/engine/artifacts
+            ${{ github.workspace }}/.denial-cache/engine/state
           key: ${{ steps.denial-cache-restore.outputs.cache-primary-key }}
 
   # ==========================================================================

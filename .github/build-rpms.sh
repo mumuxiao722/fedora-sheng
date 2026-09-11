@@ -14,7 +14,7 @@ echo "  Firmware: ${FIRMWARE_REPO} @ ${FIRMWARE_BRANCH}"
 dnf install -y fedora-repos
 dnf install -y \
   rpm-build gcc gcc-c++ make autoconf automake libtool \
-  meson ninja-build pkg-config git ccache \
+  meson ninja-build pkg-config git \
   glib2-devel libqmi-devel libmbim-devel libyaml-devel libbsd-devel \
   protobuf-c-devel protobuf-c-compiler protobuf-compiler python3-devel \
   polkit-devel libgudev-devel systemd systemd-devel systemd-rpm-macros
@@ -22,14 +22,6 @@ dnf install -y \
 # Verify critical deps
 rpm -q libqmi-devel libbsd-devel libyaml-devel protobuf-c-devel python3-devel glib2-devel polkit-devel libgudev-devel systemd-devel
 echo "✓ Build dependencies verified"
-
-# Enable ccache for gcc/g++/cc/c++
-export PATH="/usr/lib64/ccache:$PATH"
-export CCACHE_DIR="${CCACHE_DIR:-/ccache}"
-export CCACHE_MAXSIZE="${CCACHE_MAXSIZE:-2G}"
-export CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK:-content}"
-export CCACHE_NOHASHDIR="${CCACHE_NOHASHDIR:-true}"
-ccache -z
 
 # Set up rpmbuild directory in workspace
 mkdir -p /workspace/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
