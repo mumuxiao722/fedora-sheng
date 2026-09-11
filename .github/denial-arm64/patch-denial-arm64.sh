@@ -118,6 +118,8 @@ for mode in ("debug", "profile", "release"):
     d.mkdir(parents=True, exist_ok=True)
     (d / "args.gn").touch(exist_ok=True)
     (d / "libflutter_engine.so.sha256").touch(exist_ok=True)
+    (d / "ENGINE_REVISION").touch(exist_ok=True)
+    (d / "FLUTTER_REVISION").touch(exist_ok=True)
 print("seeded linux-arm64 metadata placeholders")
 
 # ---------- tools/denial-pc ----------
@@ -163,6 +165,24 @@ else:
             "    [[ \"$expected\" =~ ^[0-9a-f]{64}$ ]] \\\n"
             "        || die \"invalid expected SHA-256 for $label\"\n",
             "require_pinned_engine lenient on empty baseline",
+        ),
+        (
+            "require_flutter_bindings() {\n"
+            "    require_file \"$PREBUILT_ENGINE_REVISION\"\n"
+            "    require_file \"$PREBUILT_FLUTTER_REVISION\"\n"
+            "    require_file \"$EMBEDDER_BINDINGS\"\n",
+            "require_flutter_bindings() {\n"
+            "    if [[ ! -s \"$PREBUILT_ENGINE_REVISION\" \\\n"
+            "        || ! -s \"$PREBUILT_FLUTTER_REVISION\" ]]; then\n"
+            "        require_file \"$EMBEDDER_BINDINGS\"\n"
+            "        printf '%s: self-built engine without pinned revisions (skipping revision match)\\n' \\\n"
+            "          \"$(basename -- \"$0\")\" >&2\n"
+            "        return 0\n"
+            "    fi\n"
+            "    require_file \"$PREBUILT_ENGINE_REVISION\"\n"
+            "    require_file \"$PREBUILT_FLUTTER_REVISION\"\n"
+            "    require_file \"$EMBEDDER_BINDINGS\"\n",
+            "require_flutter_bindings lenient on missing pinned revisions",
         ),
     ]
     for old, new, note in checks:
