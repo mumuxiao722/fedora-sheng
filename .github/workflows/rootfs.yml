@@ -786,11 +786,6 @@ jobs:
           sudo chroot "$ROOTFS_MOUNT" dnf install -y dnf-plugins-core
           echo "✓ Third-party repository support enabled"
 
-      - name: "Remind: Denial ships no terminal"
-        if: ${{ inputs.desktop == 'Denial' }}
-        run: |
-          echo "::warning::Denial ships no terminal by default. Install your preferred one via 'extra_packages' (e.g. 'foot' or 'kitty')."
-
       - name: "Install GNOME"
         if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == false }}
         run: |
