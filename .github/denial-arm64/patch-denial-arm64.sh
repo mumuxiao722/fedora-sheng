@@ -265,4 +265,32 @@ else:
     n = s.count(".x86_64.rpm")
     s = s.replace(".x86_64.rpm", ".*.rpm")
     mark(rpm, s + marker, f"patched package-denial-rpm ({n} x86_64 rpm globs widened)")
+
+# ---------- packaging/fedora/denial.spec ----------
+spec = repo / "packaging" / "fedora" / "denial.spec"
+if patched(spec):
+    print("denial.spec: already patched")
+else:
+    s = spec.read_text()
+    anchor = "ExclusiveArch:  x86_64\n"
+    if anchor not in s:
+        sys.exit("patch: denial.spec ExclusiveArch anchor not found")
+    s = s.replace(anchor, "ExclusiveArch:  x86_64 aarch64\n", 1)
+    mark(spec, s + marker, "patched denial.spec (ExclusiveArch includes aarch64)")
+
+# ---------- tools/verify-denial-native-package-metadata ----------
+verify = repo / "tools" / "verify-denial-native-package-metadata"
+if patched(verify):
+    print("verify-denial-native-package-metadata: already patched")
+else:
+    s = verify.read_text()
+    anchor = '  [[ "$package_arch" == x86_64 ]] \\\n'
+    if anchor not in s:
+        sys.exit("patch: verify-denial-native-package-metadata arch anchor not found")
+    s = s.replace(
+        anchor,
+        '  [[ "$package_arch" == x86_64 || "$package_arch" == aarch64 ]] \\\n',
+        1,
+    )
+    mark(verify, s + marker, "patched verify-denial-native-package-metadata (accepts aarch64 rpm arch)")
 PY
