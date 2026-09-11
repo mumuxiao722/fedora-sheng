@@ -533,15 +533,33 @@ jobs:
         run: ./tools/denial-pc build
         working-directory: denial
 
+      - name: "Set RPM Suffix"
+        run: |
+          FEDORA_VERSION=${{ inputs.fedora_version }}
+          if [ "$FEDORA_VERSION" = "rawhide" ]; then
+            RPM_SUFFIX="fc46"
+          else
+            RPM_SUFFIX="fc${FEDORA_VERSION}"
+          fi
+          echo "RPM_SUFFIX=${RPM_SUFFIX}" >> $GITHUB_ENV
+
       - name: "Package RPMs"
         run: ./tools/denial-pc fedora-package
         working-directory: denial
 
-      - name: "Upload Denial RPMs"
+      - name: "Upload Denial RPM"
         uses: actions/upload-artifact@v7
         with:
-          name: denial-rpms
-          path: ${{ github.workspace }}/.denial-cache/pc-build/packages/*.rpm
+          name: denial-rpm-${{ env.RPM_SUFFIX }}
+          path: ${{ github.workspace }}/.denial-cache/pc-build/packages/denial-[0-9]*.rpm
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: "Upload Denial Flutter Engine RPM"
+        uses: actions/upload-artifact@v7
+        with:
+          name: denial-flutter-engine-rpm-${{ env.RPM_SUFFIX }}
+          path: ${{ github.workspace }}/.denial-cache/pc-build/packages/denial-flutter-engine-*.rpm
           retention-days: 3
           if-no-files-found: error
 
