@@ -481,6 +481,8 @@ jobs:
             ${{ github.workspace }}/.denial-cache/engine/artifacts
             ${{ github.workspace }}/.denial-cache/engine/state
           key: denial-engine-cache-v0.3.1
+          restore-keys: |
+            denial-engine-cache-
 
       - name: "Install Build Tools"
         run: |
