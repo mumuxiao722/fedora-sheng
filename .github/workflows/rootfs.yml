@@ -22,7 +22,7 @@ on:
         default: false
 
       desktop:
-        description: 'Desktop Environment (server = no DE). Denial is built from source for ARM64 (first run slow, cached afterwards)'
+        description: 'Desktop Environment (server = no DE). Denial is built from source for ARM64: a first run with no cache builds the whole Flutter engine + Denial and can take 3+ hours (cached afterwards)'
         type: choice
         options:
           - 'GNOME'
@@ -73,7 +73,7 @@ on:
         default: 'None (C.UTF-8)'
 
       extra_packages:
-        description: 'Extra packages to install (space-separated). NOTE: Denial ships no terminal/editor by default - add one yourself, e.g. "foot kitty"'
+        description: 'Extra packages to install (space-separated). NOTE: Denial ships no terminal by default - add your own via this input, e.g. "foot kitty". An editor (vi) comes from @core.'
         type: string
         required: false
         default: ''
@@ -785,6 +785,11 @@ jobs:
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y dnf-plugins-core
           echo "✓ Third-party repository support enabled"
+
+      - name: "Remind: Denial ships no terminal"
+        if: ${{ inputs.desktop == 'Denial' }}
+        run: |
+          echo "::warning::Denial ships no terminal by default. Install your preferred one via 'extra_packages' (e.g. 'foot' or 'kitty')."
 
       - name: "Install GNOME"
         if: ${{ inputs.desktop == 'GNOME' && inputs.gnome_mobile == false }}

@@ -202,8 +202,9 @@ fastboot reboot
 
 1. **ARM64** – 按 [docs/BUILDING.md](https://github.com/denialwm/denial/blob/main/docs/BUILDING.md) 用 `tools/denial-pc` + `tools/denial-flutter-engine` 从源码构建。官方不发布 ARM64 二进制，因此我们自行构建以在 ARM64 上使用 Denial。
 2. **固定 tag v0.3.1** – Denial 源码固定为已确认的上游发布 tag，保证构建确定性。上游发布更新的可用 tag 后，再更新 `.github/workflows/rootfs.yml` 中的固定引用（`ref: v0.3.1`、缓存 key `denial-build-v0.3.1`）。
-3. **默认无终端** – Denial 不自带终端/编辑器。请通过 `extra_packages` 自行添加（如 `foot` 或 `kitty`）。
-4. **版本追踪** – 因为还没有官方 ARM64 tag，我们从分支构建。上游更新请自行跟进，待 ARM64 正式落地后欢迎提 PR。
+3. **默认无终端** – Denial 不自带终端；`@core` 仅提供 `vi` 作为编辑器。请通过 `extra_packages` 安装你喜欢的终端（如 `foot` 或 `kitty`）。
+4. **首次构建需 3 小时以上** – 无缓存时，工作流会为 ARM64 从源码构建整个 Flutter engine 与 Denial，首次 Denial 构建预计需 3 小时以上；缓存的 engine 产物（`.denial-cache`）可加速后续构建。
+5. **版本追踪** – 因为还没有官方 ARM64 tag，我们从分支构建。上游更新请自行跟进，待 ARM64 正式落地后欢迎提 PR。
 
 ---
 

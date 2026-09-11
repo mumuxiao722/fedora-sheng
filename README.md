@@ -202,8 +202,9 @@ After rebooting, the device should start from slot B and boot into Fedora.
 
 1. **ARM64** – Built from source with `tools/denial-pc` + `tools/denial-flutter-engine`, per [docs/BUILDING.md](https://github.com/denialwm/denial/blob/main/docs/BUILDING.md). Upstream publishes no ARM64 binaries yet, so we self-build to get Denial on ARM64.
 2. **Pinned to tag v0.3.1** – The Denial source is pinned to the confirmed upstream release tag for deterministic builds. Bump the pin in `.github/workflows/rootfs.yml` (`ref: v0.3.1`, `denial-build-v0.3.1` cache key) once a newer usable tag is published.
-3. **No terminal/settings by default** – Denial ships no terminal or editor. Add one via `extra_packages` (e.g. `foot` or `kitty`).
-4. **Version tracking** – No ARM64 tag exists yet, so we build from a branch. Follow upstream yourself and open a PR when ARM64 lands properly.
+3. **No terminal by default** – Denial ships no terminal; `@core` provides `vi` as the only editor. Add your preferred terminal via `extra_packages` (e.g. `foot` or `kitty`).
+4. **First build takes 3+ hours** – With an empty Denial cache the workflow builds the whole Flutter engine and Denial from source for ARM64; expect 3+ hours on the first Denial run. The cached engine artifacts (`.denial-cache`) make later runs fast.
+5. **Version tracking** – No ARM64 tag exists yet, so we build from a branch. Follow upstream yourself and open a PR when ARM64 lands properly.
 
 ---
 
