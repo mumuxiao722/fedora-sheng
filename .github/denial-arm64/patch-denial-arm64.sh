@@ -120,7 +120,10 @@ for mode in ("debug", "profile", "release"):
     (d / "libflutter_engine.so.sha256").touch(exist_ok=True)
     (d / "ENGINE_REVISION").touch(exist_ok=True)
     (d / "FLUTTER_REVISION").touch(exist_ok=True)
-print("seeded linux-arm64 metadata placeholders")
+    src = repo / "prebuilt" / "flutter-engine" / "linux-x64-release"
+    for name in ("BUILD_INFO.md", "LICENSE.flutter", "LICENSE.third_party"):
+        (d / name).write_bytes((src / name).read_bytes())
+print("seeded linux-arm64 metadata placeholders (docs/licenses copied, pins empty)")
 
 # ---------- tools/denial-pc ----------
 pc = repo / "tools" / "denial-pc"
@@ -190,6 +193,68 @@ else:
             sys.exit(f"patch: denial-pc anchor not found: {note}")
         s = s.replace(old, new, 1)
     mark(pc, s + marker, f"patched denial-pc (arch paths, {len(checks)} lenient engine checks)")
+
+# ---------- tools/stage-denial-runtime ----------
+stage = repo / "tools" / "stage-denial-runtime"
+if patched(stage):
+    print("stage-denial-runtime: already patched")
+else:
+    s = stage.read_text()
+
+    root_anchor = 'ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"\n'
+    if root_anchor not in s:
+        sys.exit("patch: stage-denial-runtime ROOT anchor not found")
+    host_cpu = (
+        'HOST_CPU="${DENIAL_HOST_CPU:-}"\n'
+        'case "${HOST_CPU:-$(uname -m)}" in\n'
+        "  aarch64|arm64) HOST_CPU=arm64 ;;\n"
+        "  x86_64|amd64) HOST_CPU=x64 ;;\n"
+        "  *)\n"
+        '    printf \'stage-denial-runtime: unsupported host CPU: %s\\n\' "${HOST_CPU:-$(uname -m)}" >&2\n'
+        "    exit 1\n"
+        "    ;;\n"
+        "esac\n"
+    )
+    s = s.replace(root_anchor, root_anchor + host_cpu, 1)
+
+    settings_anchor = (
+        'SETTINGS_BUNDLE="${DENIAL_PC_SETTINGS_BUNDLE:-$ROOT/settings_app/build/linux/x64/release/bundle}"\n'
+    )
+    if settings_anchor not in s:
+        sys.exit("patch: stage-denial-runtime SETTINGS_BUNDLE anchor not found")
+    s = s.replace(
+        settings_anchor,
+        'SETTINGS_BUNDLE="${DENIAL_PC_SETTINGS_BUNDLE:-$ROOT/settings_app/build/linux/${HOST_CPU}/release/bundle}"\n',
+        1,
+    )
+
+    engine_anchor = 'engine_source_root="$ROOT/prebuilt/flutter-engine/linux-x64-release"\n'
+    if engine_anchor not in s:
+        sys.exit("patch: stage-denial-runtime engine_source_root anchor not found")
+    s = s.replace(
+        engine_anchor,
+        'engine_source_root="$ROOT/prebuilt/flutter-engine/linux-${HOST_CPU}-release"\n',
+        1,
+    )
+
+    sha_anchor = (
+        'expected_engine_sha256="$(cut -d\' \' -f1 < "$engine_source_root/libflutter_engine.so.sha256")"\n'
+        'actual_engine_sha256="$(sha256sum "$BUNDLE/lib/libflutter_engine.so" | cut -d\' \' -f1)"\n'
+        '[[ "$actual_engine_sha256" == "$expected_engine_sha256" ]] \\\n'
+        '  || die "Flutter Engine SHA-256 is $actual_engine_sha256, expected $expected_engine_sha256"\n'
+    )
+    if sha_anchor not in s:
+        sys.exit("patch: stage-denial-runtime engine sha anchor not found")
+    sha_repl = (
+        'expected_engine_sha256="$(cut -d\' \' -f1 < "$engine_source_root/libflutter_engine.so.sha256")"\n'
+        'actual_engine_sha256="$(sha256sum "$BUNDLE/lib/libflutter_engine.so" | cut -d\' \' -f1)"\n'
+        'if [[ -n "$expected_engine_sha256" ]]; then\n'
+        '  [[ "$actual_engine_sha256" == "$expected_engine_sha256" ]] \\\n'
+        '    || die "Flutter Engine SHA-256 is $actual_engine_sha256, expected $expected_engine_sha256"\n'
+        "fi\n"
+    )
+    s = s.replace(sha_anchor, sha_repl, 1)
+    mark(stage, s + marker, "patched stage-denial-runtime (host-cpu paths, lenient engine sha)")
 
 # ---------- tools/package-denial-rpm ----------
 rpm = repo / "tools" / "package-denial-rpm"
