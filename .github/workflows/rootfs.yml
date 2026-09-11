@@ -22,7 +22,7 @@ on:
         default: false
 
       desktop:
-        description: 'Desktop Environment (server = no DE). Denial is built from source for ARM64: a first run with no cache builds the whole Flutter engine + Denial and can take 3+ hours (cached afterwards)'
+        description: 'Desktop Environment (server = no DE). Denial is built from source for ARM64: a first run with no cache builds the whole Flutter engine + Denial and can take 3+ hours (cached afterwards). Denial ships no terminal by default - add one via extra_packages'
         type: choice
         options:
           - 'GNOME'
