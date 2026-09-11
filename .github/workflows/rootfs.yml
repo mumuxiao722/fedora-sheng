@@ -41,6 +41,11 @@ on:
         type: boolean
         default: false
 
+      denial_mobile:
+        description: 'Denial: launch in Mobile mode (auto shows on-screen keyboard). Turn OFF for Desktop mode (no OSK).'
+        type: boolean
+        default: true
+
       autologin:
         description: 'Autologin'
         type: boolean
@@ -881,7 +886,7 @@ jobs:
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             pipewire-pulseaudio pipewire-alsa pipewire-jack-audio-connection-kit \
-            greetd upower
+            systemd-pam upower bluez
           echo "✓ Denial installed"
 
       - name: "Install Plymouth"
@@ -914,8 +919,6 @@ jobs:
             sudo chroot "$ROOTFS_MOUNT" systemctl enable gdm
           elif [[ "${{ inputs.desktop }}" == "KDE Plasma" ]]; then
             sudo chroot "$ROOTFS_MOUNT" systemctl enable sddm
-          elif [[ "${{ inputs.desktop }}" == "Denial" ]]; then
-            sudo chroot "$ROOTFS_MOUNT" systemctl enable greetd
           fi
           echo "✓ Display manager configured"
 
@@ -944,10 +947,11 @@ jobs:
               echo "✓ SDDM configured (default session: $SESSION, autologin disabled)"
             fi
           elif [[ "${{ inputs.desktop }}" == "Denial" ]]; then
-            sudo mkdir -p "$ROOTFS_MOUNT/etc/greetd"
-            printf '[terminal]\nvt = 1\n\n[initial_session]\nuser = %s\ncommand = "denial-session"\n' "$USERNAME" | \
-              sudo tee "$ROOTFS_MOUNT/etc/greetd/config.toml" > /dev/null
-            echo "✓ greetd configured (autologin: $USERNAME -> denial-session)"
+            sudo mkdir -p "$ROOTFS_MOUNT/etc/systemd/system/getty@tty1.service.d"
+            printf '[Service]\nExecStart=\nExecStart=-/usr/sbin/agetty --noreset --noclear --autologin %s - $TERM\n' \
+              "$USERNAME" | \
+              sudo tee "$ROOTFS_MOUNT/etc/systemd/system/getty@tty1.service.d/autologin.conf" > /dev/null
+            echo "✓ Denial getty autologin configured for $USERNAME"
           fi
 
       - name: "Set Graphical Target"
@@ -1000,6 +1004,43 @@ jobs:
           printf 'root:%s\n' "$ROOTFS_PASSWORD" | \
             sudo chroot "$ROOTFS_MOUNT" chpasswd
           echo "✓ Passwords set"
+
+      - name: "Configure Denial Session"
+        if: ${{ inputs.desktop == 'Denial' }}
+        run: |
+          USERNAME="${{ inputs.username }}"
+          if [[ "${{ inputs.autologin }}" == "true" ]]; then
+            SESSION_FLAGS="--start-locked"
+          else
+            SESSION_FLAGS=""
+          fi
+          if [[ "${{ inputs.denial_mobile }}" == "true" ]]; then
+            SHELL_PROFILE="mobile"
+          else
+            SHELL_PROFILE="desktop"
+          fi
+          sudo tee "$ROOTFS_MOUNT/home/$USERNAME/.bash_profile" > /dev/null <<EOF
+          # .bash_profile
+
+          # Get the aliases and functions
+          if [ -f ~/.bashrc ]; then
+              . ~/.bashrc
+          fi
+
+          export DENIA_SHELL_PROFILE=$SHELL_PROFILE
+
+          # Start Denial compositor on the autologin console tty
+          if [ "\$(tty)" = "/dev/tty1" ] && [ -z "\${SSH_CONNECTION:-}" ] && [ -z "\${WAYLAND_DISPLAY:-}" ]; then
+            exec denial-session $SESSION_FLAGS
+          fi
+          EOF
+          sudo chroot "$ROOTFS_MOUNT" chown "$USERNAME:wheel" "/home/$USERNAME/.bash_profile"
+          # logind: power key suspends (Denial idle policy handles lock/DPMS)
+          sudo mkdir -p "$ROOTFS_MOUNT/etc/systemd/logind.conf.d"
+          printf '[Login]\nHandlePowerKey=suspend\n' | \
+            sudo tee "$ROOTFS_MOUNT/etc/systemd/logind.conf.d/50-denial-power.conf" > /dev/null
+          sudo chroot "$ROOTFS_MOUNT" systemctl enable bluetooth
+          echo "✓ Denial session configured on tty1 (shell: $SHELL_PROFILE, autologin lock: ${{ inputs.autologin }}, power key: suspend)"
 
       - name: "Enable Services"
         run: |
