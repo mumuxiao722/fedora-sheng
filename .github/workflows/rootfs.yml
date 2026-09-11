@@ -73,7 +73,7 @@ on:
         default: 'None (C.UTF-8)'
 
       extra_packages:
-        description: 'Extra packages to install (space-separated). NOTE: Denial ships no terminal by default - add your own via this input, e.g. "foot kitty". An editor (vi) comes from @core.'
+        description: 'Extra packages to install (space-separated)'
         type: string
         required: false
         default: ''
