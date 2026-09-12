@@ -489,18 +489,6 @@ jobs:
           restore-keys: |
             denial-engine-cache-
 
-      - name: "Restore Denial pc-build cache"
-        id: denial-pc-cache-restore
-        uses: actions/cache/restore@v5
-        with:
-          # Cargo/release tree for the Denial compositor (deniald, denialctl,
-          # denial-portal). Kept as a separate entry from the engine cache so a
-          # shared key cannot exceed GitHub's per-repo cache limit.
-          path: ${{ github.workspace }}/.denial-cache/pc-build/rust
-          key: denial-pc-cache-v0.3.1
-          restore-keys: |
-            denial-pc-cache-
-
       - name: "Install Build Tools"
         run: |
           sudo apt-get update
@@ -577,13 +565,6 @@ jobs:
             ${{ github.workspace }}/.denial-cache/engine/artifacts
             ${{ github.workspace }}/.denial-cache/engine/state
           key: ${{ steps.denial-cache-restore.outputs.cache-primary-key }}
-
-      - name: "Save Denial pc-build cache"
-        if: ${{ always() && steps.denial-pc-cache-restore.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v5
-        with:
-          path: ${{ github.workspace }}/.denial-cache/pc-build/rust
-          key: ${{ steps.denial-pc-cache-restore.outputs.cache-primary-key }}
 
   # ==========================================================================
   # Build RootFS
