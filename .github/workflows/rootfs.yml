@@ -531,19 +531,6 @@ jobs:
         run: ./tools/denial-pc bootstrap
         working-directory: denial
 
-      - name: "Inspect Denial engine cache"
-        run: |
-          if [[ -d .denial-cache/engine/artifacts ]]; then
-            echo "engine artifacts cache restored:"
-            du -sh .denial-cache/engine/artifacts
-            find .denial-cache/engine/artifacts -maxdepth 2 -type f | head -20
-          else
-            echo "engine artifacts cache MISSED (full ~2.5h rebuild expected)"
-          fi
-          if [[ -f .denial-cache/engine/state/source-lock.sha256 ]]; then
-            echo "engine state cache restored"
-          fi
-
       - name: "Build Flutter engine (cacheable)"
         run: ./tools/denial-flutter-engine build
         working-directory: denial
@@ -581,21 +568,6 @@ jobs:
           path: ${{ github.workspace }}/.denial-cache/pc-build/packages/denial-flutter-engine-*.rpm
           retention-days: 3
           if-no-files-found: error
-
-      - name: "Inspect Denial engine cache before save"
-        if: ${{ always() && steps.denial-cache-restore.outputs.cache-hit != 'true' }}
-        run: |
-          echo "Cache key: ${{ steps.denial-cache-restore.outputs.cache-primary-key }}"
-          echo "Cache hit on restore: ${{ steps.denial-cache-restore.outputs.cache-hit }}"
-          for dir in .denial-cache/engine/artifacts .denial-cache/engine/state; do
-            if [[ -d "$dir" ]]; then
-              echo "  $dir:"
-              du -sh "$dir"
-              find "$dir" -maxdepth 3 -type f | head -20
-            else
-              echo "  $dir: MISSING"
-            fi
-          done
 
       - name: "Save Denial engine cache"
         if: ${{ always() && steps.denial-cache-restore.outputs.cache-hit != 'true' }}
