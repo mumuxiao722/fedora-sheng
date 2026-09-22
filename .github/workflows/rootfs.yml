@@ -836,7 +836,7 @@ jobs:
         run: |
           sudo chroot "$ROOTFS_MOUNT" dnf install -y \
             pipewire-pulseaudio pipewire-alsa pipewire-jack-audio-connection-kit \
-            plasma-desktop plasma-nm \
+            plasma-desktop plasma-workspace plasma-nm \
             plasma-login-manager kcm-plasmalogin konsole dolphin kate \
             systemd-pam \
             xdg-desktop-portal-kde kio-admin
