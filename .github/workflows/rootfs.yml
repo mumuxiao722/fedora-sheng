@@ -486,8 +486,10 @@ jobs:
             ${{ github.workspace }}/.denial-cache/engine/artifacts
             ${{ github.workspace }}/.denial-cache/engine/state
           key: denial-engine-cache-v0.4.3
+          # Cold cache on version change (no prefix fallback): a stale cache
+          # from a different Denial version silently seeded failed builds.
           restore-keys: |
-            denial-engine-cache-
+            denial-engine-cache-v0.4.3
 
       - name: "Install Build Tools"
         run: |
