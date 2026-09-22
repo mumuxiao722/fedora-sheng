@@ -838,6 +838,7 @@ jobs:
             pipewire-pulseaudio pipewire-alsa pipewire-jack-audio-connection-kit \
             plasma-desktop plasma-nm \
             plasma-login-manager kcm-plasmalogin konsole dolphin kate \
+            kscreen bluedevil \
             systemd-pam \
             xdg-desktop-portal-kde kio-admin
           echo "✓ KDE Plasma installed"
