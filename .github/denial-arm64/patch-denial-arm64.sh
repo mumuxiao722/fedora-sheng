@@ -110,6 +110,22 @@ else:
     )
     s = s.replace(sha_anchor, sha_repl, 1)
 
+    # Newer upstream stages the native release engine behind its own checksum
+    # gate. The seeded arm64 placeholder is an empty file; skip the comparison
+    # until real arm64 metadata is committed. Absent on older checkouts.
+    release_anchor = (
+        '  if [[ -f "$NATIVE_RELEASE_ENGINE_DIR/libflutter_engine.so.sha256" ]]; then\n'
+    )
+    if release_anchor in s:
+        s = s.replace(
+            release_anchor,
+            '  if [[ -s "$NATIVE_RELEASE_ENGINE_DIR/libflutter_engine.so.sha256" ]]; then\n',
+            1,
+        )
+        print("patched denial-flutter-engine (release checksum gate lenient on empty baseline)")
+    else:
+        print("denial-flutter-engine: no release checksum gate present, skipped")
+
     mark(engine, s + marker, "patched denial-flutter-engine (arm64 paths, lenient metadata, DEPS hook)")
 
 # ---------- seed linux-arm64 metadata placeholders ----------
@@ -135,6 +151,51 @@ else:
     m = s.count("linux/x64")
     s = s.replace("linux-x64", "linux-arm64").replace("linux/x64", "linux/arm64")
 
+    # Upstream refactored these helpers on dev (Sep 2026). The dev shapes get
+    # the same empty-baseline leniency the pinned releases carry.
+    dev_variants = {
+        "prebuilt_engine_sha256 lenient on empty baseline": (
+            "prebuilt_engine_sha256() {\n"
+            "    if [[ -f \"$PREBUILT_ENGINE_SHA256\" ]]; then\n"
+            "        cut -d' ' -f1 < \"$PREBUILT_ENGINE_SHA256\"\n"
+            "    else\n"
+            "        require_file \"$PREBUILT_ENGINE\"\n"
+            "        file_sha256 \"$PREBUILT_ENGINE\"\n"
+            "    fi\n"
+            "}\n",
+            "prebuilt_engine_sha256() {\n"
+            "    [[ -s \"$PREBUILT_ENGINE_SHA256\" ]] || return 0\n"
+            "    cut -d' ' -f1 < \"$PREBUILT_ENGINE_SHA256\"\n"
+            "}\n",
+        ),
+        "verify_prebuilt_engine lenient on empty baseline": (
+            "verify_prebuilt_engine() {\n"
+            "    [[ -f \"$PREBUILT_ENGINE\" ]] \\\n"
+            "        || die \"missing locally built Flutter engine: $PREBUILT_ENGINE\"\n"
+            "    [[ \"$(file_sha256 \"$PREBUILT_ENGINE\")\" == \"$(prebuilt_engine_sha256)\" ]] \\\n"
+            "        || die \"locally built Flutter engine does not match $PREBUILT_ENGINE_SHA256; rebuild or investigate it\"\n",
+            "verify_prebuilt_engine() {\n"
+            "    [[ -f \"$PREBUILT_ENGINE\" ]] \\\n"
+            "        || die \"missing locally built Flutter engine: $PREBUILT_ENGINE\"\n"
+            "    local expected_prebuilt\n"
+            "    expected_prebuilt=\"$(prebuilt_engine_sha256)\"\n"
+            "    [[ -z \"$expected_prebuilt\" || \"$(file_sha256 \"$PREBUILT_ENGINE\")\" == \"$expected_prebuilt\" ]] \\\n"
+            "        || die \"locally built Flutter engine does not match $PREBUILT_ENGINE_SHA256; rebuild or investigate it\"\n",
+        ),
+    }
+    dev_require_pinned = (
+        "        expected=\"$(prebuilt_engine_sha256)\"\n"
+        "        label=\"pinned build\"\n"
+        "    fi\n"
+        "    [[ \"$expected\" =~ ^[0-9a-f]{64}$ ]] \\\n"
+        "        || die \"invalid expected SHA-256 for $label\"\n",
+        "        expected=\"$(prebuilt_engine_sha256)\"\n"
+        "        label=\"pinned build\"\n"
+        "    fi\n"
+        "    [[ -z \"$expected\" ]] && return 0\n"
+        "    [[ \"$expected\" =~ ^[0-9a-f]{64}$ ]] \\\n"
+        "        || die \"invalid expected SHA-256 for $label\"\n",
+    )
     checks = [
         (
             "prebuilt_engine_sha256() {\n"
@@ -188,11 +249,24 @@ else:
             "require_flutter_bindings lenient on missing pinned revisions",
         ),
     ]
+    applied = 0
     for old, new, note in checks:
-        if old not in s:
-            sys.exit(f"patch: denial-pc anchor not found: {note}")
-        s = s.replace(old, new, 1)
-    mark(pc, s + marker, f"patched denial-pc (arch paths, {len(checks)} lenient engine checks)")
+        if old in s:
+            s = s.replace(old, new, 1)
+            applied += 1
+            continue
+        if note == "require_pinned_engine lenient on empty baseline" and dev_require_pinned[0] in s:
+            s = s.replace(dev_require_pinned[0], dev_require_pinned[1], 1)
+            print("denial-pc: applied dev variant: require_pinned_engine lenient on empty baseline")
+            applied += 1
+            continue
+        if note in dev_variants and dev_variants[note][0] in s:
+            s = s.replace(dev_variants[note][0], dev_variants[note][1], 1)
+            print(f"denial-pc: applied dev variant: {note}")
+            applied += 1
+            continue
+        sys.exit(f"patch: denial-pc anchor not found: {note}")
+    mark(pc, s + marker, f"patched denial-pc (arch paths, {applied} lenient engine checks)")
 
 # ---------- tools/stage-denial-runtime ----------
 stage = repo / "tools" / "stage-denial-runtime"

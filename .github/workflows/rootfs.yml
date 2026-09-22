@@ -6,6 +6,11 @@ name: Build Fedora RootFS
 on:
   workflow_dispatch:
     inputs:
+      read_known_issues:
+        description: '⚠️  Please read the "Known Issues" section in README.md before building'
+        type: boolean
+        default: true
+
       fedora_version:
         description: 'Fedora Version'
         type: choice
@@ -22,7 +27,7 @@ on:
         default: false
 
       desktop:
-        description: 'Desktop Environment (server = no DE). Denial is built from source for ARM64: a first run with no cache builds the whole Flutter engine + Denial and can take 3+ hours (cached afterwards). Denial ships no terminal by default - add one via extra_packages'
+        description: 'server = no DE. ⚠️ Denial needs a terminal: install via extra_packages'
         type: choice
         options:
           - 'GNOME'
@@ -32,17 +37,17 @@ on:
         default: 'GNOME'
 
       gnome_mobile:
-        description: 'Enable GNOME Mobile from @mobility/gnome-mobile COPR (requires Enable Third-Party). Check https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/ for build status.'
+        description: 'GNOME Mobile (requires Enable Third-Party)'
         type: boolean
         default: false
 
       plasma_mobile:
-        description: 'Enable Plasma Mobile instead of Plasma Desktop (only when desktop=KDE Plasma). WARNING: Only Fedora 43 is confirmed working. Plasma Mobile crashes on fc44/45/rawhide. We switched from SDDM to plasma-login-manager which may fix this, but it is untested.'
+        description: 'Plasma Mobile shell (Desktop = KDE Plasma only)'
         type: boolean
         default: false
 
       denial_mobile:
-        description: 'Denial: launch in Mobile mode (Android-like tablet UI) instead of Desktop mode (no on-screen keyboard) (only when desktop=Denial).'
+        description: 'Denial Mobile mode (Desktop = Denial only)'
         type: boolean
         default: true
 
@@ -108,7 +113,7 @@ on:
         default: true
 
       plymouth_theme:
-        description: 'Plymouth theme (requires quiet_boot=true). Default = spinner for GNOME, breeze for KDE'
+        description: 'Plymouth theme (requires quiet_boot=true). Default = spinner for GNOME and Denial, breeze for KDE'
         type: choice
         options:
           - 'default'
@@ -451,7 +456,7 @@ jobs:
   # Build Denial (source build, ARM64; see docs/BUILDING.md)
   # ==========================================================================
   build-denial:
-    name: "Build Denial (v0.4.3, ARM64)"
+    name: "Build Denial (v0.4.4, ARM64)"
     runs-on: ubuntu-24.04-arm
     if: ${{ inputs.desktop == 'Denial' }}
 
@@ -465,11 +470,11 @@ jobs:
       - name: "Checkout Repo"
         uses: actions/checkout@v7
 
-      - name: "Checkout Denial (tag v0.4.3)"
+      - name: "Checkout Denial (tag v0.4.4)"
         uses: actions/checkout@v7
         with:
           repository: denialwm/denial
-          ref: v0.4.3
+          ref: v0.4.4
           path: denial
           fetch-depth: 0
           fetch-tags: true
@@ -485,9 +490,11 @@ jobs:
           path: |
             ${{ github.workspace }}/.denial-cache/engine/artifacts
             ${{ github.workspace }}/.denial-cache/engine/state
-          key: denial-engine-cache-v0.4.3
+          key: denial-engine-cache-v0.4.4
+          # Cold cache on version change (no prefix fallback): a stale cache
+          # from a different Denial version silently seeded failed builds.
           restore-keys: |
-            denial-engine-cache-
+            denial-engine-cache-v0.4.4
 
       - name: "Install Build Tools"
         run: |
@@ -838,6 +845,7 @@ jobs:
             pipewire-pulseaudio pipewire-alsa pipewire-jack-audio-connection-kit \
             plasma-desktop plasma-nm \
             plasma-login-manager kcm-plasmalogin konsole dolphin kate \
+            kscreen bluedevil \
             systemd-pam \
             xdg-desktop-portal-kde kio-admin
           echo "✓ KDE Plasma installed"
