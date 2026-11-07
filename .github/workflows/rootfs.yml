@@ -674,6 +674,7 @@ jobs:
               iw \
               lm_sensors \
               wireless-regdb \
+              qbootctl \
               glib2 \
               libqmi \
               libmbim \
