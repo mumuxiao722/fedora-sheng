@@ -498,13 +498,17 @@ jobs:
             --clobber
           echo "✓ sheng-gnome-fix RPM downloaded from sheng-gnome-fix Release"
 
-      - name: "Download Denial RPMs (from the upstream release)"
+      - name: "Download Denial RPMs (from the latest upstream release)"
         if: ${{ inputs.desktop == 'Denial' }}
         run: |
           set -euo pipefail
-          # Pinned rather than "latest": a release upstream would otherwise
-          # change what this image ships, with nothing here recording that it did.
-          tag=v0.6.2
+          # Upstream marks every release as a prerelease, so
+          # releases/latest returns 404. Take the newest entry of the release
+          # list instead. A release without aarch64 RPMs fails below rather
+          # than silently falling back to an older one.
+          tag=$(gh api repos/denialwm/denial/releases --jq '.[0].tag_name')
+          [[ -n "$tag" ]] \
+            || { echo "::error::could not resolve the latest denial release"; exit 1; }
           version="${tag#v}"
           # The compositor and its engine arrive together because neither
           # installs without the other; the plugin manager arrives apart
@@ -530,7 +534,9 @@ jobs:
             compgen -G "$required" >/dev/null \
               || { echo "::error::no match for $required"; exit 1; }
           done
-          echo "✓ Denial RPMs ready"
+          echo "✓ Denial RPMs ready ($tag)"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
       - name: "Download Kernel Artifact (custom_build)"
