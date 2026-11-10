@@ -498,35 +498,31 @@ jobs:
             --clobber
           echo "✓ sheng-gnome-fix RPM downloaded from sheng-gnome-fix Release"
 
-      - name: "Download Denial RPMs (from denial-arm64-builder Release)"
+      - name: "Download Denial RPMs (from the upstream release)"
         if: ${{ inputs.desktop == 'Denial' }}
         run: |
           set -euo pipefail
-          # Pinned rather than "latest": a release there would otherwise change
-          # what this image ships, with nothing here recording that it did.
-          tag=v0.5.1
+          # Pinned rather than "latest": a release upstream would otherwise
+          # change what this image ships, with nothing here recording that it did.
+          tag=v0.6.2
+          version="${tag#v}"
           # The compositor and its engine arrive together because neither
           # installs without the other; the plugin manager arrives apart
           # because it is optional.
-          assets=(denial-rpm-fedora-arm64.zip)
+          assets=(
+            "denial-${version}-1.aarch64.rpm"
+            "denial-flutter-engine-${version}-1.aarch64.rpm"
+          )
           if [[ "${{ inputs.denial_plugins }}" == "true" ]]; then
-            assets+=(denial-rpm-plugin-manager-fedora-arm64.zip)
+            assets+=("denial-plugin-manager-${version}-1.aarch64.rpm")
           fi
 
-          mkdir -p denial-archives rpms
+          mkdir -p rpms
           for asset in "${assets[@]}"; do
-            id=$(gh api "repos/mumuxiao722/denial-arm64-builder/releases/tags/$tag" \
-              --jq ".assets[] | select(.name == \"$asset\") | .id")
-            if [[ -z "$id" ]]; then
-              echo "::error::$asset is not in the $tag release of denial-arm64-builder"
-              exit 1
-            fi
-            gh api "repos/mumuxiao722/denial-arm64-builder/releases/assets/$id" \
-              -H 'Accept: application/octet-stream' \
-              > "denial-archives/$asset"
+            curl --fail --location --silent --show-error \
+              --output "rpms/$asset" \
+              "https://github.com/denialwm/denial/releases/download/$tag/$asset"
           done
-          for archive in denial-archives/*.zip; do unzip -qo "$archive" -d rpms/; done
-          rm -rf denial-archives
           ls -l rpms/denial*.rpm
           # The engine installs the compositor's data directory, so a missing
           # one of these only shows up much later as a broken session.
@@ -535,8 +531,6 @@ jobs:
               || { echo "::error::no match for $required"; exit 1; }
           done
           echo "✓ Denial RPMs ready"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
       - name: "Download Kernel Artifact (custom_build)"
@@ -695,8 +689,7 @@ jobs:
       - name: "Install Custom RPMs"
         run: |
           # xiaomi-sheng + sheng-gnome-fix (GNOME, from its Release) + denial
-          # (from the denial-arm64-builder Release when desktop=Denial), all
-          # merged into rpms/.
+          # (from upstream's release when desktop=Denial), all merged into rpms/.
           cp rpms/*.rpm "$ROOTFS_MOUNT/tmp/"
           sudo chroot "$ROOTFS_MOUNT" bash -c "dnf install -y /tmp/*.rpm"
           sudo rm -f "$ROOTFS_MOUNT/tmp/"*.rpm

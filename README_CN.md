@@ -136,7 +136,7 @@
 | [libssc](https://codeberg.org/DylanVanAssche/libssc) | Qualcomm Sensor Core 用户空间库 |
 | [iio-sensor-proxy](https://github.com/hadess/iio-sensor-proxy) | IIO 传感器代理守护进程 |
 | [sheng-gnome-fix](https://github.com/mumuxiao722/sheng-gnome-fix) | GNOME 自动旋转、电源键息屏锁屏、系统级禁用挂起 |
-| [Denial](https://github.com/denialwm/denial) | Flutter-native Wayland 合成器（[ARM64 安装包](https://github.com/mumuxiao722/denial-arm64-builder) 由固定版本源码构建；上游未发布 ARM64 二进制） |
+| [Denial](https://github.com/denialwm/denial) | Flutter-native Wayland 合成器（AArch64 RPM 取自[上游 release](https://github.com/denialwm/denial/releases)） |
 | [sheng-sensors](#) | 设备特定传感器配置和 udev 规则 |
 | [alsa-xiaomi-sheng](#) | ALSA UCM2 音频配置 |
 

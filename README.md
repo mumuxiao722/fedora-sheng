@@ -136,7 +136,7 @@ If you want to use a custom kernel instead of the prebuilt one:
 | [libssc](https://codeberg.org/DylanVanAssche/libssc) | Qualcomm Sensor Core userspace library |
 | [iio-sensor-proxy](https://github.com/hadess/iio-sensor-proxy) | IIO sensor proxy daemon |
 | [sheng-gnome-fix](https://github.com/mumuxiao722/sheng-gnome-fix) | GNOME auto-rotation, power-key display toggle, suspend disabled system-wide |
-| [Denial](https://github.com/denialwm/denial) | Flutter-native Wayland compositor ([ARM64 packages](https://github.com/mumuxiao722/denial-arm64-builder) built from a pinned upstream revision; upstream publishes no ARM64 binaries) |
+| [Denial](https://github.com/denialwm/denial) | Flutter-native Wayland compositor (AArch64 RPMs from [upstream releases](https://github.com/denialwm/denial/releases)) |
 | [sheng-sensors](#) | Device-specific sensor configuration and udev rules |
 | [alsa-xiaomi-sheng](#) | ALSA UCM2 audio configuration |
 
