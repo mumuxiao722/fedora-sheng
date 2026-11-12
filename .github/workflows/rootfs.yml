@@ -19,7 +19,7 @@ on:
           - 44
           - 45
           - rawhide
-        default: '44'
+        default: '45'
 
       enable_third_party:
         description: 'Enable third-party repositories'

@@ -48,7 +48,7 @@ When you trigger the **Build Fedora RootFS** workflow via `workflow_dispatch`, t
 
 | Parameter | Description | Options | Default |
 |-----------|-------------|---------|---------|
-| **Fedora Version** | Fedora version to install | `43` / `44` / `45` / `rawhide` | `44` |
+| **Fedora Version** | Fedora version to install | `43` / `44` / `45` / `rawhide` | `45` |
 | **Enable Third-Party** | Enable third-party repositories | `true` / `false` | `false` |
 | **Desktop** | Desktop environment to install | `GNOME` / `KDE Plasma` / `Denial` / `server` | `GNOME` |
 | **GNOME Mobile** | Use GNOME Mobile from @mobility/gnome-mobile COPR (requires Enable Third-Party). Package availability differs per Fedora release — see the **CRITICAL WARNING** below and check the [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/) before building. | `true` / `false` | `false` |

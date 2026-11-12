@@ -48,7 +48,7 @@
 
 | 参数 | 说明 | 选项 | 默认值 |
 |------|------|------|--------|
-| **Fedora Version** | 要安装的 Fedora 版本 | `43` / `44` / `45` / `rawhide` | `44` |
+| **Fedora Version** | 要安装的 Fedora 版本 | `43` / `44` / `45` / `rawhide` | `45` |
 | **Enable Third-Party** | 启用第三方仓库 | `true` / `false` | `false` |
 | **Desktop** | 要安装的桌面环境 | `GNOME` / `KDE Plasma` / `Denial` / `server` | `GNOME` |
 | **GNOME Mobile** | 使用 @mobility/gnome-mobile COPR 的 GNOME Mobile（需要启用 Enable Third-Party）。各 Fedora 版本的包可用性不同——详见下方**严重警告**，构建前请查看 [COPR Monitor](https://copr.fedorainfracloud.org/coprs/g/mobility/gnome-mobile/monitor/)。 | `true` / `false` | `false` |
