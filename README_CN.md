@@ -80,7 +80,7 @@
 | **Kernel Source** | 使用预构建内核还是从源码构建 | `prebuilt` / `custom_build` | `prebuilt` |
 | **Kernel Prebuilt Source** | 预构建内核来源（仅 prebuilt 时） | `upstream` / `own` | `upstream` |
 | **Kernel Repo URL** | 内核源码仓库地址（仅 custom_build 时） | 有效的 Git URL | `https://github.com/ianchb/sm8550-mainline` |
-| **Kernel Branch** | 内核分支名或 release tag（custom_build: 上游分支名；prebuilt: 要下载的 release tag） | 分支名 / tag | `sheng-7.3.0` |
+| **Kernel Branch** | 内核分支名或 release tag（custom_build: 上游分支名；prebuilt: 要下载的 release tag） | 分支名 / tag | `sheng-7.3.4` |
 | **Kernel Config** | 仓库中的配置文件路径（仅 custom_build 时） | 文件路径 | `sm8550.config` |
 
 ### 固件设置
