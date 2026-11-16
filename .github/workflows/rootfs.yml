@@ -159,7 +159,7 @@ on:
         description: 'Kernel branch name or release tag (custom_build: upstream branch, prebuilt: release tag)'
         type: string
         required: false
-        default: 'sheng-7.3.0'
+        default: 'sheng-7.3.4'
 
       kernel_config:
         description: 'Kernel Config file path in repo (only when kernel_source=custom_build)'
